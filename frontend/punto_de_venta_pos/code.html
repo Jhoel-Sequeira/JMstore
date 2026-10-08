@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"outline-variant":"#c7c4d8","primary":"#3525cd","on-primary":"#ffffff","on-secondary-fixed-variant":"#005236","on-error-container":"#93000a","primary-fixed":"#e2dfff","on-secondary-fixed":"#002113","error":"#ba1a1a","surface-container-high":"#e2e7ff","tertiary-container":"#885500","inverse-on-surface":"#eef0ff","on-surface-variant":"#464555","on-primary-fixed-variant":"#3323cc","on-secondary":"#ffffff","secondary-fixed-dim":"#4edea3","error-container":"#ffdad6","on-tertiary-container":"#ffd4a4","on-background":"#131b2e","primary-fixed-dim":"#c3c0ff","surface-container-lowest":"#ffffff","secondary":"#006c49","on-error":"#ffffff","outline":"#777587","surface-bright":"#faf8ff","surface-container-low":"#f2f3ff","surface":"#faf8ff","tertiary":"#684000","surface-dim":"#d2d9f4","surface-variant":"#dae2fd","surface-container":"#eaedff","on-tertiary-fixed-variant":"#653e00","primary-container":"#4f46e5","on-tertiary-fixed":"#2a1700","on-primary-container":"#dad7ff","on-tertiary":"#ffffff","tertiary-fixed":"#ffddb8","tertiary-fixed-dim":"#ffb95f","surface-tint":"#4d44e3","inverse-primary":"#c3c0ff","on-primary-fixed":"#0f0069","secondary-fixed":"#6ffbbe","inverse-surface":"#283044","secondary-container":"#6cf8bb","on-secondary-container":"#00714d","surface-container-highest":"#dae2fd","background":"#faf8ff","on-surface":"#131b2e"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"space-lg":"1rem","gutter":"1rem","space-xs":"0.25rem","space-xl":"1.5rem","space-md":"0.75rem","margin-lg":"2rem","gutter-lg":"1.5rem","space-sm":"0.5rem","margin":"1rem"},fontFamily:{"label-md":["Inter"],"headline-xl":["Inter"],"body-sm":["Inter"],"headline-sm":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"body-lg":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"label-sm":["Inter"]},fontSize:{"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.02em","fontWeight":"600"}],"headline-xl":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.025em","fontWeight":"700"}],"body-sm":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["1.125rem",{"lineHeight":"1.5rem","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["1.375rem",{"lineHeight":"1.75rem","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["1rem",{"lineHeight":"1.5rem","letterSpacing":"-0.005em","fontWeight":"400"}],"headline-lg":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"600"}],"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0em","fontWeight":"600"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.04em","fontWeight":"600"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface min-h-screen"><aside class="fixed left-0 top-0 bottom-0 w-[260px] bg-surface-container-lowest z-40 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)] overflow-y-auto"><div class="flex flex-col"><div class="p-space-lg flex flex-col gap-space-sm bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><img alt="BrandHub POS Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VhjAxhto9jhtLTysaz6a7nPPV6WH5xXTvYTB_r_UK0WaNCYxCjjps_Z1cxmqI95obDbVT8n0dvN-QeCqhyQRruinoVb4DhI1vFKh9NiuTfVZRl6DJNQ7iuHXfK9MjFXTeGJ5U1Iln-rT-X3BsdH3jO4Q6s3bDFGAqxADdp23ykFqH4BRjmmWcY6zQSuJ3qoAvSNg-hLcbiwS9vj9H03u6vXyjo0n12LQes-qMNlqskrO6FS4KG4scK58Xe"/><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">BrandHub</span><span class="bg-primary text-on-primary font-label-sm text-label-sm px-1.5 py-0.5 rounded">POS</span></div></div><div class="mt-1 flex items-center justify-between px-2.5 py-1.5 bg-surface-container-low rounded cursor-pointer hover:bg-surface-container transition-colors"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">storefront</span><span class="font-label-md text-label-md text-on-surface">Sucursal Principal</span></div><span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span></div></div><nav class="flex flex-col px-space-sm py-space-xs gap-1" data-active-classes="bg-surface-container text-primary font-label-lg border-l-4 border-primary pl-3"><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="administracion" href="#"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span>Administración</span></a><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="gestion-de-marcas" href="#"><span class="material-symbols-outlined text-[20px]">loyalty</span><span>Gestión de Marcas</span></a><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="gestion-de-clientes" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Gestión de Clientes</span></a><div class="pt-2"><div class="px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider"><span>Inventario</span><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="flex flex-col pl-2 gap-1 mt-0.5"><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="catalogo-y-generador-qr" href="#"><span class="material-symbols-outlined text-[16px]">qr_code_2</span><span>Catálogo & QR</span></a><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="recepcion-e-ingreso" href="#"><span class="material-symbols-outlined text-[16px]">move_to_inbox</span><span>Recepción e Ingreso</span></a><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="bajas-y-retiros" href="#"><span class="material-symbols-outlined text-[16px]">outbox</span><span>Bajas y Retiros</span></a></div></div><div class="pt-2"><div class="px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider"><span>POS y Caja</span><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="flex flex-col pl-2 gap-1 mt-0.5"><a aria-current="page" class="flex items-center gap-2.5 px-space-md py-1.5 rounded transition-all bg-surface-container text-primary font-label-lg border-l-4 border-primary pl-3" data-path="punto-de-venta-pos" href="#"><span class="material-symbols-outlined text-[16px]">point_of_sale</span><span>Punto de Venta</span></a><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="cierre-de-caja" href="#"><span class="material-symbols-outlined text-[16px]">lock_clock</span><span>Cierre de Caja</span></a></div></div><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="liquidaciones" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span>Liquidaciones</span></a></nav></div><div class="p-space-md bg-surface-container-low/60 m-space-sm rounded-lg flex flex-col gap-2"><div class="flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface leading-tight">Camila Rodríguez</span><span class="font-body-sm text-body-sm text-on-surface-variant">Cajera Principal</span></div></div><button class="text-on-surface-variant hover:text-error transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">logout</span></button></div><div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm w-fit"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span>Caja Abierta</span></div></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-lg w-full max-w-lg"><img alt="BrandHub POS Logo" class="h-8 w-auto object-contain hidden" src="https://lh3.googleusercontent.com/aida/AEtjO1VhjAxhto9jhtLTysaz6a7nPPV6WH5xXTvYTB_r_UK0WaNCYxCjjps_Z1cxmqI95obDbVT8n0dvN-QeCqhyQRruinoVb4DhI1vFKh9NiuTfVZRl6DJNQ7iuHXfK9MjFXTeGJ5U1Iln-rT-X3BsdH3jO4Q6s3bDFGAqxADdp23ykFqH4BRjmmWcY6zQSuJ3qoAvSNg-hLcbiwS9vj9H03u6vXyjo0n12LQes-qMNlqskrO6FS4KG4scK58Xe"/><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-[38px] pl-9 pr-14 bg-surface-container-low rounded text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Buscar por SKU, marca, cliente o ticket..." type="text"/><span class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.5 rounded border border-outline-variant/30">⌘K</span></div></div><div class="flex items-center gap-space-lg"><div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-low rounded text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px] text-primary">schedule</span><span>Turno Mañana · 14 Oct, 10:45 AM</span></div><button class="relative p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><button class="flex items-center gap-1.5 bg-primary-container text-on-primary px-space-lg py-2 rounded font-label-md text-label-md shadow-sm hover:opacity-95 active:scale-98 transition-all" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Nueva Venta</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 px-gutter-lg py-space-xl bg-background min-h-screen"><div class="flex flex-col w-full">
+<div class="flex items-center justify-between gap-space-lg pb-space-md mb-space-sm">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[24px]">point_of_sale</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-sm">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">Caja de Cobro Rápido</span>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed/60 text-on-secondary-fixed-variant font-label-sm text-label-sm inline-flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+            Modo Activo
+          </span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Terminal #01 · Operador: Camila Rodríguez · Venta Multimarca Integrada</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0">
+<div class="hidden xl:flex items-center gap-2 px-3 py-1.5 bg-surface-container rounded-lg text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[16px] text-secondary">wifi</span>
+<span>Modo Local Conectado</span>
+</div>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-low hover:bg-surface-container text-on-surface rounded-lg font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>Últimos Tickets</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-low hover:bg-surface-container text-on-surface rounded-lg font-label-md text-label-md transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">price_change</span>
+<span>Ingreso/Retiro Caja</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-space-xl items-start">
+<div class="col-span-12 lg:col-span-7 xl:col-span-7 flex flex-col gap-space-lg">
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex flex-col gap-space-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-primary text-[22px]">barcode_scanner</span>
+<input autofocus="" class="w-full h-12 pl-12 pr-28 bg-surface-container-low rounded-lg text-on-surface placeholder:text-on-surface-variant font-body-md text-body-md focus:outline-none focus:bg-surface-container transition-all" id="scannerInput" placeholder="Escanear código de barras o buscar por SKU, nombre, marca..." type="text"/>
+<div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
+<span class="px-2 py-0.5 bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm rounded shadow-xs">F2</span>
+<button class="w-8 h-8 flex items-center justify-center text-on-surface-variant hover:text-primary rounded-lg transition-colors" title="Limpiar" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Filtrar por Marca</span>
+<span class="font-body-sm text-body-sm text-primary cursor-pointer hover:underline">Ver todas (14)</span>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar text-nowrap">
+<button class="brand-filter-pill active px-3 py-1.5 rounded-full font-label-md text-label-md bg-primary text-on-primary shadow-xs transition-all" type="button">
+              Todas las Marcas (128)
+            </button>
+<button class="brand-filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" type="button">
+              Nordic Home (42)
+            </button>
+<button class="brand-filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" type="button">
+              Vera Studio (28)
+            </button>
+<button class="brand-filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" type="button">
+              Aura Botanics (19)
+            </button>
+<button class="brand-filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" type="button">
+              Loom & Thread (16)
+            </button>
+<button class="brand-filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" type="button">
+              Siena Leather (14)
+            </button>
+<button class="brand-filter-pill px-3 py-1.5 rounded-full font-label-md text-label-md bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all" type="button">
+              Komorebi Crafts (9)
+            </button>
+</div>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto pb-0.5 no-scrollbar">
+<button class="cat-pill active px-2.5 py-1 rounded font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed-variant transition-colors" type="button">
+            Todo
+          </button>
+<button class="cat-pill px-2.5 py-1 rounded font-label-sm text-label-sm bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+            Hogar & Deco
+          </button>
+<button class="cat-pill px-2.5 py-1 rounded font-label-sm text-label-sm bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+            Indumentaria
+          </button>
+<button class="cat-pill px-2.5 py-1 rounded font-label-sm text-label-sm bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+            Cosmética & Bienestar
+          </button>
+<button class="cat-pill px-2.5 py-1 rounded font-label-sm text-label-sm bg-surface-container-low text-on-surface-variant hover:text-on-surface transition-colors" type="button">
+            Accesorios en Cuero
+          </button>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-space-md">
+<div class="product-card group bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md flex flex-col justify-between transition-all cursor-pointer">
+<div class="flex flex-col gap-2">
+<div class="relative w-full h-32 rounded-lg bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Handcrafted minimalist ceramic matte mug in warm off-white sand clay texture placed on a modern clean tabletop in soft studio lighting with subtle shadow BrandHub retail POS style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAA6ORBgdJh9rYGeeNZUAvKq-1WOnzBqNIfo9v8U5gFCYKcgvouxAfNlh-3rroBeVgiKcNP-qo9lWojXxIBcEaOQgI2vREI2SPAn8kVXahKNMsy0GWBZ7XjT8mHeTRJGuJXhz8eecf4QM43wxCTphlIg7jBqIMwpqrcbWZP6aK0K83jUaVUtv87XGMcuNfLV-ikBclbsx5ONXochK5L-ZDFmXrJRCHfKTBXbk20glcMdoER0NpPTL4C4Q"/>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-surface-container-lowest/90 text-secondary font-label-sm text-label-sm shadow-xs backdrop-blur-xs flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 18 uds
+              </span>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center justify-between gap-1">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm truncate">
+                  Nordic Home
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">NH-089</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-1">
+                Taza Cerámica Matte
+              </h3>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Precio</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$24.00</span>
+</div>
+<button class="add-btn flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-on-surface font-label-md text-label-md transition-all active:scale-95" onclick="flashAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Agregar</span>
+</button>
+</div>
+</div>
+<div class="product-card group bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md flex flex-col justify-between transition-all cursor-pointer">
+<div class="flex flex-col gap-2">
+<div class="relative w-full h-32 rounded-lg bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Editorial close up photograph of an ecru raw linen tailored jacket on a wooden mannequin against an airy studio background with architectural shadows and neutral tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC_Q3leWMJG3yke0CDA-KycHuPTR5WFqXD3TR4aikd_PYk1rT_Eurkgg7ZEGOBalcVYzMZK5vW-NFyC_GsZ1sdqVPcqOVPaEOvUVr7Tt2MCqLjcZsgBdGMxw9ZsHgSMIxGL3WiJdVTVZBm60QpIXgzYoD6Q4au9jx5HU1HoUOEGE9yT96C2KKYSw73dpyRsoN6BY0zN96A2COeyubecviGuhrBr6b2xb7dw4IrYgAQ3dUXZ9PVa7p1L_w"/>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-surface-container-lowest/90 text-tertiary-container font-label-sm text-label-sm shadow-xs backdrop-blur-xs flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span> 5 uds
+              </span>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center justify-between gap-1">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm truncate">
+                  Vera Studio
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">VS-204</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-1">
+                Chaqueta Lino Crudo
+              </h3>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Precio</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$120.00</span>
+</div>
+<button class="add-btn flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-on-surface font-label-md text-label-md transition-all active:scale-95" onclick="flashAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Agregar</span>
+</button>
+</div>
+</div>
+<div class="product-card group bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md flex flex-col justify-between transition-all cursor-pointer">
+<div class="flex flex-col gap-2">
+<div class="relative w-full h-32 rounded-lg bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" data-alt="Amber glass cosmetic dropper bottle containing golden botanical restorative oil resting on smooth river stones with soft botanical eucalyptus greenery in bright daylight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDHNBT8haZ9AyFQHBCzAGmXJnow64XTxEZdseB6gZGAkE1F1gOTUtaojhKTSL8HASPVsQCZylD4w1I0VM6hPM_jO73F9qOa6eLn35p4eikhXGljO8GNX3vwek5twjQUbrchvabdVo9wlTcBugI_5wYh3FeZbXlSmomUGNaunvofNx0VC07YfEVAh57_3wlLm16oFKDIS5YqlVDj6SazT3XwRX1prvY1dAQIbPfsFcKc4CviKpFy3JnJw"/>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-surface-container-lowest/90 text-secondary font-label-sm text-label-sm shadow-xs backdrop-blur-xs flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 24 uds
+              </span>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center justify-between gap-1">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm truncate">
+                  Aura Botanics
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">AB-112</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-1">
+                Aceite Botánico Reparador
+              </h3>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Precio</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$38.00</span>
+</div>
+<button class="add-btn flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-on-surface font-label-md text-label-md transition-all active:scale-95" onclick="flashAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Agregar</span>
+</button>
+</div>
+</div>
+<div class="product-card group bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md flex flex-col justify-between transition-all cursor-pointer">
+<div class="flex flex-col gap-2">
+<div class="relative w-full h-32 rounded-lg bg-surface-container overflow-hidden">
+<div class="w-full h-full bg-surface-container-high/60 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[44px]">texture</span>
+</div>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-surface-container-lowest/90 text-secondary font-label-sm text-label-sm shadow-xs backdrop-blur-xs flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 12 uds
+              </span>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center justify-between gap-1">
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface font-label-sm text-label-sm truncate">
+                  Loom & Thread
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">LT-401</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-1">
+                Funda Cojín Chenille
+              </h3>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Precio</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$32.00</span>
+</div>
+<button class="add-btn flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-on-surface font-label-md text-label-md transition-all active:scale-95" onclick="flashAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Agregar</span>
+</button>
+</div>
+</div>
+<div class="product-card group bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md flex flex-col justify-between transition-all cursor-pointer">
+<div class="flex flex-col gap-2">
+<div class="relative w-full h-32 rounded-lg bg-surface-container overflow-hidden">
+<div class="w-full h-full bg-surface-container-high/60 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[44px]">wallet</span>
+</div>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-surface-container-lowest/90 text-secondary font-label-sm text-label-sm shadow-xs backdrop-blur-xs flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 8 uds
+              </span>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center justify-between gap-1">
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm truncate">
+                  Siena Leather
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">SL-019</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-1">
+                Portadocumentos Cuero
+              </h3>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Precio</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$55.00</span>
+</div>
+<button class="add-btn flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-on-surface font-label-md text-label-md transition-all active:scale-95" onclick="flashAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Agregar</span>
+</button>
+</div>
+</div>
+<div class="product-card group bg-surface-container-lowest rounded-xl p-space-md shadow-sm hover:shadow-md flex flex-col justify-between transition-all cursor-pointer">
+<div class="flex flex-col gap-2">
+<div class="relative w-full h-32 rounded-lg bg-surface-container overflow-hidden">
+<div class="w-full h-full bg-surface-container-high/60 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[44px]">local_fire_department</span>
+</div>
+<span class="absolute top-2 right-2 px-2 py-0.5 rounded-full bg-surface-container-lowest/90 text-secondary font-label-sm text-label-sm shadow-xs backdrop-blur-xs flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> 30 uds
+              </span>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<div class="flex items-center justify-between gap-1">
+<span class="px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm truncate">
+                  Nordic Home
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">NH-115</span>
+</div>
+<h3 class="font-label-lg text-label-lg text-on-surface group-hover:text-primary transition-colors leading-tight line-clamp-1">
+                Vela Aromática Soja 200g
+              </h3>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-sm mt-space-xs">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Precio</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$19.50</span>
+</div>
+<button class="add-btn flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-on-surface font-label-md text-label-md transition-all active:scale-95" onclick="flashAddToCart(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>Agregar</span>
+</button>
+</div>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-space-md">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Mostrando 6 de 128 productos</span>
+<div class="flex items-center gap-1 text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+            Inventario sincronizado
+          </div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 bg-surface-container-low text-on-surface-variant rounded hover:bg-surface-container font-label-sm text-label-sm" disabled="" type="button">
+            Anterior
+          </button>
+<span class="font-label-sm text-label-sm px-2 text-on-surface">1 / 22</span>
+<button class="px-3 py-1 bg-surface-container text-on-surface rounded hover:bg-surface-container-high font-label-sm text-label-sm" type="button">
+            Siguiente
+          </button>
+</div>
+</div>
+</div>
+<div class="col-span-12 lg:col-span-5 xl:col-span-5 flex flex-col gap-space-md">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="p-space-lg bg-surface-container-low/50 flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">receipt</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Ticket #TK-9842</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant font-mono">
+              3 ÍTEMS (4 UDS)
+            </span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-surface-container-lowest rounded-lg shadow-xs">
+<div class="flex items-center gap-2.5 min-w-0">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">person</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-md text-label-md text-on-surface truncate">Sofía Valenzuela</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Consumidor Final · C.I. 17.842.119-3</span>
+</div>
+</div>
+<button class="px-2.5 py-1 text-primary hover:bg-surface-container rounded font-label-sm text-label-sm transition-colors shrink-0" type="button">
+              Cambiar
+            </button>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md max-h-[340px] overflow-y-auto no-scrollbar">
+<div class="cart-item flex items-center justify-between gap-space-sm p-space-sm bg-surface-container-low/40 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-primary-fixed text-on-primary-fixed-variant font-semibold">
+                  Nordic Home
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">NH-089</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface truncate pt-0.5">Taza Cerámica Matte</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">$24.00 c/u</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center bg-surface-container rounded-lg p-0.5">
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded transition-colors" type="button">-</button>
+<span class="w-8 text-center font-label-md text-label-md text-on-surface">2</span>
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded transition-colors" type="button">+</button>
+</div>
+<div class="w-20 text-right">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">$48.00</span>
+</div>
+<button class="text-on-surface-variant hover:text-error p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="cart-item flex items-center justify-between gap-space-sm p-space-sm bg-surface-container-low/40 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-surface-container-high text-on-surface font-semibold">
+                  Vera Studio
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">VS-204</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface truncate pt-0.5">Chaqueta Lino Crudo (Talla M)</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">$120.00 c/u</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center bg-surface-container rounded-lg p-0.5">
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded transition-colors" type="button">-</button>
+<span class="w-8 text-center font-label-md text-label-md text-on-surface">1</span>
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded transition-colors" type="button">+</button>
+</div>
+<div class="w-20 text-right">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">$120.00</span>
+</div>
+<button class="text-on-surface-variant hover:text-error p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+<div class="cart-item flex items-center justify-between gap-space-sm p-space-sm bg-surface-container-low/40 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-secondary-fixed/50 text-on-secondary-fixed-variant font-semibold">
+                  Aura Botanics
+                </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">AB-112</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface truncate pt-0.5">Aceite Botánico Reparador</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">$38.00 c/u</span>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<div class="flex items-center bg-surface-container rounded-lg p-0.5">
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded transition-colors" type="button">-</button>
+<span class="w-8 text-center font-label-md text-label-md text-on-surface">1</span>
+<button class="w-7 h-7 flex items-center justify-center text-on-surface hover:bg-surface-container-high rounded transition-colors" type="button">+</button>
+</div>
+<div class="w-20 text-right">
+<span class="font-label-lg text-label-lg text-on-surface font-bold">$38.00</span>
+</div>
+<button class="text-on-surface-variant hover:text-error p-1 rounded transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<div class="px-space-lg py-2.5 bg-surface-container-low/30 flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">pie_chart</span>
+              Liquidación Estimada por Marca
+            </span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-mono">Tienda: $41.20</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="bg-surface-container-lowest p-2 rounded flex flex-col shadow-xs">
+<span class="font-label-sm text-label-sm text-on-surface truncate">Nordic Home</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">$48.00</span>
+<span class="font-label-sm text-label-sm text-secondary">Com. $9.60 (20%)</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded flex flex-col shadow-xs">
+<span class="font-label-sm text-label-sm text-on-surface truncate">Vera Studio</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">$120.00</span>
+<span class="font-label-sm text-label-sm text-secondary">Com. $24.00 (20%)</span>
+</div>
+<div class="bg-surface-container-lowest p-2 rounded flex flex-col shadow-xs">
+<span class="font-label-sm text-label-sm text-on-surface truncate">Aura Botanics</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-mono">$38.00</span>
+<span class="font-label-sm text-label-sm text-secondary">Com. $7.60 (20%)</span>
+</div>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-sm bg-surface-container-lowest">
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body-md text-body-md">Subtotal</span>
+<span class="font-body-md text-body-md font-mono">$206.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body-md text-body-md">Descuento Global</span>
+<span class="font-body-md text-body-md font-mono">$0.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body-md text-body-md">IVA (19%)</span>
+<span class="font-body-md text-body-md font-mono">$39.14</span>
+</div>
+</div>
+<div class="p-space-md rounded-xl bg-surface-container flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Total a Cobrar</span>
+<span class="font-headline-xl text-headline-xl text-primary font-bold tracking-tight leading-none">$245.14</span>
+</div>
+<div class="flex flex-col items-end">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm">
+                4 Artículos
+              </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant pt-1 font-mono">Ref: #POS-01</span>
+</div>
+</div>
+<div class="flex flex-col gap-2 pt-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Método de Pago</span>
+<div class="grid grid-cols-3 gap-2">
+<button class="pay-btn active flex flex-col items-center justify-center p-2.5 rounded-lg bg-primary text-on-primary shadow-xs transition-all" onclick="selectPayment(this)" type="button">
+<span class="material-symbols-outlined text-[22px]">credit_card</span>
+<span class="font-label-md text-label-md pt-0.5">Tarjeta</span>
+</button>
+<button class="pay-btn flex flex-col items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-all" onclick="selectPayment(this)" type="button">
+<span class="material-symbols-outlined text-[22px]">payments</span>
+<span class="font-label-md text-label-md pt-0.5">Efectivo</span>
+</button>
+<button class="pay-btn flex flex-col items-center justify-center p-2.5 rounded-lg bg-surface-container text-on-surface hover:bg-surface-container-high transition-all" onclick="selectPayment(this)" type="button">
+<span class="material-symbols-outlined text-[22px]">account_balance</span>
+<span class="font-label-md text-label-md pt-0.5">Transferencia</span>
+</button>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<label class="flex items-center gap-2 cursor-pointer select-none">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 bg-surface-container" type="checkbox"/>
+<span class="font-body-sm text-body-sm text-on-surface">Imprimir boleta automáticamente</span>
+</label>
+<span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">print</span> POS-80mm
+            </span>
+</div>
+<button class="w-full h-14 bg-primary text-on-primary hover:bg-primary-container rounded-xl font-headline-sm text-headline-sm flex items-center justify-center gap-2 shadow-md hover:shadow-lg transition-all active:scale-[0.99] mt-1" id="chargeButton" onclick="processCheckout()" type="button">
+<span class="material-symbols-outlined text-[24px]">payments</span>
+<span>COBRAR $245.14</span>
+<span class="px-2 py-0.5 rounded bg-on-primary/20 text-on-primary font-label-sm text-label-sm ml-2">F12</span>
+</button>
+<div class="grid grid-cols-2 gap-2 pt-1">
+<button class="w-full py-2 bg-surface-container hover:bg-surface-container-high text-on-surface rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+<span>Pausar Venta</span>
+</button>
+<button class="w-full py-2 bg-error-container hover:opacity-90 text-on-error-container rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">cancel</span>
+<span>Cancelar Ticket</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-inverse-surface/40 backdrop-blur-xs" id="successModal">
+<div class="bg-surface-container-lowest rounded-2xl p-space-xl max-w-sm w-full shadow-2xl flex flex-col items-center text-center gap-space-md animate-in fade-in zoom-in-95 duration-200">
+<div class="w-16 h-16 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed">
+<span class="material-symbols-outlined text-[36px]">check_circle</span>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">¡Venta Completada!</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Ticket #TK-9842 procesado por $245.14 con Débito/Crédito.</p>
+</div>
+<div class="w-full p-3 bg-surface-container-low rounded-lg text-left text-body-sm font-mono flex flex-col gap-1">
+<div class="flex justify-between"><span>Liquidación generada:</span><span class="text-secondary font-bold">OK</span></div>
+<div class="flex justify-between"><span>Voucher impreso:</span><span>OK (Term. #01)</span></div>
+</div>
+<button class="w-full py-2.5 bg-primary text-on-primary rounded-xl font-label-md text-label-md hover:bg-primary-container transition-all" onclick="closeModal()" type="button">
+        Iniciar Siguiente Ticket [Enter]
+      </button>
+</div>
+</div>
+</div>
+<script>
+  function flashAddToCart(btn) {
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span class="material-symbols-outlined text-[18px] text-secondary">check</span><span>Agregado</span>';
+    btn.classList.add('bg-secondary-fixed', 'text-on-secondary-fixed-variant');
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.classList.remove('bg-secondary-fixed', 'text-on-secondary-fixed-variant');
+    }, 900);
+  }
+
+  function selectPayment(selectedBtn) {
+    document.querySelectorAll('.pay-btn').forEach(btn => {
+      btn.classList.remove('active', 'bg-primary', 'text-on-primary');
+      btn.classList.add('bg-surface-container', 'text-on-surface');
+    });
+    selectedBtn.classList.add('active', 'bg-primary', 'text-on-primary');
+    selectedBtn.classList.remove('bg-surface-container', 'text-on-surface');
+  }
+
+  function processCheckout() {
+    const modal = document.getElementById('successModal');
+    modal.classList.remove('hidden');
+  }
+
+  function closeModal() {
+    const modal = document.getElementById('successModal');
+    modal.classList.add('hidden');
+    const input = document.getElementById('scannerInput');
+    if (input) input.focus();
+  }
+
+  document.querySelectorAll('.brand-filter-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.brand-filter-pill').forEach(p => {
+        p.classList.remove('active', 'bg-primary', 'text-on-primary');
+        p.classList.add('bg-surface-container', 'text-on-surface-variant');
+      });
+      pill.classList.add('active', 'bg-primary', 'text-on-primary');
+      pill.classList.remove('bg-surface-container', 'text-on-surface-variant');
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'F2') {
+      e.preventDefault();
+      const input = document.getElementById('scannerInput');
+      if (input) input.focus();
+    }
+    if (e.key === 'F12') {
+      e.preventDefault();
+      processCheckout();
+    }
+    if (e.key === 'Enter') {
+      const modal = document.getElementById('successModal');
+      if (!modal.classList.contains('hidden')) {
+        closeModal();
+      }
+    }
+  });
+</script></main></div></body></html>

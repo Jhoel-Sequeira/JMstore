@@ -1,0 +1,572 @@
+<div class="flex flex-col w-full gap-space-xl">
+<!-- Top Context Header & Actions -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-lg">
+<div class="flex flex-col gap-space-xs">
+<nav class="flex items-center gap-space-xs text-outline text-label-sm font-label-sm tracking-wide uppercase">
+<span>Operaciones</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary-container font-semibold">Alianzas Comerciales</span>
+</nav>
+<div class="flex items-baseline gap-space-md">
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">Gestión de Marcas Aliadas</h1>
+<span class="inline-flex items-center px-space-xs py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+          28 Marcas Totales
+        </span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-3xl">
+        Directorio centralizado de marcas asociadas, acuerdos comerciales, comisiones y seguimiento de ventas en tienda física y terminales POS.
+      </p>
+</div>
+<!-- Quick Actions -->
+<div class="flex items-center gap-space-sm self-start lg:self-center shrink-0">
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2 rounded-xl bg-surface-container-low text-on-surface hover:bg-surface-container text-label-lg font-label-lg shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px] text-outline">download</span>
+<span>Descargar Reporte (CSV)</span>
+</button>
+<button class="inline-flex items-center gap-space-xs px-space-lg py-2 rounded-xl bg-primary-container text-on-primary hover:opacity-95 text-label-lg font-label-lg shadow-sm transition-all">
+<span class="material-symbols-outlined text-[18px]">add</span>
+<span>+ Nueva Marca</span>
+</button>
+</div>
+</div>
+<!-- Metric Summary Cards (KPI Grid) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-lg">
+<!-- Card 1 -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Total Marcas</span>
+<div class="w-9 h-9 rounded-xl bg-surface-container-low text-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">storefront</span>
+</div>
+</div>
+<div class="flex items-baseline gap-space-sm">
+<span class="text-headline-xl font-headline-xl text-on-surface">28</span>
+<span class="inline-flex items-center gap-0.5 px-space-xs py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[12px] text-secondary">trending_up</span>
+          +3 este trimestre
+        </span>
+</div>
+<!-- Mini Sparkline Decorator -->
+<div class="h-1.5 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 82%;"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Marcas Activas</span>
+<div class="w-9 h-9 rounded-xl bg-secondary-container/40 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+</div>
+<div class="flex items-baseline gap-space-sm">
+<span class="text-headline-xl font-headline-xl text-on-surface">25</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">
+          89.3% operando
+        </span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 89%;"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Comisión Promedio</span>
+<div class="w-9 h-9 rounded-xl bg-primary-fixed text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">percent</span>
+</div>
+</div>
+<div class="flex items-baseline gap-space-sm">
+<span class="text-headline-xl font-headline-xl text-on-surface">20.5%</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+          Margen tienda
+        </span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-surface-tint rounded-full" style="width: 68%;"></div>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="relative overflow-hidden p-space-lg rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between gap-space-md group hover:shadow-md transition-shadow">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-outline uppercase tracking-wider">Ventas Marcas (Mes)</span>
+<div class="w-9 h-9 rounded-xl bg-secondary-container/40 text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+</div>
+<div class="flex items-baseline gap-space-sm">
+<span class="text-headline-xl font-headline-xl text-on-surface">$48,250</span>
+<span class="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[12px]">arrow_upward</span>
+          +16.4%
+        </span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-low rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 76%;"></div>
+</div>
+</div>
+</div>
+<!-- Filters & Operations Bar -->
+<div class="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-space-md p-space-md bg-surface-container-lowest rounded-xl shadow-sm">
+<div class="flex flex-col md:flex-row items-stretch md:items-center gap-space-md flex-1">
+<!-- Search Input -->
+<div class="relative flex-1 max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
+<input class="w-full h-10 pl-9 pr-4 rounded-xl bg-surface-container-low text-body-md font-body-md text-on-surface placeholder:text-outline focus:outline-none focus:bg-surface-container-lowest transition-all" id="brandSearch" placeholder="Buscar por nombre de marca o representante..." type="text"/>
+</div>
+<!-- Segmented Status Tabs -->
+<div class="inline-flex p-1 bg-surface-container-low rounded-xl gap-1 shrink-0">
+<button class="px-space-md py-1 rounded-lg text-label-md font-label-md bg-surface-container-lowest text-on-surface shadow-sm">
+          Todas <span class="ml-1 text-outline">28</span>
+</button>
+<button class="px-space-md py-1 rounded-lg text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+          Activas <span class="ml-1 text-secondary">25</span>
+</button>
+<button class="px-space-md py-1 rounded-lg text-label-md font-label-md text-on-surface-variant hover:text-on-surface transition-colors">
+          Inactivas <span class="ml-1 text-outline">3</span>
+</button>
+</div>
+</div>
+<!-- Dropdowns & Sorting -->
+<div class="flex items-center gap-space-sm shrink-0">
+<div class="relative">
+<button class="h-10 px-space-md rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-label-md font-label-md flex items-center gap-space-xs transition-colors">
+<span class="material-symbols-outlined text-[18px] text-outline">category</span>
+<span>Todas las Categorías</span>
+<span class="material-symbols-outlined text-[16px] text-outline">expand_more</span>
+</button>
+</div>
+<div class="relative">
+<button class="h-10 px-space-md rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface text-label-md font-label-md flex items-center gap-space-xs transition-colors">
+<span class="material-symbols-outlined text-[18px] text-outline">sort</span>
+<span>Mayor Venta</span>
+<span class="material-symbols-outlined text-[16px] text-outline">unfold_more</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Primary Data Table Presentation -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/70 h-10">
+<th class="px-space-lg py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Marca</th>
+<th class="px-space-lg py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider">Representante</th>
+<th class="px-space-lg py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider text-center">% Comisión</th>
+<th class="px-space-lg py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider text-right">Productos Activos</th>
+<th class="px-space-lg py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider text-right">Ventas del Mes</th>
+<th class="px-space-lg py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider text-center">Estado</th>
+<th class="px-space-lg py-2 text-label-sm font-label-sm text-outline uppercase tracking-wider text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-body-md font-body-md">
+<!-- Row 1: Nordic Home -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-space-lg py-3.5">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-[#1e293b] text-[#ffffff] flex items-center justify-center font-headline-sm text-[13px] font-bold shadow-sm shrink-0">
+                  NH
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary-container transition-colors">Nordic Home</span>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+                      Hogar &amp; Deco
+                    </span>
+</div>
+<span class="text-body-sm font-body-sm text-outline">SKU Prefijo: #NDH</span>
+</div>
+</div>
+</td>
+<td class="px-space-lg py-3.5">
+<div class="flex flex-col">
+<span class="text-on-surface font-label-md">Elena Müller</span>
+<span class="text-outline text-body-sm font-body-sm">elena@nordichome.design</span>
+</div>
+</td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-primary font-label-md text-label-md">
+                20%
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-medium">
+<span class="text-on-surface">48 SKUs</span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-semibold text-on-surface tracking-tight">
+              $8,450.00 USD
+            </td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Activa
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-outline hover:text-primary-container hover:bg-surface-container transition-colors" title="Ver Ficha Completa">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Editar Acuerdos">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Más Opciones">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Vera Studio -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-space-lg py-3.5">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center font-headline-sm text-[13px] font-bold shadow-sm shrink-0">
+                  VS
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary-container transition-colors">Vera Studio</span>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+                      Moda Sostenible
+                    </span>
+</div>
+<span class="text-body-sm font-body-sm text-outline">SKU Prefijo: #VRA</span>
+</div>
+</div>
+</td>
+<td class="px-space-lg py-3.5">
+<div class="flex flex-col">
+<span class="text-on-surface font-label-md">Lucas Vera</span>
+<span class="text-outline text-body-sm font-body-sm">lucas@verastudio.ar</span>
+</div>
+</td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-primary font-label-md text-label-md">
+                22%
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-medium">
+<span class="text-on-surface">35 SKUs</span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-semibold text-on-surface tracking-tight">
+              $6,200.00 USD
+            </td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Activa
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-outline hover:text-primary-container hover:bg-surface-container transition-colors" title="Ver Ficha Completa">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Editar Acuerdos">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Más Opciones">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Aura Botanics -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-space-lg py-3.5">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center font-headline-sm text-[13px] font-bold shadow-sm shrink-0">
+                  AB
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary-container transition-colors">Aura Botanics</span>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+                      Cosmética Orgánica
+                    </span>
+</div>
+<span class="text-body-sm font-body-sm text-outline">SKU Prefijo: #AUR</span>
+</div>
+</div>
+</td>
+<td class="px-space-lg py-3.5">
+<div class="flex flex-col">
+<span class="text-on-surface font-label-md">Mariana Solís</span>
+<span class="text-outline text-body-sm font-body-sm">marianasolis@aurabotanics.com</span>
+</div>
+</td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-primary font-label-md text-label-md">
+                18%
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-medium">
+<span class="text-on-surface">24 SKUs</span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-semibold text-on-surface tracking-tight">
+              $4,120.00 USD
+            </td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Activa
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-outline hover:text-primary-container hover:bg-surface-container transition-colors" title="Ver Ficha Completa">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Editar Acuerdos">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Más Opciones">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Loom & Thread -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-space-lg py-3.5">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-[#8c502b] text-[#ffffff] flex items-center justify-center font-headline-sm text-[13px] font-bold shadow-sm shrink-0">
+                  LT
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary-container transition-colors">Loom &amp; Thread</span>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+                      Textil Artesanal
+                    </span>
+</div>
+<span class="text-body-sm font-body-sm text-outline">SKU Prefijo: #LOM</span>
+</div>
+</div>
+</td>
+<td class="px-space-lg py-3.5">
+<div class="flex flex-col">
+<span class="text-on-surface font-label-md">Clara Fuentes</span>
+<span class="text-outline text-body-sm font-body-sm">clara@loomandthread.co</span>
+</div>
+</td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-primary font-label-md text-label-md">
+                20%
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-medium">
+<span class="text-on-surface">29 SKUs</span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-semibold text-on-surface tracking-tight">
+              $3,280.00 USD
+            </td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Activa
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-outline hover:text-primary-container hover:bg-surface-container transition-colors" title="Ver Ficha Completa">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Editar Acuerdos">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Más Opciones">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Siena Leather -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group">
+<td class="px-space-lg py-3.5">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-tertiary text-on-tertiary flex items-center justify-center font-headline-sm text-[13px] font-bold shadow-sm shrink-0">
+                  SL
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary-container transition-colors">Siena Leather</span>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm">
+                      Marroquinería
+                    </span>
+</div>
+<span class="text-body-sm font-body-sm text-outline">SKU Prefijo: #SNA</span>
+</div>
+</div>
+</td>
+<td class="px-space-lg py-3.5">
+<div class="flex flex-col">
+<span class="text-on-surface font-label-md">Mateo Rossi</span>
+<span class="text-outline text-body-sm font-body-sm">mateo@sienaleather.com</span>
+</div>
+</td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-primary-fixed text-primary font-label-md text-label-md">
+                25%
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-medium">
+<span class="text-on-surface">16 SKUs</span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-semibold text-on-surface tracking-tight">
+              $2,450.00 USD
+            </td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                Activa
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="p-1.5 rounded-lg text-outline hover:text-primary-container hover:bg-surface-container transition-colors" title="Ver Ficha Completa">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Editar Acuerdos">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Más Opciones">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Komorebi Crafts (Inactive) -->
+<tr class="hover:bg-surface-container-low/40 transition-colors group opacity-85">
+<td class="px-space-lg py-3.5">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-headline-sm text-[13px] font-bold shadow-sm shrink-0">
+                  KC
+                </div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="font-headline-sm text-headline-sm text-on-surface-variant group-hover:text-primary-container transition-colors">Komorebi Crafts</span>
+<span class="inline-flex px-2 py-0.5 rounded-full bg-surface-container text-outline text-label-sm font-label-sm">
+                      Papelería &amp; Cerámica
+                    </span>
+</div>
+<span class="text-body-sm font-body-sm text-outline">SKU Prefijo: #KMB</span>
+</div>
+</div>
+</td>
+<td class="px-space-lg py-3.5">
+<div class="flex flex-col">
+<span class="text-on-surface-variant font-label-md">Kenji Tanaka</span>
+<span class="text-outline text-body-sm font-body-sm">kenji@komorebi.store</span>
+</div>
+</td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant font-label-md text-label-md">
+                20%
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-medium">
+<span class="text-outline text-body-sm">0 SKUs (En pausa)</span>
+</td>
+<td class="px-space-lg py-3.5 text-right font-semibold text-outline tracking-tight">
+              $0.00 USD
+            </td>
+<td class="px-space-lg py-3.5 text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                Inactiva
+              </span>
+</td>
+<td class="px-space-lg py-3.5 text-right">
+<div class="inline-flex items-center gap-1">
+<button class="px-2 py-1 rounded-lg text-primary-container hover:bg-primary-fixed/40 font-label-sm text-label-sm transition-colors" title="Reactivar Marca">
+                  Reactivar
+                </button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Editar Acuerdos">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors" title="Más Opciones">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-space-lg py-space-md bg-surface-container-low/40 flex flex-col sm:flex-row items-center justify-between gap-space-md">
+<span class="text-body-sm font-body-sm text-outline">
+        Mostrando <span class="font-semibold text-on-surface">6</span> de <span class="font-semibold text-on-surface">28</span> marcas registradas
+      </span>
+<div class="inline-flex items-center gap-1">
+<button class="px-space-md py-1.5 rounded-lg text-label-md font-label-md text-outline hover:bg-surface-container hover:text-on-surface transition-colors" disabled="">
+          Anterior
+        </button>
+<button class="w-8 h-8 rounded-lg bg-primary-container text-on-primary font-label-md text-label-md shadow-sm">
+          1
+        </button>
+<button class="w-8 h-8 rounded-lg text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors">
+          2
+        </button>
+<button class="w-8 h-8 rounded-lg text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors">
+          3
+        </button>
+<button class="w-8 h-8 rounded-lg text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors">
+          4
+        </button>
+<button class="px-space-md py-1.5 rounded-lg text-label-md font-label-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+          Siguiente
+        </button>
+</div>
+</div>
+</div>
+<!-- Onboarding Link & Quick Tip Callout -->
+<div class="p-space-lg rounded-xl bg-surface-container-low flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md shadow-sm">
+<div class="flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">link</span>
+</div>
+<div class="flex flex-col">
+<span class="text-headline-sm font-headline-sm text-on-surface">Autoinscripción Digital de Nuevas Marcas</span>
+<p class="text-body-sm font-body-sm text-outline">
+          Comparte el formulario para que diseñadores y creadores carguen catálogo, fotos y datos bancarios directamente.
+        </p>
+</div>
+</div>
+<button class="shrink-0 inline-flex items-center gap-space-xs px-space-lg py-2 rounded-xl bg-surface-container-lowest hover:bg-surface-container text-on-surface text-label-lg font-label-lg shadow-sm transition-all" id="copyOnboardBtn">
+<span class="material-symbols-outlined text-[18px] text-primary-container">content_copy</span>
+<span id="copyBtnText">Copiar enlace de onboarding</span>
+</button>
+</div>
+</div>
+<script>
+  // Simple copy feedback micro-interaction
+  const copyBtn = document.getElementById('copyOnboardBtn');
+  const copyText = document.getElementById('copyBtnText');
+  if (copyBtn && copyText) {
+    copyBtn.addEventListener('click', () => {
+      const originalText = copyText.textContent;
+      copyText.textContent = '¡Enlace copiado al portapapeles!';
+      copyBtn.classList.add('bg-secondary-container', 'text-on-secondary-container');
+      setTimeout(() => {
+        copyText.textContent = originalText;
+        copyBtn.classList.remove('bg-secondary-container', 'text-on-secondary-container');
+      }, 2500);
+    });
+  }
+
+  // Interactive Live Filter on Search
+  const searchInput = document.getElementById('brandSearch');
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      const rows = document.querySelectorAll('tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+  }
+</script>

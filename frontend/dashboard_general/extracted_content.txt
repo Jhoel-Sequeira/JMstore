@@ -1,0 +1,444 @@
+<div class="flex flex-col w-full gap-space-xl">
+<!-- Page Header & Action Controls -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center gap-2">
+<span class="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Dashboard General</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5 animate-pulse"></span>En Vivo
+        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Métricas consolidadas de ventas multimarca y operaciones en tiempo real
+      </p>
+</div>
+<div class="flex items-center gap-space-sm flex-wrap">
+<div class="relative inline-flex items-center bg-surface-container-low rounded-lg px-3 py-1.5 cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-outline text-[18px] mr-2">calendar_today</span>
+<span class="font-label-md text-label-md text-on-surface">Hoy: 14 Octubre 2024</span>
+<span class="material-symbols-outlined text-outline text-[18px] ml-1.5">expand_more</span>
+</div>
+<button class="inline-flex items-center gap-2 bg-surface-container-low text-on-surface font-label-md text-label-md px-3.5 py-1.5 rounded-lg hover:bg-surface-container active:scale-98 transition-all" type="button">
+<span class="material-symbols-outlined text-outline text-[18px]">download</span>
+<span>Exportar Resumen</span>
+</button>
+<button class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Actualizar datos" type="button">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+</button>
+</div>
+</div>
+<!-- 4 Key Stat Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-lg">
+<!-- Stat 1: Ventas del Día -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Ventas del Día</span>
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">$4,850.00 <span class="font-label-md text-label-md text-outline font-normal">USD</span></span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
+<div class="inline-flex items-center text-secondary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px] mr-0.5">trending_up</span>
+<span>+14.2%</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-normal ml-1">vs ayer</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">38 transacciones</span>
+</div>
+</div>
+<!-- Stat 2: Ganancia Comisión Tienda -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Ganancia Comisión Tienda</span>
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">$970.00 <span class="font-label-md text-label-md text-outline font-normal">USD</span></span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-[22px]">percent</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
+<span class="font-label-sm text-label-sm text-primary font-medium">Tasa promedio consolidada</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">20.0%</span>
+</div>
+</div>
+<!-- Stat 3: Liquidaciones Pendientes -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Liquidaciones Pendientes</span>
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">$12,430.00 <span class="font-label-md text-label-md text-outline font-normal">USD</span></span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[22px]">pending_actions</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
+<div class="inline-flex items-center text-tertiary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[16px] mr-1">schedule</span>
+<span>8 marcas por liquidar</span>
+</div>
+<span class="font-label-sm text-label-sm text-primary hover:underline cursor-pointer">Ver detalle</span>
+</div>
+</div>
+<!-- Stat 4: Total Stock Unidades -->
+<div class="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
+<div class="flex items-start justify-between">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Total Stock Unidades</span>
+<span class="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">3,420 <span class="font-label-md text-label-md text-outline font-normal">uds</span></span>
+</div>
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">inventory_2</span>
+</div>
+</div>
+<div class="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant">12 marcas activas</span>
+<span class="inline-flex items-center text-error font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-error mr-1"></span>4 alertas stock bajo
+        </span>
+</div>
+</div>
+</div>
+<!-- Main Section (7fr / 5fr Grid) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- Left Column (7fr): Ventas por Marca (Top 6 del Mes) -->
+<div class="lg:col-span-7 flex flex-col gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Ventas por Marca</h2>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Rendimiento y volumen acumulado · Top 6 del Mes</span>
+</div>
+<div class="inline-flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded text-on-surface-variant font-label-sm text-label-sm">
+<span>Mes en curso</span>
+<span class="material-symbols-outlined text-[16px]">tune</span>
+</div>
+</div>
+<!-- Financial Snapshot Summary Row -->
+<div class="grid grid-cols-3 gap-2 p-3 bg-surface-container-low/70 rounded-lg">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Ventas Brutas Top 6</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold mt-0.5">$26,150</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Comisión Retenida</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold mt-0.5">$5,230</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Margen Tienda</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-bold mt-0.5">20.0%</span>
+</div>
+</div>
+<!-- Multi-brand Progress Bars List -->
+<div class="flex flex-col gap-4 mt-2">
+<!-- Brand 1: Nordic Home -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary-container"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Nordic Home</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.2 rounded">Hogar & Deco</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-body-sm text-body-sm text-on-surface-variant">32% cuota</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">$8,450.00</span>
+</div>
+</div>
+<div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+<div class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 32%;"></div>
+</div>
+</div>
+<!-- Brand 2: Vera Studio -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Vera Studio</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.2 rounded">Moda & Textil</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-body-sm text-body-sm text-on-surface-variant">24% cuota</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">$6,200.00</span>
+</div>
+</div>
+<div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full transition-all duration-500" style="width: 24%;"></div>
+</div>
+</div>
+<!-- Brand 3: Aura Botanics -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Aura Botanics</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.2 rounded">Cosmética</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-body-sm text-body-sm text-on-surface-variant">16% cuota</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">$4,120.00</span>
+</div>
+</div>
+<div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full transition-all duration-500" style="width: 16%;"></div>
+</div>
+</div>
+<!-- Brand 4: Loom & Thread -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-surface-tint"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Loom & Thread</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.2 rounded">Accesorios</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-body-sm text-body-sm text-on-surface-variant">13% cuota</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">$3,280.00</span>
+</div>
+</div>
+<div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+<div class="bg-surface-tint h-full rounded-full transition-all duration-500" style="width: 13%;"></div>
+</div>
+</div>
+<!-- Brand 5: Siena Leather -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Siena Leather</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.2 rounded">Marroquinería</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-body-sm text-body-sm text-on-surface-variant">9% cuota</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">$2,450.00</span>
+</div>
+</div>
+<div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+<div class="bg-tertiary h-full rounded-full transition-all duration-500" style="width: 9%;"></div>
+</div>
+</div>
+<!-- Brand 6: Komorebi Crafts -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-outline"></span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Komorebi Crafts</span>
+<span class="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.2 rounded">Cerámica</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="font-body-sm text-body-sm text-on-surface-variant">6% cuota</span>
+<span class="font-label-md text-label-md text-on-surface font-bold">$1,650.00</span>
+</div>
+</div>
+<div class="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
+<div class="bg-outline h-full rounded-full transition-all duration-500" style="width: 6%;"></div>
+</div>
+</div>
+</div>
+<!-- Visual Inline Chart: Distribution Sparkline Vector -->
+<div class="mt-2 pt-3 bg-surface-container-low/40 rounded-lg p-3 flex flex-col gap-2">
+<div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
+<span>Distribución de Ventas por Turno (Hoy)</span>
+<span class="font-semibold text-primary">Pico: 11:30 AM ($1,120)</span>
+</div>
+<div class="h-14 w-full">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 500 50">
+<defs>
+<lineargradient id="brandGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#4f46e5" stop-opacity="0.3"></stop>
+<stop offset="100%" stop-color="#4f46e5" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,45 L40,38 L80,42 L130,25 L180,30 L230,12 L280,18 L330,8 L380,22 L430,15 L470,28 L500,20 L500,50 L0,50 Z" fill="url(#brandGradient)"></path>
+<path d="M0,45 L40,38 L80,42 L130,25 L180,30 L230,12 L280,18 L330,8 L380,22 L430,15 L470,28 L500,20" fill="none" stroke="#4f46e5" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+<!-- Highlight Point -->
+<circle cx="330" cy="8" fill="#3525cd" r="4"></circle>
+<circle cx="330" cy="8" fill="#3525cd" fill-opacity="0.25" r="7"></circle>
+</svg>
+</div>
+<div class="flex items-center justify-between font-label-sm text-label-sm text-outline">
+<span>09:00 AM</span>
+<span>11:00 AM</span>
+<span>01:00 PM</span>
+<span>03:00 PM</span>
+<span>05:00 PM</span>
+</div>
+</div>
+</div>
+<!-- Right Column (5fr): Últimas 5 Ventas en Vivo -->
+<div class="lg:col-span-5 flex flex-col gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Últimas Ventas en Vivo</h2>
+<span class="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Transacciones registradas en caja</span>
+</div>
+<span class="bg-surface-container font-label-sm text-label-sm text-primary px-2 py-0.5 rounded font-semibold">Terminal POS #1</span>
+</div>
+<!-- Feed / Mini Data Table -->
+<div class="flex flex-col gap-2.5">
+<!-- Item 1 -->
+<div class="p-3 bg-surface-container-low rounded-lg hover:bg-surface-container transition-colors flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm font-semibold text-primary">#TK-9841</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm">Nordic Home</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$145.00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-medium truncate max-w-[210px]">Lámpara Cerámica Nórdica</span>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">credit_card</span>
+<span>Tarjeta</span>
+<span>·</span>
+<span>10:42 AM</span>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="p-3 bg-surface-container-low rounded-lg hover:bg-surface-container transition-colors flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm font-semibold text-primary">#TK-9840</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm">Aura Botanics</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$78.50</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-medium truncate max-w-[210px]">Set Serum Facial 50ml</span>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">payments</span>
+<span>Efectivo</span>
+<span>·</span>
+<span>10:35 AM</span>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="p-3 bg-surface-container-low rounded-lg hover:bg-surface-container transition-colors flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm font-semibold text-primary">#TK-9839</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-variant text-primary font-label-sm text-label-sm">Vera Studio</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$220.00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-medium truncate max-w-[210px]">Chaqueta Lino Natural (M)</span>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">account_balance</span>
+<span>Transferencia</span>
+<span>·</span>
+<span>10:18 AM</span>
+</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="p-3 bg-surface-container-low rounded-lg hover:bg-surface-container transition-colors flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm font-semibold text-primary">#TK-9838</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Loom & Thread</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$42.00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-medium truncate max-w-[210px]">Cojín Bordado Terciopelo</span>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">credit_card</span>
+<span>Tarjeta</span>
+<span>·</span>
+<span>09:55 AM</span>
+</div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="p-3 bg-surface-container-low rounded-lg hover:bg-surface-container transition-colors flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-label-sm text-label-sm font-semibold text-primary">#TK-9837</span>
+<span class="inline-flex items-center px-1.5 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed-variant font-label-sm text-label-sm">Siena Leather</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">$65.00</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-sm text-body-sm text-on-surface font-medium truncate max-w-[210px]">Billetera Cuero Café</span>
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">credit_card</span>
+<span>Tarjeta</span>
+<span>·</span>
+<span>09:30 AM</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Footer Link -->
+<a class="mt-2 inline-flex items-center justify-center gap-1.5 text-primary font-label-md text-label-md hover:underline py-1.5 text-center" href="#">
+<span>Ver historial completo de tickets</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+<!-- Secondary Section: "Alertas Operativas Rápidas" -->
+<div class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between px-1">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">notifications_active</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold">Alertas Operativas Rápidas</h3>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">3 tareas prioritarias</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Mini Card 1: Recepción Pendiente -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between gap-space-md hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high flex-shrink-0 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">move_to_inbox</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Recepción pendiente</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">2 guías de Nordic Home</span>
+</div>
+</div>
+<button class="bg-surface-container text-primary font-label-sm text-label-sm px-2.5 py-1.5 rounded hover:bg-primary hover:text-on-primary transition-all whitespace-nowrap" type="button">
+          Recibir
+        </button>
+</div>
+<!-- Mini Card 2: Arqueo de Caja -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between gap-space-md hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed flex-shrink-0 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Arqueo de caja</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">65% alcanzado de la meta diaria</span>
+</div>
+</div>
+<button class="bg-surface-container text-on-surface font-label-sm text-label-sm px-2.5 py-1.5 rounded hover:bg-surface-container-high transition-all whitespace-nowrap" type="button">
+          Revisar
+        </button>
+</div>
+<!-- Mini Card 3: Liquidación Quincenal -->
+<div class="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between gap-space-md hover:shadow-md transition-shadow">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-tertiary-fixed flex-shrink-0 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[20px]">assignment_turned_in</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Liquidación quincenal</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Lista para autorizar y desembolso</span>
+</div>
+</div>
+<button class="bg-primary text-on-primary font-label-sm text-label-sm px-2.5 py-1.5 rounded hover:bg-primary-container active:scale-98 transition-all whitespace-nowrap" type="button">
+          Autorizar
+        </button>
+</div>
+</div>
+</div>
+</div>

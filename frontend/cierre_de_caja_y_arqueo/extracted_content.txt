@@ -1,0 +1,504 @@
+<div class="flex flex-col w-full">
+<div class="flex flex-col gap-6">
+<!-- Header Section with Actions -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            Turno Activo
+          </span>
+<span class="text-on-surface-variant font-label-sm text-label-sm">Terminal POS #02</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Cierre de Caja y Arqueo de Turno</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Reconciliación de efectivo, vouchers de tarjeta y transferencias bancarias registradas en el turno</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container transition-all shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>Historial de Cierres Anteriores</span>
+</button>
+<button class="inline-flex items-center gap-2 px-3 py-2 rounded bg-surface-container-high text-primary font-label-md text-label-md hover:bg-primary-fixed transition-all" title="Descargar corte preliminar en CSV" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+<span>Exportar</span>
+</button>
+</div>
+</div>
+<!-- Active Shift Overview Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm flex items-start gap-3.5 relative overflow-hidden">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">badge</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Identificador</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Turno Mañana #042</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">ID Ref: SHIFT-20241014-M</span>
+</div>
+<div class="absolute right-0 top-0 bottom-0 w-1 bg-primary"></div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm flex items-start gap-3.5 relative overflow-hidden">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">person_check</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Cajero Responsable</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">Camila Rodríguez</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Matrícula POS #4891</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm flex items-start gap-3.5 relative overflow-hidden">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">nest_clock_farsight_analog</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Apertura de Caja</span>
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold truncate">14 Oct, 08:00 AM</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Fondo base: <strong class="text-on-surface">$150.00 USD</strong></span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm flex items-start gap-3.5 relative overflow-hidden">
+<div class="w-10 h-10 rounded-lg bg-secondary-fixed/50 flex items-center justify-center text-secondary flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">sync_saved_locally</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Estado Operativo</span>
+<span class="font-headline-sm text-headline-sm text-secondary font-bold flex items-center gap-1.5 truncate">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+            En Proceso de Cierre
+          </span>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Tiempo transcurrido: 2h 45m</span>
+</div>
+</div>
+</div>
+<!-- Main Layout: Reconciliaton Table (7 cols) + Realtime Breakdown Sidebar (5 cols) -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+<!-- Left Column: Reconciliation Form Table (8 cols on large screens) -->
+<div class="xl:col-span-8 flex flex-col gap-5">
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface-container-low">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-bold">Conciliación de Balances de Caja</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Ingrese los valores auditados para calcular discrepancias en tiempo real</p>
+</div>
+</div>
+<div class="flex items-center gap-2 self-start sm:self-center">
+<span class="px-2.5 py-1 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+                Moneda: <strong class="text-on-surface">USD ($)</strong>
+</span>
+<button class="text-primary hover:text-on-primary-fixed-variant font-label-sm text-label-sm underline px-1 py-0.5" id="btn-quick-fill" type="button">
+                Autocompletar esperados
+              </button>
+</div>
+</div>
+<!-- High-legibility Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-4">Método de Pago</th>
+<th class="py-3 px-4 text-right">Esperado en Sistema</th>
+<th class="py-3 px-4 text-right min-w-[200px]">Contado Real (Input)</th>
+<th class="py-3 px-4 text-right">Diferencia</th>
+<th class="py-3 px-4 text-center">Estado</th>
+</tr>
+</thead>
+<tbody class="divide-y-0 text-on-surface font-body-md text-body-md">
+<!-- Row 1: Cash -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-4 align-middle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Efectivo en Caja</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Incluye fondo inicial de $150.00</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">$1,240.00</span>
+<div class="font-body-sm text-body-sm text-on-surface-variant">10 ventas físicas</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<div class="relative inline-block w-full max-w-[170px]">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-label-md text-label-md text-on-surface-variant">$</span>
+<input class="w-full h-10 pl-7 pr-3 bg-surface-container-lowest rounded-lg text-right font-label-lg text-label-lg text-on-surface shadow-inner focus:outline-none focus:ring-2 focus:ring-primary font-mono transition-all" data-expected="1240.00" id="input-cash" step="0.01" type="number" value="1240.00"/>
+</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<span class="font-label-lg text-label-lg text-secondary font-mono" id="diff-cash">$0.00</span>
+</td>
+<td class="py-4 px-4 text-center align-middle">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm" id="badge-cash">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      Cuadrado Exacto
+                    </span>
+</td>
+</tr>
+<!-- Row 2: Cards -->
+<tr class="bg-surface-container-lowest hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-4 align-middle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">credit_card</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Tarjetas Débito / Crédito</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">24 transacciones POS terminal</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">$2,860.00</span>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Lote POS #0089</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<div class="relative inline-block w-full max-w-[170px]">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-label-md text-label-md text-on-surface-variant">$</span>
+<input class="w-full h-10 pl-7 pr-3 bg-surface-container-lowest rounded-lg text-right font-label-lg text-label-lg text-on-surface shadow-inner focus:outline-none focus:ring-2 focus:ring-primary font-mono transition-all" data-expected="2860.00" id="input-cards" step="0.01" type="number" value="2860.00"/>
+</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<span class="font-label-lg text-label-lg text-secondary font-mono" id="diff-cards">$0.00</span>
+</td>
+<td class="py-4 px-4 text-center align-middle">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm" id="badge-cards">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      Cuadrado Exacto
+                    </span>
+</td>
+</tr>
+<!-- Row 3: Transfers -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="py-4 px-4 align-middle">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-lg text-label-lg text-on-surface font-semibold">Transferencias Bancarias</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">4 comprobantes verificados</span>
+</div>
+</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<span class="font-headline-sm text-headline-sm text-on-surface font-semibold">$750.00</span>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Bancos directos</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<div class="relative inline-block w-full max-w-[170px]">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 font-label-md text-label-md text-on-surface-variant">$</span>
+<input class="w-full h-10 pl-7 pr-3 bg-surface-container-lowest rounded-lg text-right font-label-lg text-label-lg text-on-surface shadow-inner focus:outline-none focus:ring-2 focus:ring-primary font-mono transition-all" data-expected="750.00" id="input-transfers" step="0.01" type="number" value="750.00"/>
+</div>
+</td>
+<td class="py-4 px-4 text-right align-middle">
+<span class="font-label-lg text-label-lg text-secondary font-mono" id="diff-transfers">$0.00</span>
+</td>
+<td class="py-4 px-4 text-center align-middle">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm" id="badge-transfers">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                      Cuadrado Exacto
+                    </span>
+</td>
+</tr>
+</tbody>
+<!-- Reconciled Summary Footer Row -->
+<tfoot>
+<tr class="bg-surface-container font-label-lg text-label-lg">
+<td class="py-3.5 px-4 font-bold text-on-surface">TOTAL ARQUEO AUDITADO</td>
+<td class="py-3.5 px-4 text-right font-bold font-mono text-on-surface">$4,850.00</td>
+<td class="py-3.5 px-4 text-right font-bold font-mono text-primary">
+<span id="total-counted">$4,850.00</span>
+</td>
+<td class="py-3.5 px-4 text-right font-bold font-mono text-secondary">
+<span id="total-diff">$0.00</span>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary text-on-secondary font-label-sm text-label-sm" id="overall-status">
+<span class="material-symbols-outlined text-[14px]">done_all</span>
+                      Balance Cuadrado
+                    </span>
+</td>
+</tr>
+</tfoot>
+</table>
+</div>
+</div>
+<!-- Shift Notes and Supervisor Observation -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm">
+<div class="flex items-center justify-between mb-2">
+<label class="font-label-lg text-label-lg text-on-surface font-semibold flex items-center gap-2" for="shift-notes">
+<span class="material-symbols-outlined text-[18px] text-primary">edit_note</span>
+              Observaciones y Notas de Arqueo
+            </label>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Opcional para auditoría</span>
+</div>
+<textarea class="w-full p-3 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md placeholder:text-on-surface-variant/70 focus:outline-none focus:ring-2 focus:ring-primary" id="shift-notes" placeholder="Ej: Fondo de caja de $150.00 USD entregado en mano al supervisor del turno tarde Marcos Vega. Vouchers de lote POS #0089 grapados en sobre de auditoría..." rows="3"></textarea>
+<div class="flex items-center justify-between mt-2.5 text-on-surface-variant font-body-sm text-body-sm">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[15px] text-secondary">verified</span>
+              Las observaciones quedarán selladas en el Comprobante Fiscal Z
+            </span>
+<span class="text-on-surface-variant">Atajo de cierre: <kbd class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface font-mono font-label-sm text-label-sm">F10</kbd></span>
+</div>
+</div>
+</div>
+<!-- Right Column: Brand Breakdown & Sales Totals (4 cols on large screens) -->
+<div class="xl:col-span-4 flex flex-col gap-5">
+<!-- Total Sales Summary Banner -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Métricas del Turno</span>
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-label-sm text-label-sm">
+              38 Tickets Emitidos
+            </span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Total Neto Facturado</span>
+<div class="flex items-baseline gap-2 mt-0.5">
+<span class="font-headline-xl text-headline-xl font-bold text-on-surface tracking-tight">$4,850.00</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">USD</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant mt-1">Ticket promedio: <strong class="text-on-surface">$127.63 USD</strong></span>
+</div>
+<!-- Brand Mix Progress Bar -->
+<div class="flex flex-col gap-1.5 pt-2">
+<div class="flex items-center justify-between font-label-sm text-label-sm">
+<span class="text-on-surface-variant">Composición de Marcas</span>
+<span class="text-on-surface font-medium">4 Marcas activas</span>
+</div>
+<div class="w-full h-3 rounded-full bg-surface-container flex overflow-hidden">
+<div class="bg-primary" style="width: 31.3%;" title="Nordic Home (31.3%)"></div>
+<div class="bg-secondary" style="width: 26.4%;" title="Vera Studio (26.4%)"></div>
+<div class="bg-tertiary-container" style="width: 17.3%;" title="Aura Botanics (17.3%)"></div>
+<div class="bg-outline-variant" style="width: 25.0%;" title="Otros creadores (25.0%)"></div>
+</div>
+</div>
+</div>
+<!-- Detailed Multi-Brand Breakdown Cards -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between pb-1">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">loyalty</span>
+              Ventas por Marca
+            </h3>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Comisiones BrandHub</span>
+</div>
+<!-- Brand 1 -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-primary-fixed flex items-center justify-center text-primary font-bold font-label-md text-label-md">
+                NH
+              </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Nordic Home</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">14 artículos vendidos</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-lg text-label-lg text-on-surface font-mono font-bold">$1,520.00</span>
+<div class="font-label-sm text-label-sm text-secondary font-medium">31.3%</div>
+</div>
+</div>
+<!-- Brand 2 -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary font-bold font-label-md text-label-md">
+                VS
+              </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Vera Studio</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">11 artículos vendidos</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-lg text-label-lg text-on-surface font-mono font-bold">$1,280.00</span>
+<div class="font-label-sm text-label-sm text-secondary font-medium">26.4%</div>
+</div>
+</div>
+<!-- Brand 3 -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary font-bold font-label-md text-label-md">
+                AB
+              </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Aura Botanics</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">7 artículos vendidos</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-lg text-label-lg text-on-surface font-mono font-bold">$840.00</span>
+<div class="font-label-sm text-label-sm text-secondary font-medium">17.3%</div>
+</div>
+</div>
+<!-- Brand 4 -->
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant font-bold font-label-md text-label-md">
+                OT
+              </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Otras Marcas</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">6 artículos surtidos</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-lg text-label-lg text-on-surface font-mono font-bold">$1,210.00</span>
+<div class="font-label-sm text-label-sm text-on-surface-variant font-medium">25.0%</div>
+</div>
+</div>
+<!-- Small audit footnote -->
+<div class="mt-1 flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm p-2 rounded bg-surface-container-low/60">
+<span class="material-symbols-outlined text-[16px] text-primary flex-shrink-0">info</span>
+<span>Las liquidaciones individuales a cada creador se procesarán al finalizar este arqueo Z.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Primary Sticky Action Bar -->
+<div class="sticky bottom-4 z-20 bg-surface-container-lowest/95 backdrop-blur-md rounded-xl p-4 shadow-xl flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[22px]">check_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Caja lista para liquidación final</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Impresión fiscal térmica y desconexión segura del cajero</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2.5 justify-end">
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-surface-container-low text-on-surface font-label-md text-label-md hover:bg-surface-container active:scale-98 transition-all" id="btn-pause" type="button">
+<span class="material-symbols-outlined text-[18px]">pause_circle</span>
+<span>Pausar Arqueo</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2.5 rounded bg-surface-container-high text-primary font-label-md text-label-md hover:bg-primary-fixed active:scale-98 transition-all" id="btn-report-x" type="button">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>Previsualizar Reporte X</span>
+</button>
+<button class="inline-flex items-center gap-2.5 px-6 py-2.5 rounded bg-primary text-on-primary font-label-lg text-label-lg shadow-md hover:opacity-95 active:scale-98 transition-all" id="btn-close-shift" type="button">
+<span class="material-symbols-outlined text-[20px]">inventory_2</span>
+<span>Imprimir Arqueo (Z) y Cerrar Turno Definitivo [F10]</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const cashInput = document.getElementById('input-cash');
+    const cardsInput = document.getElementById('input-cards');
+    const transfersInput = document.getElementById('input-transfers');
+    
+    const diffCash = document.getElementById('diff-cash');
+    const diffCards = document.getElementById('diff-cards');
+    const diffTransfers = document.getElementById('diff-transfers');
+
+    const badgeCash = document.getElementById('badge-cash');
+    const badgeCards = document.getElementById('badge-cards');
+    const badgeTransfers = document.getElementById('badge-transfers');
+
+    const totalCounted = document.getElementById('total-counted');
+    const totalDiff = document.getElementById('total-diff');
+    const overallStatus = document.getElementById('overall-status');
+
+    const expectedCash = 1240.00;
+    const expectedCards = 2860.00;
+    const expectedTransfers = 750.00;
+    const totalExpected = expectedCash + expectedCards + expectedTransfers;
+
+    function formatCurrency(amount) {
+      return '$' + Math.abs(amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function updateRowState(inputEl, diffEl, badgeEl, expected) {
+      const val = parseFloat(inputEl.value) || 0;
+      const difference = val - expected;
+
+      if (Math.abs(difference) < 0.01) {
+        diffEl.textContent = '$0.00';
+        diffEl.className = 'font-label-lg text-label-lg text-secondary font-mono';
+        badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm';
+        badgeEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>Cuadrado Exacto';
+      } else if (difference > 0) {
+        diffEl.textContent = '+' + formatCurrency(difference);
+        diffEl.className = 'font-label-lg text-label-lg text-tertiary font-mono';
+        badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm';
+        badgeEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Sobrante';
+      } else {
+        diffEl.textContent = '-' + formatCurrency(difference);
+        diffEl.className = 'font-label-lg text-label-lg text-error font-mono';
+        badgeEl.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm';
+        badgeEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-error"></span>Faltante';
+      }
+      return val;
+    }
+
+    function recalculateTotal() {
+      const c = updateRowState(cashInput, diffCash, badgeCash, expectedCash);
+      const k = updateRowState(cardsInput, diffCards, badgeCards, expectedCards);
+      const t = updateRowState(transfersInput, diffTransfers, badgeTransfers, expectedTransfers);
+
+      const sum = c + k + t;
+      const diff = sum - totalExpected;
+
+      totalCounted.textContent = formatCurrency(sum);
+
+      if (Math.abs(diff) < 0.01) {
+        totalDiff.textContent = '$0.00';
+        totalDiff.className = 'text-secondary';
+        overallStatus.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-secondary text-on-secondary font-label-sm text-label-sm';
+        overallStatus.innerHTML = '<span class="material-symbols-outlined text-[14px]">done_all</span> Balance Cuadrado';
+      } else if (diff > 0) {
+        totalDiff.textContent = '+' + formatCurrency(diff);
+        totalDiff.className = 'text-tertiary';
+        overallStatus.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-tertiary text-on-tertiary font-label-sm text-label-sm';
+        overallStatus.innerHTML = '<span class="material-symbols-outlined text-[14px]">warning</span> Sobrante detectado';
+      } else {
+        totalDiff.textContent = '-' + formatCurrency(diff);
+        totalDiff.className = 'text-error';
+        overallStatus.className = 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-error text-on-error font-label-sm text-label-sm';
+        overallStatus.innerHTML = '<span class="material-symbols-outlined text-[14px]">error</span> Faltante detectado';
+      }
+    }
+
+    [cashInput, cardsInput, transfersInput].forEach(inp => {
+      inp.addEventListener('input', recalculateTotal);
+    });
+
+    document.getElementById('btn-quick-fill')?.addEventListener('click', () => {
+      cashInput.value = expectedCash.toFixed(2);
+      cardsInput.value = expectedCards.toFixed(2);
+      transfersInput.value = expectedTransfers.toFixed(2);
+      recalculateTotal();
+    });
+
+    function executeClosure() {
+      const confirmed = confirm('¿Desea cerrar definitivamente el Turno Mañana #042 e imprimir el Comprobante Fiscal Z?');
+      if (confirmed) {
+        alert('Cierre de caja completado exitosamente. Se ha enviado la orden de impresión térmica del corte Z.');
+      }
+    }
+
+    document.getElementById('btn-close-shift')?.addEventListener('click', executeClosure);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'F10') {
+        e.preventDefault();
+        executeClosure();
+      }
+    });
+
+    document.getElementById('btn-report-x')?.addEventListener('click', () => {
+      alert('Generando vista previa de Reporte X (Corte Parcial sin cierre)...');
+    });
+
+    document.getElementById('btn-pause')?.addEventListener('click', () => {
+      alert('Arqueo pausado. El turno permanece activo en el sistema.');
+    });
+  })();
+</script>

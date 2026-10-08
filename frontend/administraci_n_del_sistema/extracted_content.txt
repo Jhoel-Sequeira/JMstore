@@ -1,0 +1,575 @@
+<div class="flex flex-col w-full">
+<div class="flex flex-col gap-6">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center gap-2 text-primary font-label-sm text-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-[16px]">admin_panel_settings</span>
+<span>Panel de Control & Seguridad</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Administración del Sistema</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+          Configuración global de usuarios, roles de seguridad, datos de sucursal e impuestos para tiendas multimarca.
+        </p>
+</div>
+<!-- Quick Metrics Strip -->
+<div class="flex items-center gap-3 bg-surface-container-lowest px-4 py-2.5 rounded-xl shadow-sm">
+<div class="flex items-center gap-2.5 pr-4 border-r border-surface-container-high/60">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed/40 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Usuarios Activos</span>
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight">18 / 20</span>
+</div>
+</div>
+<div class="flex items-center gap-2 pl-1 text-secondary font-label-md text-label-md">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span>2FA Obligatorio</span>
+</div>
+</div>
+</div>
+<!-- SaaS Navigation Tabs -->
+<div class="flex items-center justify-between border-b border-surface-container-high/80">
+<div class="flex items-center gap-2 -mb-px">
+<button class="group flex items-center gap-2 py-3 px-4 font-label-md text-label-md text-primary border-b-2 border-primary transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">manage_accounts</span>
+<span>Usuarios y Roles</span>
+<span class="px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed-variant font-label-sm text-label-sm ml-1">5</span>
+</button>
+<button class="group flex items-center gap-2 py-3 px-4 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:border-b-2 hover:border-outline-variant/60 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">store</span>
+<span>Datos de Sucursal</span>
+</button>
+<button class="group flex items-center gap-2 py-3 px-4 font-label-md text-label-md text-on-surface-variant hover:text-on-surface hover:border-b-2 hover:border-outline-variant/60 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span>Configuración General e Impuestos</span>
+</button>
+</div>
+<div class="hidden lg:flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px]">sync</span>
+<span>Sincronizado con BrandHub Cloud</span>
+</div>
+</div>
+<!-- Active Tab Filter and Action Toolbar -->
+<div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface-container-lowest p-3.5 rounded-xl shadow-sm">
+<div class="flex flex-wrap items-center gap-2.5 flex-1 max-w-2xl">
+<!-- Search Input -->
+<div class="relative flex-1 min-w-[220px]">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">person_search</span>
+<input class="w-full h-9 pl-9 pr-3 bg-surface-container-low rounded-lg text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary transition-all" id="userSearchInput" placeholder="Buscar por nombre, email o marca..." type="text"/>
+</div>
+<!-- Role Select Filter -->
+<div class="relative min-w-[190px]">
+<select class="w-full h-9 appearance-none pl-3 pr-8 bg-surface-container-low rounded-lg text-on-surface font-label-md text-label-md focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer transition-all" id="roleFilterSelect">
+<option value="all">Todos los roles (5)</option>
+<option value="admin">Administrador General</option>
+<option value="cashier">Cajero / Operador</option>
+<option value="brand">Gestor de Marca</option>
+</select>
+<span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none text-[18px]">unfold_more</span>
+</div>
+<!-- Branch Pill Filter -->
+<button class="h-9 px-3 bg-surface-container-low hover:bg-surface-container rounded-lg flex items-center gap-1.5 text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+<span>Filtros avanzados</span>
+</button>
+</div>
+<!-- Primary Action -->
+<button class="h-9 px-4 bg-primary text-on-primary rounded-lg font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm hover:opacity-95 active:scale-[0.98] transition-all whitespace-nowrap" id="openInviteModalBtn" type="button">
+<span class="material-symbols-outlined text-[18px]">person_add</span>
+<span>+ Invitar Nuevo Usuario</span>
+</button>
+</div>
+<!-- Users Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-3 px-4" scope="col">Usuario</th>
+<th class="py-3 px-4" scope="col">Email</th>
+<th class="py-3 px-4" scope="col">Rol Asignado</th>
+<th class="py-3 px-4" scope="col">Sucursal Asignada</th>
+<th class="py-3 px-4" scope="col">Último Acceso</th>
+<th class="py-3 px-4" scope="col">Estado</th>
+<th class="py-3 px-4 text-right" scope="col">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-surface-container-high/60 font-body-md text-body-md text-on-surface">
+<!-- Row 1: Camila Rodríguez -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="relative w-9 h-9 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed font-label-md text-label-md">
+                    CR
+                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-secondary ring-2 ring-surface-container-lowest"></span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Camila Rodríguez</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ID: USR-00109 · Caja #1</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                camila.rodriguez@brandhub.com
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-fixed/50 text-on-primary-fixed-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">point_of_sale</span>
+                  Cajero Principal
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm whitespace-nowrap">
+<div class="flex items-center gap-1.5 text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">storefront</span>
+<span>Sucursal Principal</span>
+</div>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 font-label-sm text-label-sm text-secondary font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+                  En línea ahora
+                </span>
+</td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Activo
+                </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="px-2.5 py-1 text-primary hover:bg-surface-container font-label-sm text-label-sm rounded transition-colors" type="button">
+                    Editar Permisos
+                  </button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Más opciones" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Martín Arismendi -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="relative w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-label-md text-label-md">
+                    MA
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Martín Arismendi</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ID: USR-00001 · SuperAdmin</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                martin.a@brandhub.com
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-highest text-primary font-label-sm text-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">shield_person</span>
+                  Administrador General
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm whitespace-nowrap">
+<span class="px-2 py-0.5 bg-surface-container-low rounded text-on-surface-variant font-label-sm text-label-sm">
+                  Todas las Sucursales (3)
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                Hace 2 horas
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Activo
+                </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="px-2.5 py-1 text-primary hover:bg-surface-container font-label-sm text-label-sm rounded transition-colors" type="button">
+                    Editar Permisos
+                  </button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Más opciones" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Elena Müller -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="relative w-9 h-9 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed font-label-md text-label-md">
+                    EM
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Elena Müller</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ID: USR-00442 · Nordic Home</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                elena@nordichome.design
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-tertiary">store</span>
+                  Gestor de Marca (Nordic Home)
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm whitespace-nowrap">
+<span class="inline-flex items-center gap-1 text-tertiary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">captive_portal</span>
+                  Portal Proveedor
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                Hace 1 día
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Activo
+                </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="px-2.5 py-1 text-primary hover:bg-surface-container font-label-sm text-label-sm rounded transition-colors" type="button">
+                    Editar Permisos
+                  </button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Más opciones" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Lucas Vera -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group">
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="relative w-9 h-9 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant font-label-md text-label-md">
+                    LV
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Lucas Vera</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ID: USR-00448 · Vera Studio</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                lucas@verastudio.ar
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px] text-tertiary">store</span>
+                  Gestor de Marca (Vera Studio)
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm whitespace-nowrap">
+<span class="inline-flex items-center gap-1 text-tertiary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">captive_portal</span>
+                  Portal Proveedor
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                Hace 3 días
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                  Activo
+                </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="px-2.5 py-1 text-primary hover:bg-surface-container font-label-sm text-label-sm rounded transition-colors" type="button">
+                    Editar Permisos
+                  </button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Más opciones" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Diego Fernández -->
+<tr class="hover:bg-surface-container-low/60 transition-colors group opacity-85">
+<td class="py-3 px-4 whitespace-nowrap">
+<div class="flex items-center gap-3">
+<div class="relative w-9 h-9 rounded-full bg-surface-container-high/60 flex items-center justify-center text-outline font-label-md text-label-md">
+                    DF
+                  </div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface group-hover:text-primary transition-colors">Diego Fernández</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">ID: USR-00214 · Turno Tarde</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                d.fernandez@brandhub.com
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">schedule</span>
+                  Cajero Suplente
+                </span>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm whitespace-nowrap">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]">storefront</span>
+<span>Sucursal Principal</span>
+</div>
+</td>
+<td class="py-3 px-4 font-body-sm text-body-sm text-on-surface-variant whitespace-nowrap">
+                08 Oct 2024
+              </td>
+<td class="py-3 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                  En Pausa
+                </span>
+</td>
+<td class="py-3 px-4 text-right whitespace-nowrap">
+<div class="inline-flex items-center gap-1">
+<button class="px-2.5 py-1 text-secondary hover:bg-secondary-fixed/30 font-label-sm text-label-sm rounded transition-colors font-semibold" type="button">
+                    Reactivar
+                  </button>
+<button class="w-8 h-8 rounded flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Más opciones" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer / Pagination -->
+<div class="px-4 py-3 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-3 text-on-surface-variant font-body-sm text-body-sm">
+<div class="flex items-center gap-2">
+<span>Mostrando 5 de 18 usuarios registrados</span>
+<span class="text-outline-variant">•</span>
+<button class="text-primary hover:underline font-label-sm text-label-sm" type="button">Exportar listado (CSV)</button>
+</div>
+<div class="flex items-center gap-1.5">
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-label-sm text-label-sm transition-colors disabled:opacity-40" disabled="" type="button">
+            Anterior
+          </button>
+<span class="px-2 py-0.5 font-label-sm text-label-sm bg-primary text-on-primary rounded">1</span>
+<button class="px-2 py-0.5 font-label-sm text-label-sm hover:bg-surface-container rounded text-on-surface-variant" type="button">2</button>
+<button class="px-2.5 py-1 rounded bg-surface-container-lowest text-on-surface hover:bg-surface-container font-label-sm text-label-sm transition-colors" type="button">
+            Siguiente
+          </button>
+</div>
+</div>
+</div>
+<!-- Security & Brand Isolation Info Card -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-surface-container-lowest rounded-xl p-6 shadow-sm relative overflow-hidden">
+<!-- Decorative background wave -->
+<div class="absolute -right-12 -bottom-12 w-64 h-64 rounded-full bg-gradient-to-br from-primary/5 via-secondary/10 to-transparent pointer-events-none"></div>
+<div class="lg:col-span-4 flex flex-col justify-between gap-4">
+<div class="flex flex-col gap-2">
+<div class="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Resumen de Niveles de Permiso y Seguridad</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            BrandHub POS implementa una arquitectura estricta de <span class="font-semibold text-on-surface">Aislamiento Multitenant por Marca</span>. Cada proveedor opera en un contenedor virtual seguro.
+          </p>
+</div>
+<div class="flex items-center gap-2 text-primary font-label-md text-label-md cursor-pointer hover:underline">
+<span>Ver matriz de permisos completa</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</div>
+</div>
+<div class="lg:col-span-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+<!-- Role Tier 1 -->
+<div class="p-4 rounded-xl bg-surface-container-low/70 flex flex-col justify-between gap-3 hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Super Admin</span>
+<span class="material-symbols-outlined text-primary text-[18px]">security</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Acceso irrestricto a todas las marcas, cajas, recaudación global, configuraciones fiscales y conciliaciones bancarias.
+            </p>
+</div>
+<div class="pt-2 border-t border-surface-container-high/60 flex items-center gap-1.5 font-label-sm text-label-sm text-secondary">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Auditoría completa</span>
+</div>
+</div>
+<!-- Role Tier 2 -->
+<div class="p-4 rounded-xl bg-surface-container-low/70 flex flex-col justify-between gap-3 hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Cajero / Operador</span>
+<span class="material-symbols-outlined text-primary text-[18px]">point_of_sale</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Operación de terminal POS, escaneo de tickets y cobro múltiple. Sin visibilidad de costos de adquisición ni márgenes de marca.
+            </p>
+</div>
+<div class="pt-2 border-t border-surface-container-high/60 flex items-center gap-1.5 font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Cierre por turno</span>
+</div>
+</div>
+<!-- Role Tier 3 -->
+<div class="p-4 rounded-xl bg-surface-container-low/70 flex flex-col justify-between gap-3 hover:bg-surface-container-low transition-colors">
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Gestor de Marca</span>
+<span class="material-symbols-outlined text-tertiary text-[18px]">loyalty</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+              Acceso aislado únicamente a su catálogo, stock y reportes de liquidación. Cero acceso a datos de otras marcas del local.
+            </p>
+</div>
+<div class="pt-2 border-t border-surface-container-high/60 flex items-center gap-1.5 font-label-sm text-label-sm text-secondary">
+<span class="material-symbols-outlined text-[14px]">verified</span>
+<span>Aislamiento 100% estricto</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Invite User Slide-over Modal Backdrop (Simulated/Interactive) -->
+<div class="fixed inset-0 bg-inverse-surface/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200" id="inviteModal">
+<div class="bg-surface-container-lowest w-full max-w-lg rounded-2xl shadow-xl p-6 flex flex-col gap-5 transform scale-95 transition-transform duration-200" id="inviteModalCard">
+<div class="flex items-center justify-between pb-3 border-b border-surface-container-high/60">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[20px]">person_add</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Invitar Nuevo Usuario</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Configura las credenciales y el nivel de acceso</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors" id="closeInviteModalBtn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<form class="flex flex-col gap-4" onsubmit="event.preventDefault();">
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-medium">Nombre</label>
+<input class="h-9 px-3 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Ej. Sofía" type="text"/>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-medium">Apellido</label>
+<input class="h-9 px-3 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Ej. Valenzuela" type="text"/>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-medium">Correo Electrónico Corporativo</label>
+<input class="h-9 px-3 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="usuario@empresa.com" type="email"/>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-medium">Rol de Usuario</label>
+<select class="h-9 px-3 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option>Cajero / Operador POS</option>
+<option>Administrador General</option>
+<option>Gestor de Marca</option>
+<option>Auditor de Inventario</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm text-on-surface font-medium">Sucursal Asignada</label>
+<select class="h-9 px-3 bg-surface-container-low rounded-lg text-on-surface font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary">
+<option>Sucursal Principal (Palermo)</option>
+<option>Sucursal Norte (Martínez)</option>
+<option>Todas las sucursales</option>
+<option>Portal Proveedor</option>
+</select>
+</div>
+</div>
+<div class="p-3 bg-surface-container-low rounded-lg flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5">info</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+            Se enviará una invitación por correo con enlace temporal seguro para la creación de contraseña y activación de doble factor (2FA).
+          </p>
+</div>
+<div class="flex items-center justify-end gap-2.5 pt-3 border-t border-surface-container-high/60">
+<button class="px-4 py-2 rounded-lg font-label-md text-label-md text-on-surface-variant hover:bg-surface-container transition-colors" id="cancelInviteBtn" type="button">
+            Cancelar
+          </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md hover:opacity-95 transition-all shadow-sm" id="confirmInviteBtn" type="button">
+            Enviar Invitación
+          </button>
+</div>
+</form>
+</div>
+</div>
+<script>
+    // Micro-interaction handlers for User Management Screen
+    document.addEventListener('DOMContentLoaded', () => {
+      const openModalBtn = document.getElementById('openInviteModalBtn');
+      const closeModalBtn = document.getElementById('closeInviteModalBtn');
+      const cancelModalBtn = document.getElementById('cancelInviteBtn');
+      const confirmInviteBtn = document.getElementById('confirmInviteBtn');
+      const modal = document.getElementById('inviteModal');
+      const modalCard = document.getElementById('inviteModalCard');
+      const searchInput = document.getElementById('userSearchInput');
+
+      function openModal() {
+        modal.classList.remove('opacity-0', 'pointer-events-none');
+        modalCard.classList.remove('scale-95');
+        modalCard.classList.add('scale-100');
+      }
+
+      function closeModal() {
+        modal.classList.add('opacity-0', 'pointer-events-none');
+        modalCard.classList.remove('scale-100');
+        modalCard.classList.add('scale-95');
+      }
+
+      if (openModalBtn) openModalBtn.addEventListener('click', openModal);
+      if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+      if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeModal);
+      if (confirmInviteBtn) {
+        confirmInviteBtn.addEventListener('click', () => {
+          confirmInviteBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span> Enviando...';
+          setTimeout(() => {
+            confirmInviteBtn.innerHTML = 'Enviar Invitación';
+            closeModal();
+          }, 600);
+        });
+      }
+
+      // Close modal on backdrop click
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      // Simple Table Filter Interaction
+      const roleFilter = document.getElementById('roleFilterSelect');
+      const rows = document.querySelectorAll('tbody tr');
+
+      function filterTable() {
+        const query = searchInput.value.toLowerCase();
+        const role = roleFilter.value;
+
+        rows.forEach(row => {
+          const text = row.innerText.toLowerCase();
+          const matchesQuery = text.includes(query);
+          let matchesRole = true;
+
+          if (role === 'admin') matchesRole = text.includes('administrador');
+          if (role === 'cashier') matchesRole = text.includes('cajero');
+          if (role === 'brand') matchesRole = text.includes('gestor de marca');
+
+          if (matchesQuery && matchesRole) {
+            row.style.display = '';
+          } else {
+            row.style.display = 'none';
+          }
+        });
+      }
+
+      if (searchInput) searchInput.addEventListener('input', filterTable);
+      if (roleFilter) roleFilter.addEventListener('change', filterTable);
+    });
+  </script>
+</div>

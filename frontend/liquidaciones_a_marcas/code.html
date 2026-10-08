@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"outline-variant":"#c7c4d8","primary":"#3525cd","on-primary":"#ffffff","on-secondary-fixed-variant":"#005236","on-error-container":"#93000a","primary-fixed":"#e2dfff","on-secondary-fixed":"#002113","error":"#ba1a1a","surface-container-high":"#e2e7ff","tertiary-container":"#885500","inverse-on-surface":"#eef0ff","on-surface-variant":"#464555","on-primary-fixed-variant":"#3323cc","on-secondary":"#ffffff","secondary-fixed-dim":"#4edea3","error-container":"#ffdad6","on-tertiary-container":"#ffd4a4","on-background":"#131b2e","primary-fixed-dim":"#c3c0ff","surface-container-lowest":"#ffffff","secondary":"#006c49","on-error":"#ffffff","outline":"#777587","surface-bright":"#faf8ff","surface-container-low":"#f2f3ff","surface":"#faf8ff","tertiary":"#684000","surface-dim":"#d2d9f4","surface-variant":"#dae2fd","surface-container":"#eaedff","on-tertiary-fixed-variant":"#653e00","primary-container":"#4f46e5","on-tertiary-fixed":"#2a1700","on-primary-container":"#dad7ff","on-tertiary":"#ffffff","tertiary-fixed":"#ffddb8","tertiary-fixed-dim":"#ffb95f","surface-tint":"#4d44e3","inverse-primary":"#c3c0ff","on-primary-fixed":"#0f0069","secondary-fixed":"#6ffbbe","inverse-surface":"#283044","secondary-container":"#6cf8bb","on-secondary-container":"#00714d","surface-container-highest":"#dae2fd","background":"#faf8ff","on-surface":"#131b2e"},borderRadius:{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},spacing:{"space-lg":"1rem","gutter":"1rem","space-xs":"0.25rem","space-xl":"1.5rem","space-md":"0.75rem","margin-lg":"2rem","gutter-lg":"1.5rem","space-sm":"0.5rem","margin":"1rem"},fontFamily:{"label-md":["Inter"],"headline-xl":["Inter"],"body-sm":["Inter"],"headline-sm":["Inter"],"headline-md":["Inter"],"body-md":["Inter"],"body-lg":["Inter"],"headline-lg":["Inter"],"label-lg":["Inter"],"label-sm":["Inter"]},fontSize:{"label-md":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0.02em","fontWeight":"600"}],"headline-xl":["2.25rem",{"lineHeight":"2.75rem","letterSpacing":"-0.025em","fontWeight":"700"}],"body-sm":["0.75rem",{"lineHeight":"1rem","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["1.125rem",{"lineHeight":"1.5rem","letterSpacing":"-0.01em","fontWeight":"600"}],"headline-md":["1.375rem",{"lineHeight":"1.75rem","letterSpacing":"-0.015em","fontWeight":"600"}],"body-md":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0em","fontWeight":"400"}],"body-lg":["1rem",{"lineHeight":"1.5rem","letterSpacing":"-0.005em","fontWeight":"400"}],"headline-lg":["1.75rem",{"lineHeight":"2.25rem","letterSpacing":"-0.02em","fontWeight":"600"}],"label-lg":["0.875rem",{"lineHeight":"1.25rem","letterSpacing":"0em","fontWeight":"600"}],"label-sm":["0.6875rem",{"lineHeight":"0.875rem","letterSpacing":"0.04em","fontWeight":"600"}]}}}};</script></head><body class="bg-background font-body-md text-on-surface min-h-screen"><aside class="fixed left-0 top-0 bottom-0 w-[260px] bg-surface-container-lowest z-40 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)] overflow-y-auto"><div class="flex flex-col"><div class="p-space-lg flex flex-col gap-space-sm bg-surface-container-lowest"><div class="flex items-center gap-space-sm"><img alt="BrandHub POS Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1VhjAxhto9jhtLTysaz6a7nPPV6WH5xXTvYTB_r_UK0WaNCYxCjjps_Z1cxmqI95obDbVT8n0dvN-QeCqhyQRruinoVb4DhI1vFKh9NiuTfVZRl6DJNQ7iuHXfK9MjFXTeGJ5U1Iln-rT-X3BsdH3jO4Q6s3bDFGAqxADdp23ykFqH4BRjmmWcY6zQSuJ3qoAvSNg-hLcbiwS9vj9H03u6vXyjo0n12LQes-qMNlqskrO6FS4KG4scK58Xe"/><div class="flex items-center gap-1.5"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-bold">BrandHub</span><span class="bg-primary text-on-primary font-label-sm text-label-sm px-1.5 py-0.5 rounded">POS</span></div></div><div class="mt-1 flex items-center justify-between px-2.5 py-1.5 bg-surface-container-low rounded cursor-pointer hover:bg-surface-container transition-colors"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">storefront</span><span class="font-label-md text-label-md text-on-surface">Sucursal Principal</span></div><span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span></div></div><nav class="flex flex-col px-space-sm py-space-xs gap-1" data-active-classes="bg-surface-container text-primary font-label-lg border-l-4 border-primary pl-3"><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Dashboard</span></a><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="administracion" href="#"><span class="material-symbols-outlined text-[20px]">admin_panel_settings</span><span>Administración</span></a><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="gestion-de-marcas" href="#"><span class="material-symbols-outlined text-[20px]">loyalty</span><span>Gestión de Marcas</span></a><a class="flex items-center gap-3 px-space-md py-2 rounded text-on-surface-variant font-label-md text-label-md hover:bg-surface-container hover:text-on-surface transition-all" data-path="gestion-de-clientes" href="#"><span class="material-symbols-outlined text-[20px]">group</span><span>Gestión de Clientes</span></a><div class="pt-2"><div class="px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider"><span>Inventario</span><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="flex flex-col pl-2 gap-1 mt-0.5"><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="catalogo-y-generador-qr" href="#"><span class="material-symbols-outlined text-[16px]">qr_code_2</span><span>Catálogo & QR</span></a><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="recepcion-e-ingreso" href="#"><span class="material-symbols-outlined text-[16px]">move_to_inbox</span><span>Recepción e Ingreso</span></a><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="bajas-y-retiros" href="#"><span class="material-symbols-outlined text-[16px]">outbox</span><span>Bajas y Retiros</span></a></div></div><div class="pt-2"><div class="px-space-md py-1.5 flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider"><span>POS y Caja</span><span class="material-symbols-outlined text-[16px]">expand_more</span></div><div class="flex flex-col pl-2 gap-1 mt-0.5"><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="punto-de-venta-pos" href="#"><span class="material-symbols-outlined text-[16px]">point_of_sale</span><span>Punto de Venta</span></a><a class="flex items-center gap-2.5 px-space-md py-1.5 rounded text-on-surface-variant font-body-sm text-body-sm hover:bg-surface-container hover:text-on-surface transition-all" data-path="cierre-de-caja" href="#"><span class="material-symbols-outlined text-[16px]">lock_clock</span><span>Cierre de Caja</span></a></div></div><a aria-current="page" class="flex items-center gap-3 px-space-md py-2 rounded transition-all bg-surface-container text-primary font-label-lg border-l-4 border-primary pl-3" data-path="liquidaciones" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span>Liquidaciones</span></a></nav></div><div class="p-space-md bg-surface-container-low/60 m-space-sm rounded-lg flex flex-col gap-2"><div class="flex items-center justify-between"><div class="flex items-center gap-2.5"><div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">person</span></div><div class="flex flex-col"><span class="font-label-md text-label-md text-on-surface leading-tight">Camila Rodríguez</span><span class="font-body-sm text-body-sm text-on-surface-variant">Cajera Principal</span></div></div><button class="text-on-surface-variant hover:text-error transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">logout</span></button></div><div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm w-fit"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span>Caja Abierta</span></div></div></aside><div class="pl-[260px]"><header class="fixed top-0 left-[260px] right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between px-gutter-lg"><div class="flex items-center gap-space-lg w-full max-w-lg"><img alt="BrandHub POS Logo" class="h-8 w-auto object-contain hidden" src="https://lh3.googleusercontent.com/aida/AEtjO1VhjAxhto9jhtLTysaz6a7nPPV6WH5xXTvYTB_r_UK0WaNCYxCjjps_Z1cxmqI95obDbVT8n0dvN-QeCqhyQRruinoVb4DhI1vFKh9NiuTfVZRl6DJNQ7iuHXfK9MjFXTeGJ5U1Iln-rT-X3BsdH3jO4Q6s3bDFGAqxADdp23ykFqH4BRjmmWcY6zQSuJ3qoAvSNg-hLcbiwS9vj9H03u6vXyjo0n12LQes-qMNlqskrO6FS4KG4scK58Xe"/><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full h-[38px] pl-9 pr-14 bg-surface-container-low rounded text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Buscar por SKU, marca, cliente o ticket..." type="text"/><span class="absolute right-2.5 top-1/2 -translate-y-1/2 bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.5 rounded border border-outline-variant/30">⌘K</span></div></div><div class="flex items-center gap-space-lg"><div class="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-surface-container-low rounded text-on-surface-variant font-label-sm text-label-sm"><span class="material-symbols-outlined text-[16px] text-primary">schedule</span><span>Turno Mañana · 14 Oct, 10:45 AM</span></div><button class="relative p-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low rounded transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span></button><button class="flex items-center gap-1.5 bg-primary-container text-on-primary px-space-lg py-2 rounded font-label-md text-label-md shadow-sm hover:opacity-95 active:scale-98 transition-all" type="button"><span class="material-symbols-outlined text-[18px]">add</span><span>Nueva Venta</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></header><main class="w-full pt-16 px-gutter-lg py-space-xl bg-background min-h-screen"><div class="flex flex-col w-full">
+<div class="flex flex-col gap-space-lg">
+<!-- Header Contextual -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-2 mb-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">Módulo Financiero POS</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Corte Mensual Activo</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Liquidaciones y Rendición a Marcas</h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-3xl mt-0.5">
+          Cálculo automático de ventas brutas, retención de comisión de tienda y saldos netos a transferir a marcas aliadas.
+        </p>
+</div>
+<!-- Botones de Acción Global -->
+<div class="flex items-center gap-space-sm flex-wrap">
+<button class="inline-flex items-center gap-2 px-space-md py-2 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-all shadow-sm active:scale-98" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">picture_as_pdf</span>
+<span>Generar Reporte PDF Consolidado</span>
+</button>
+<button class="inline-flex items-center gap-2 px-space-md py-2 rounded bg-primary text-on-primary font-label-md text-label-md shadow-sm hover:opacity-95 active:scale-98 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">payments</span>
+<span>Registrar Pago Masivo</span>
+</button>
+</div>
+</div>
+<!-- Barra de Filtros Operativos -->
+<div class="p-space-md bg-surface-container-lowest rounded-xl shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-space-md">
+<div class="flex flex-wrap items-center gap-space-sm">
+<!-- Selector Período -->
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-primary text-[18px]">calendar_month</span>
+<span class="font-label-md text-label-md text-on-surface">Octubre 2024 (Mes en curso)</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span>
+</div>
+<!-- Selector Marca -->
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded cursor-pointer hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-secondary text-[18px]">loyalty</span>
+<span class="font-label-md text-label-md text-on-surface">Todas las Marcas (12)</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">expand_more</span>
+</div>
+<!-- Estado de Pago Switcher -->
+<div class="inline-flex p-0.5 bg-surface-container-low rounded">
+<button class="px-3 py-1 rounded text-on-primary bg-primary font-label-sm text-label-sm shadow-xs transition-all" type="button">Todos</button>
+<button class="px-3 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all" type="button">Pendientes (8)</button>
+<button class="px-3 py-1 rounded text-on-surface-variant hover:text-on-surface font-label-sm text-label-sm transition-all" type="button">Pagados (4)</button>
+</div>
+</div>
+<!-- Quick Search & Export Icon Button -->
+<div class="flex items-center gap-2">
+<div class="relative w-full md:w-56">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-[16px]">filter_list</span>
+<input class="w-full h-8 pl-8 pr-3 bg-surface-container-low rounded text-on-surface placeholder:text-on-surface-variant font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Filtrar por marca..." type="text"/>
+</div>
+<button class="h-8 w-8 rounded flex items-center justify-center bg-surface-container-low text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Exportar CSV" type="button">
+<span class="material-symbols-outlined text-[18px]">file_download</span>
+</button>
+</div>
+</div>
+<!-- KPI Summary Cards (4 columnas) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+<!-- Card 1: Ventas Brutas Totales -->
+<div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary/5 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Ventas Brutas Totales</span>
+<span class="w-8 h-8 rounded bg-primary-fixed flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">point_of_sale</span>
+</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">$34,800.00 <span class="font-label-md text-label-md font-normal text-on-surface-variant">USD</span></div>
+<div class="flex items-center gap-1.5 mt-2 text-secondary font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[14px]">trending_up</span>
+<span>+14.2% vs ciclo anterior</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Comisión Tienda Retenida -->
+<div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-secondary/5 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Comisión Tienda Retenida</span>
+<span class="w-8 h-8 rounded bg-secondary-fixed/50 flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">$7,240.00 <span class="font-label-md text-label-md font-normal text-on-surface-variant">USD</span></div>
+<div class="flex items-center gap-1.5 mt-2 text-on-surface-variant font-label-sm text-label-sm">
+<span class="px-1.5 py-0.2 rounded bg-surface-container font-semibold text-primary">Margen 20.8%</span>
+<span>Promedio tienda</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Neto por Liquidar a Marcas -->
+<div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-tertiary-fixed/30 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Neto por Liquidar a Marcas</span>
+<span class="w-8 h-8 rounded bg-tertiary-fixed flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined text-[18px]">pending_actions</span>
+</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg font-bold text-tertiary tracking-tight">$27,560.00 <span class="font-label-md text-label-md font-normal text-on-surface-variant">USD</span></div>
+<div class="flex items-center gap-1.5 mt-2 font-label-sm text-label-sm text-on-surface-variant">
+<span class="w-2 h-2 rounded-full bg-tertiary-container animate-pulse"></span>
+<span class="font-semibold text-on-surface">8 marcas</span> pendientes de pago
+          </div>
+</div>
+</div>
+<!-- Card 4: Próxima Fecha de Corte -->
+<div class="p-space-lg bg-surface-container-lowest rounded-xl shadow-sm flex flex-col justify-between relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 w-24 h-24 bg-primary-fixed/40 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Próxima Fecha de Corte</span>
+<span class="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">event_repeat</span>
+</span>
+</div>
+<div>
+<div class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">31 de Octubre</div>
+<div class="flex items-center gap-1.5 mt-2 font-label-sm text-label-sm text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">hourglass_top</span>
+<span>Cierre programado en <strong class="text-on-surface">17 días</strong></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content Area: Split Table + Drawer Info -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Data Table Card (8 or 12 Cols depending on selection) -->
+<div class="xl:col-span-8 flex flex-col bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+<div class="px-space-lg py-space-md flex items-center justify-between bg-surface-container-low/40">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">table_rows</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Detalle de Rendición por Marca</span>
+</div>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Mostrando 6 de 12 marcas aliadas</span>
+</div>
+<div class="w-full overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low font-label-sm text-label-sm uppercase text-on-surface-variant tracking-wider">
+<th class="py-3 px-space-lg">Marca Aliada</th>
+<th class="py-3 px-space-md text-right">Ventas Brutas</th>
+<th class="py-3 px-space-sm text-center">Comisión %</th>
+<th class="py-3 px-space-md text-right">Retención Tienda</th>
+<th class="py-3 px-space-md text-right font-bold text-on-surface">Neto a Pagar</th>
+<th class="py-3 px-space-md text-center">Estado</th>
+<th class="py-3 px-space-lg text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm divide-y-0" id="settlement-tbody">
+<!-- Fila 1: Nordic Home -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group bg-surface-container-low/20" onclick="selectBrand('Nordic Home', 'B-1082', 'Banco Santander Clásico', 'ES91 2100 0418 4502 0005 1192', 'B84920412', '$6,760.00', '18 items vendidos')">
+<td class="py-3 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-bold text-primary font-label-sm text-label-sm shadow-xs">NH</div>
+<div class="flex flex-col min-w-0">
+<span class="truncate font-semibold text-on-surface group-hover:text-primary transition-colors">Nordic Home</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Hogar & Diseño Minimal</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md text-right font-medium text-on-surface font-mono">$8,450.00</td>
+<td class="py-3 px-space-sm text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">20%</span>
+</td>
+<td class="py-3 px-space-md text-right text-on-surface-variant font-mono">$1,690.00</td>
+<td class="py-3 px-space-md text-right font-bold text-primary font-mono">$6,760.00</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Pendiente</span>
+</span>
+</td>
+<td class="py-3 px-space-lg text-right">
+<div class="inline-flex items-center gap-1.5 justify-end">
+<button class="px-2 py-1 bg-primary text-on-primary rounded font-label-sm text-label-sm shadow-xs hover:opacity-95 transition-all" type="button">Registrar Pago</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Detalle" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 2: Vera Studio -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group" onclick="selectBrand('Vera Studio', 'B-1049', 'BBVA Empresas', 'ES76 0182 2390 1102 0150 9482', 'B99214450', '$4,836.00', '24 prendas textiles')">
+<td class="py-3 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-bold text-primary font-label-sm text-label-sm shadow-xs">VS</div>
+<div class="flex flex-col min-w-0">
+<span class="truncate font-semibold text-on-surface group-hover:text-primary transition-colors">Vera Studio</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Moda Sostenible</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md text-right font-medium text-on-surface font-mono">$6,200.00</td>
+<td class="py-3 px-space-sm text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">22%</span>
+</td>
+<td class="py-3 px-space-md text-right text-on-surface-variant font-mono">$1,364.00</td>
+<td class="py-3 px-space-md text-right font-bold text-primary font-mono">$4,836.00</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Pendiente</span>
+</span>
+</td>
+<td class="py-3 px-space-lg text-right">
+<div class="inline-flex items-center gap-1.5 justify-end">
+<button class="px-2 py-1 bg-primary text-on-primary rounded font-label-sm text-label-sm shadow-xs hover:opacity-95 transition-all" type="button">Registrar Pago</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Detalle" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 3: Aura Botanics -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group" onclick="selectBrand('Aura Botanics', 'B-1004', 'CaixaBank Negocios', 'ES21 2100 1198 8802 0019 4410', 'B65839211', '$3,378.40', 'Liquidado el 12 Oct')">
+<td class="py-3 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-bold text-secondary font-label-sm text-label-sm shadow-xs">AB</div>
+<div class="flex flex-col min-w-0">
+<span class="truncate font-semibold text-on-surface group-hover:text-primary transition-colors">Aura Botanics</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Cosmética Natural</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md text-right font-medium text-on-surface font-mono">$4,120.00</td>
+<td class="py-3 px-space-sm text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">18%</span>
+</td>
+<td class="py-3 px-space-md text-right text-on-surface-variant font-mono">$741.60</td>
+<td class="py-3 px-space-md text-right font-bold text-on-surface font-mono">$3,378.40</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Pagado · 12 Oct</span>
+</span>
+</td>
+<td class="py-3 px-space-lg text-right">
+<div class="inline-flex items-center gap-1.5 justify-end">
+<button class="px-2 py-1 bg-surface-container text-on-surface rounded font-label-sm text-label-sm hover:bg-surface-container-high transition-colors" type="button">Ver Comprobante</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Detalle" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 4: Loom & Thread -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group" onclick="selectBrand('Loom & Thread', 'B-1120', 'Banco Sabadell', 'ES45 0081 7390 1200 0034 5678', 'B71239019', '$2,624.00', '15 piezas mantas & cojines')">
+<td class="py-3 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-bold text-primary font-label-sm text-label-sm shadow-xs">LT</div>
+<div class="flex flex-col min-w-0">
+<span class="truncate font-semibold text-on-surface group-hover:text-primary transition-colors">Loom & Thread</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Textiles Artesanales</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md text-right font-medium text-on-surface font-mono">$3,280.00</td>
+<td class="py-3 px-space-sm text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">20%</span>
+</td>
+<td class="py-3 px-space-md text-right text-on-surface-variant font-mono">$656.00</td>
+<td class="py-3 px-space-md text-right font-bold text-primary font-mono">$2,624.00</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Pendiente</span>
+</span>
+</td>
+<td class="py-3 px-space-lg text-right">
+<div class="inline-flex items-center gap-1.5 justify-end">
+<button class="px-2 py-1 bg-primary text-on-primary rounded font-label-sm text-label-sm shadow-xs hover:opacity-95 transition-all" type="button">Registrar Pago</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Detalle" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 5: Siena Leather -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group" onclick="selectBrand('Siena Leather', 'B-1011', 'Santander Corporate', 'ES12 0049 1500 0512 3456 7890', 'B90112349', '$1,837.50', 'Liquidado el 10 Oct')">
+<td class="py-3 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-bold text-secondary font-label-sm text-label-sm shadow-xs">SL</div>
+<div class="flex flex-col min-w-0">
+<span class="truncate font-semibold text-on-surface group-hover:text-primary transition-colors">Siena Leather</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Marroquinería Premium</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md text-right font-medium text-on-surface font-mono">$2,450.00</td>
+<td class="py-3 px-space-sm text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">25%</span>
+</td>
+<td class="py-3 px-space-md text-right text-on-surface-variant font-mono">$612.50</td>
+<td class="py-3 px-space-md text-right font-bold text-on-surface font-mono">$1,837.50</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span>Pagado · 10 Oct</span>
+</span>
+</td>
+<td class="py-3 px-space-lg text-right">
+<div class="inline-flex items-center gap-1.5 justify-end">
+<button class="px-2 py-1 bg-surface-container text-on-surface rounded font-label-sm text-label-sm hover:bg-surface-container-high transition-colors" type="button">Ver Comprobante</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Detalle" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Fila 6: Komorebi Crafts -->
+<tr class="hover:bg-surface-container-low/50 transition-colors cursor-pointer group" onclick="selectBrand('Komorebi Crafts', 'B-1077', 'Bankinter Pymes', 'ES09 0128 0010 9801 0023 9981', 'B55419087', '$1,320.00', '9 cerámicas gres')">
+<td class="py-3 px-space-lg font-label-md text-label-md text-on-surface">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-container flex items-center justify-center font-bold text-primary font-label-sm text-label-sm shadow-xs">KC</div>
+<div class="flex flex-col min-w-0">
+<span class="truncate font-semibold text-on-surface group-hover:text-primary transition-colors">Komorebi Crafts</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant truncate">Cerámica Utilitaria</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-space-md text-right font-medium text-on-surface font-mono">$1,650.00</td>
+<td class="py-3 px-space-sm text-center">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-semibold">20%</span>
+</td>
+<td class="py-3 px-space-md text-right text-on-surface-variant font-mono">$330.00</td>
+<td class="py-3 px-space-md text-right font-bold text-primary font-mono">$1,320.00</td>
+<td class="py-3 px-space-md text-center">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+<span>Pendiente</span>
+</span>
+</td>
+<td class="py-3 px-space-lg text-right">
+<div class="inline-flex items-center gap-1.5 justify-end">
+<button class="px-2 py-1 bg-primary text-on-primary rounded font-label-sm text-label-sm shadow-xs hover:opacity-95 transition-all" type="button">Registrar Pago</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" title="Ver Detalle" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Footer Pagination / Summary -->
+<div class="px-space-lg py-space-sm bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-2">
+<div class="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
+<span>Filas por página: <strong>6</strong> de 12</span>
+<span>·</span>
+<span>Total neto pendiente en pantalla: <strong class="text-on-surface">$15,540.00</strong></span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface disabled:opacity-40" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest font-label-sm text-label-sm text-primary font-bold shadow-xs">1</span>
+<button class="p-1 rounded text-on-surface-variant hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Side Panel / Drawer: Datos Bancarios y Facturación de la Marca Seleccionada -->
+<div class="xl:col-span-4 flex flex-col gap-space-md">
+<!-- Tarjeta de Detalles de Transferencia -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-md">
+<div class="flex items-center justify-between pb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance</span>
+<span class="font-headline-sm text-headline-sm text-on-surface">Datos para Transferencia</span>
+</div>
+<span class="px-2 py-0.5 rounded bg-secondary-fixed/50 text-on-secondary-fixed-variant font-label-sm text-label-sm font-semibold">Cuenta Verificada</span>
+</div>
+<!-- Brand Profile Card in Drawer -->
+<div class="p-space-md bg-surface-container-low rounded-lg flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary text-on-primary font-headline-sm text-headline-sm flex items-center justify-center font-bold" id="drawer-avatar">NH</div>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm text-on-surface leading-tight font-bold" id="drawer-brand-name">Nordic Home</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="drawer-brand-code">ID: B-1082 · Tienda Multimarca</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Saldo a Transferir</span>
+<span class="font-headline-md text-headline-md font-bold text-primary" id="drawer-neto">$6,760.00</span>
+</div>
+</div>
+<!-- Datos Bancarios List -->
+<div class="flex flex-col gap-2.5">
+<div class="flex flex-col gap-1 p-2.5 bg-surface-container-low/50 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Entidad Bancaria</span>
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface font-semibold" id="drawer-bank">Banco Santander Clásico</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[16px]">domain</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 p-2.5 bg-surface-container-low/50 rounded">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Código IBAN / Cuenta</span>
+<button class="text-primary hover:underline font-label-sm text-label-sm flex items-center gap-1" onclick="navigator.clipboard.writeText(document.getElementById('drawer-iban').innerText); alert('IBAN copiado al portapapeles');" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copiar</span>
+</button>
+</div>
+<span class="font-mono text-body-sm text-on-surface font-semibold tracking-wider" id="drawer-iban">ES91 2100 0418 4502 0005 1192</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="flex flex-col gap-1 p-2.5 bg-surface-container-low/50 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">NIF / CIF Fiscal</span>
+<span class="font-mono text-body-sm text-on-surface font-semibold" id="drawer-nif">B84920412</span>
+</div>
+<div class="flex flex-col gap-1 p-2.5 bg-surface-container-low/50 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Tipo Factura</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">B2B Régimen Simpl.</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 p-2.5 bg-surface-container-low/50 rounded">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Concepto de Transferencia Sugerido</span>
+<span class="font-mono text-body-sm text-on-surface-variant">LIQ-OCT24-BRANDHUB-B1082</span>
+</div>
+</div>
+<!-- Quick Actions Panel -->
+<div class="flex flex-col gap-2 pt-2">
+<button class="w-full py-2.5 px-space-md rounded bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-2 shadow-sm hover:opacity-95 active:scale-98 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px]">send_money</span>
+<span>Emitir Transferencia Directa</span>
+</button>
+<button class="w-full py-2 px-space-md rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md flex items-center justify-center gap-2 transition-all" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">receipt</span>
+<span>Descargar Desglose Fiscal XML/PDF</span>
+</button>
+</div>
+</div>
+<!-- Banner de Conciliación Automática -->
+<div class="p-space-md bg-secondary-fixed/30 rounded-xl flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary text-[24px]">verified</span>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-secondary-fixed font-bold">Retenciones Tributarias Listas</span>
+<p class="font-body-sm text-body-sm text-on-secondary-fixed-variant mt-0.5">
+              Las comisiones retenidas por tienda ya incluyen deducción de IVA y pasarela POS para declaración trimestral automática.
+            </p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Inline Script for Interactivity -->
+<script>
+    function selectBrand(name, code, bank, iban, nif, neto, note) {
+      document.getElementById('drawer-brand-name').innerText = name;
+      document.getElementById('drawer-brand-code').innerText = 'ID: ' + code + ' · Tienda Multimarca';
+      document.getElementById('drawer-bank').innerText = bank;
+      document.getElementById('drawer-iban').innerText = iban;
+      document.getElementById('drawer-nif').innerText = nif;
+      document.getElementById('drawer-neto').innerText = neto;
+      
+      // Initials for avatar
+      var initials = name.split(' ').map(function(n) { return n[0]; }).join('').substring(0, 2);
+      document.getElementById('drawer-avatar').innerText = initials;
+
+      // Highlight active row style
+      var rows = document.querySelectorAll('#settlement-tbody tr');
+      rows.forEach(function(row) {
+        row.classList.remove('bg-surface-container-low/40');
+      });
+      event.currentTarget.classList.add('bg-surface-container-low/40');
+    }
+  </script>
+</div></main></div></body></html>
