@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
-//const LOGO_URL = 'https://bzogrntiodvcrluxetwp.supabase.co/storage/v1/object/public/imagenes/logo.png';
 const LOGO_URL = 'https://lh3.googleusercontent.com/d/1BjZBopvdyYJLvUbcvLZo_3tLYbtBsPX-=w1000?authuser=0';
+
 // 1. Esquema SQL convertido a JavaScript
 export const SCHEMA_TABLES = {
   clientes: ['id', 'nombre_cliente', 'telefono', 'correo'],
@@ -30,7 +30,6 @@ export const SCHEMA_TABLES = {
 export const GoogleSheetInitButton = () => {
   const [loading, setLoading] = useState(false);
 
-  // Reemplaza esta URL con la que te dé tu Google Apps Script
   const GOOGLE_SCRIPT_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwksVY9wO9ZAk5J99V_JsNS3U1K9oWlokqMig_o3HSVRj1v7hinj1rK2xSrxAv6Y4PPmQ/exec';
 
   const handleCrearTablas = async () => {
@@ -58,12 +57,13 @@ export const GoogleSheetInitButton = () => {
       onClick={handleCrearTablas}
       disabled={loading}
       type="button"
-      className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
+      className="flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 sm:px-3 py-1.5 rounded text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
+      title="Crear Tablas en Sheets"
     >
-      <span className="material-symbols-outlined text-[16px]">
+      <span className="material-symbols-outlined text-[18px]">
         {loading ? 'sync' : 'table_view'}
       </span>
-      <span>{loading ? 'Creando...' : 'Crear Tablas en Sheets'}</span>
+      <span className="hidden md:inline">{loading ? 'Creando...' : 'Crear Tablas en Sheets'}</span>
     </button>
   );
 };
@@ -87,7 +87,7 @@ const posCajaItems = [
   { name: 'Cierre de Caja', path: '/cierre-caja', icon: 'lock_clock' },
 ];
 
-const NavItem = ({ item, isSubItem = false }) => {
+const NavItem = ({ item, isSubItem = false, onClick }) => {
   const baseClasses = isSubItem
     ? 'flex items-center gap-2.5 px-3 py-1.5 rounded transition-all text-sm'
     : 'flex items-center gap-3 px-3 py-2 rounded transition-all text-sm';
@@ -95,6 +95,7 @@ const NavItem = ({ item, isSubItem = false }) => {
   return (
     <NavLink
       to={item.path}
+      onClick={onClick}
       className={({ isActive }) =>
         `${baseClasses} ${isActive
           ? 'bg-slate-100 text-blue-600 font-semibold border-l-4 border-blue-600 pl-2'
@@ -108,80 +109,120 @@ const NavItem = ({ item, isSubItem = false }) => {
   );
 };
 
-const NavSection = ({ title, items }) => (
+const NavSection = ({ title, items, onItemClick }) => (
   <div className="pt-2">
     <div className="px-3 py-1 flex items-center justify-between text-slate-400 text-xs uppercase tracking-wider font-semibold">
       <span>{title}</span>
     </div>
     <div className="flex flex-col pl-2 gap-0.5 mt-0.5">
       {items.map((item) => (
-        <NavItem key={item.path} item={item} isSubItem />
+        <NavItem key={item.path} item={item} isSubItem onClick={onItemClick} />
       ))}
     </div>
   </div>
 );
 
-const Sidebar = () => (
-  <aside className="fixed left-0 top-0 bottom-0 w-[260px] bg-white z-40 flex flex-col justify-between border-r border-slate-200 overflow-y-auto">
-    <div className="flex flex-col">
-      <div className="p-4 flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <img alt="JMscents" referrerPolicy="no-referrer" className="h-8 w-auto object-contain" src={LOGO_URL} />
-          <div className="flex items-center gap-1.5">
+const Sidebar = ({ isOpen, onClose }) => (
+  <>
+    {/* Fondo oscuro al abrir en móviles */}
+    {isOpen && (
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+      />
+    )}
+
+    <aside
+      className={`fixed left-0 top-0 bottom-0 w-[260px] bg-white z-50 flex flex-col justify-between border-r border-slate-200 overflow-y-auto transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+    >
+      <div className="flex flex-col">
+        {/* Cabecera del sidebar */}
+        <div className="p-4 flex items-center justify-between border-b border-slate-100 lg:border-none">
+          <div className="flex items-center gap-2">
+            <img alt="JMscents" referrerPolicy="no-referrer" className="h-8 w-auto object-contain" src={LOGO_URL} />
             <span className="text-slate-900 tracking-tight font-bold text-lg">JMscents</span>
           </div>
-        </div>
-      </div>
 
-      <nav className="flex flex-col px-2 gap-1">
-        {mainNavItems.map((item) => (
-          <NavItem key={item.path} item={item} />
-        ))}
-        <NavSection title="Inventario" items={inventarioItems} />
-        <NavSection title="POS y Caja" items={posCajaItems} />
-        <NavItem item={{ name: 'Liquidaciones', path: '/liquidaciones', icon: 'receipt_long' }} />
-      </nav>
-    </div>
-  </aside>
+          {/* Botón cerrar en móvil */}
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1 rounded-md text-slate-500 hover:bg-slate-100"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        {/* Links de navegación */}
+        <nav className="flex flex-col px-2 gap-1 py-3">
+          {mainNavItems.map((item) => (
+            <NavItem key={item.path} item={item} onClick={onClose} />
+          ))}
+          <NavSection title="Inventario" items={inventarioItems} onItemClick={onClose} />
+          <NavSection title="POS y Caja" items={posCajaItems} onItemClick={onClose} />
+          <NavItem
+            item={{ name: 'Liquidaciones', path: '/liquidaciones', icon: 'receipt_long' }}
+            onClick={onClose}
+          />
+        </nav>
+      </div>
+    </aside>
+  </>
 );
 
-const Header = () => (
-  <header className="fixed top-0 left-[260px] right-0 h-16 bg-white/90 backdrop-blur-xl border-b border-slate-200 z-30 flex items-center justify-between px-6">
-    <div className="flex items-center gap-4 w-full max-w-md">
-      <input
-        className="w-full h-9 px-3 bg-slate-100 rounded text-slate-800 text-sm focus:outline-none focus:ring-1 focus:ring-blue-600"
-        placeholder="Buscar por SKU, marca, cliente..."
-        type="text"
-      />
+const Header = ({ onToggleSidebar }) => (
+  <header className="fixed top-0 left-0 lg:left-[260px] right-0 h-16 bg-white/95 backdrop-blur-md border-b border-slate-200 z-30 flex items-center justify-between px-4 sm:px-6 gap-3">
+    {/* Botón hamburguesa y buscador */}
+    <div className="flex items-center gap-3 w-full max-w-md">
+      <button
+        onClick={onToggleSidebar}
+        type="button"
+        className="lg:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 focus:outline-none"
+        aria-label="Abrir menú"
+      >
+        <span className="material-symbols-outlined text-[24px]">menu</span>
+      </button>
+
+      <div className="relative w-full">
+        <input
+          className="w-full h-9 pl-3 pr-2 bg-slate-100 rounded-lg text-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:bg-white transition-all"
+          placeholder="Buscar SKU, cliente..."
+          type="text"
+        />
+      </div>
     </div>
-    <div className="flex items-center gap-3">
-      {/* Botón integrado aquí */}
+
+    {/* Acciones de la derecha */}
+    <div className="flex items-center gap-2 sm:gap-3 shrink-0">
       <GoogleSheetInitButton />
 
       <NavLink
         to="/pos"
-        className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-sm font-medium shadow-sm"
+        className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-2.5 sm:px-3 py-1.5 rounded text-sm font-medium shadow-sm transition-all"
+        title="Nueva Venta"
       >
         <span className="material-symbols-outlined text-[18px]">add</span>
-        <span>Nueva Venta</span>
+        <span className="hidden sm:inline">Nueva Venta</span>
       </NavLink>
     </div>
   </header>
 );
 
 export const Layout = ({ children }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
-    <>
-      <Sidebar />
-      <div className="pl-[260px]">
-        <Header />
-        <main className="w-full pt-20 px-6 py-6 bg-slate-50 min-h-screen">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+
+      <div className="lg:pl-[260px] flex flex-col flex-1">
+        <Header onToggleSidebar={() => setSidebarOpen((prev) => !prev)} />
+        <main className="w-full pt-20 px-4 sm:px-6 py-6 flex-1">
           {children}
         </main>
       </div>
-    </>
+    </div>
   );
 };
 
-// Exportación por defecto para evitar errores sin importar cómo se importe en App.jsx
 export default Layout;
