@@ -5,8 +5,8 @@ import { applyTheme, getTheme } from '../../services/theme';
 const mainNavItems = [
   { name: 'Dashboard', path: '/', icon: 'dashboard' },
   { name: 'Administración', path: '/admin', icon: 'admin_panel_settings' },
-  { name: 'Gestión de Marcas', path: '/marcas', icon: 'loyalty' },
-  { name: 'Gestión de Clientes', path: '/clientes', icon: 'group' },
+  { name: 'Proveedores', path: '/marcas', icon: 'loyalty' },
+  { name: 'Clientes', path: '/clientes', icon: 'group' },
 ];
 
 const inventarioItems = [

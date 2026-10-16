@@ -16,7 +16,9 @@ export default function CatalogoQRPage() {
   const [quoteMargin, setQuoteMargin] = useState('30');
   const [quoteQuantity, setQuoteQuantity] = useState('1');
   const [quoteCustomer, setQuoteCustomer] = useState('');
+  const [quotePhone, setQuotePhone] = useState('');
   const [quoteCreatedAt, setQuoteCreatedAt] = useState(new Date());
+  const [showQuotePreview, setShowQuotePreview] = useState(false);
   const [theme, setTheme] = useState(getTheme);
   const [saving, setSaving] = useState(false);
 
@@ -51,7 +53,9 @@ export default function CatalogoQRPage() {
     setQuoteMargin(product.margen_utilidad_pct ?? 30);
     setQuoteQuantity('1');
     setQuoteCustomer('');
+    setQuotePhone('');
     setQuoteCreatedAt(new Date());
+    setShowQuotePreview(false);
     setError('');
   };
 
@@ -72,12 +76,34 @@ export default function CatalogoQRPage() {
       });
       setProducts((current) => current.map((product) => product.id === data.id ? { ...product, ...data } : product));
       setQuoteProduct((current) => ({ ...current, ...data }));
-      window.setTimeout(() => window.print(), 500);
+      setShowQuotePreview(true);
     } catch (saveError) {
       setError(saveError.response?.data?.detail || 'No se pudo guardar el costo y la utilidad.');
     } finally {
       setSaving(false);
     }
+  };
+
+  const sendQuoteWhatsApp = () => {
+    const digits = quotePhone.replace(/\D/g, '');
+    const phone = digits.length === 8 ? `505${digits}` : digits.startsWith('00') ? digits.slice(2) : digits;
+    if (phone.length < 10 || phone.length > 15) {
+      setError('Ingresa un número válido con código de país, por ejemplo +505 8888 8888.');
+      return;
+    }
+    const date = new Intl.DateTimeFormat('es-NI', { dateStyle: 'medium', timeStyle: 'short' }).format(quoteCreatedAt);
+    const message = [
+      `Hola${quoteCustomer.trim() ? ` ${quoteCustomer.trim()}` : ''}, te comparto tu cotización de ${theme.brandName || 'nuestra tienda'}:`,
+      '',
+      `Producto: ${quoteProduct.nombre}`,
+      `Marca: ${quoteProduct.marca_nombre || '—'}`,
+      `Cantidad: ${quantity}`,
+      `Precio por unidad: ${money(quotePrice)}`,
+      `Total: ${money(quotePrice * quantity)}`,
+      `Fecha: ${date}`,
+      theme.quoteFooter || 'Gracias por tu preferencia.',
+    ].join('\n');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
   };
 
   const downloadQr = (product) => {
@@ -103,8 +129,25 @@ export default function CatalogoQRPage() {
       <p className="text-right text-xs text-slate-400">{visible.length} productos</p>
 
       {quoteProduct && <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-950/50 p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setQuoteProduct(null); }}>
-        <section role="dialog" aria-modal="true" aria-labelledby="quote-title" className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
-          <form onSubmit={saveAndPrintQuote}>
+        <section role="dialog" aria-modal="true" aria-labelledby={showQuotePreview ? 'quote-preview-title' : 'quote-title'} className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+          {showQuotePreview && <div>
+            <div className="flex items-start justify-between border-b border-slate-100 p-5"><div><p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Vista previa</p><h2 id="quote-preview-title" className="mt-1 text-xl font-bold text-slate-900">Revisa tu cotización</h2><p className="mt-1 text-sm text-slate-500">Así verá la propuesta tu cliente.</p></div><button type="button" onClick={() => setQuoteProduct(null)} aria-label="Cerrar" className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"><span className="material-symbols-outlined">close</span></button></div>
+            <div className="max-h-[65vh] space-y-4 overflow-y-auto p-5">
+              <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg">
+                <header className="flex items-center justify-between gap-4 bg-gradient-to-r from-indigo-700 via-purple-600 to-pink-500 p-5 text-white"><div className="flex min-w-0 items-center gap-3">{theme.logo && <img src={theme.logo} alt="" className="h-12 w-14 shrink-0 rounded-lg bg-white object-contain p-1" />}<div className="min-w-0"><p className="truncate font-extrabold">{theme.brandName || 'Tu negocio'}</p><p className="mt-0.5 text-xs text-white/80">{theme.quoteTagline || 'Cotización personalizada'}</p></div></div><div className="shrink-0 text-right"><p className="text-xs font-bold tracking-widest text-amber-200">COTIZACIÓN</p><p className="mt-1 text-[10px] text-white/80">{new Intl.DateTimeFormat('es-NI', { dateStyle: 'medium' }).format(quoteCreatedAt)}</p><p className="text-[10px] text-white/80">{new Intl.DateTimeFormat('es-NI', { timeStyle: 'short' }).format(quoteCreatedAt)}</p></div></header>
+                <div className="h-1.5 bg-gradient-to-r from-amber-300 via-teal-300 to-pink-400" />
+                <div className="space-y-4 p-5 sm:p-6"><div><p className="text-[10px] font-bold tracking-[.2em] text-pink-600">PROPUESTA PARA TI</p><h3 className="mt-1 text-xl font-extrabold text-slate-900">{quoteProduct.nombre}</h3><p className="text-xs text-slate-500">{quoteProduct.marca_nombre || 'Perfumería'} · {quoteProduct.sku || quoteProduct.codigo_qr}</p></div>
+                  {theme.quoteShowImage !== false && <div className="flex h-36 items-center justify-center overflow-hidden rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 via-white to-teal-50 p-3">{quoteProduct.imagen_url ? <img src={quoteProduct.imagen_url} alt={quoteProduct.nombre} className="h-full max-w-full object-contain" /> : <span className="material-symbols-outlined text-5xl text-indigo-500">flair</span>}</div>}
+                  {quoteCustomer.trim() && <div className="rounded-r-lg border-l-4 border-pink-500 bg-pink-50 px-3 py-2"><p className="text-[10px] font-bold tracking-wider text-pink-700">PREPARADA PARA</p><p className="mt-1 text-sm font-semibold text-slate-800">{quoteCustomer.trim()}</p></div>}
+                  <div className="flex items-center justify-between border-b border-slate-100 py-3 text-sm"><span className="text-slate-600">{quantity} {quantity === 1 ? 'unidad' : 'unidades'} <span className="block text-xs text-slate-400">{money(quotePrice)} por unidad</span></span><strong className="text-slate-800">{money(quotePrice * quantity)}</strong></div><div className="flex items-center justify-between rounded-xl bg-gradient-to-r from-indigo-700 to-fuchsia-600 p-4 text-white"><span className="text-sm font-semibold">Total de la cotización</span><strong className="text-xl text-amber-200">{money(quotePrice * quantity)}</strong></div><p className="text-center text-xs italic text-slate-500">{theme.quoteFooter || 'Fragancias para cada momento'}</p>
+                </div>
+              </article>
+              <label className="block text-sm font-semibold text-slate-700">Número de WhatsApp del cliente<input type="tel" autoComplete="tel" value={quotePhone} onChange={(event) => setQuotePhone(event.target.value)} placeholder="+505 8888 8888" className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /><span className="mt-1 block text-xs font-normal text-slate-500">Puedes ingresar los 8 dígitos locales de Nicaragua o incluir el código de país.</span></label>
+              {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
+            </div>
+            <div className="flex flex-wrap justify-between gap-2 border-t border-slate-100 bg-slate-50 p-4"><button type="button" onClick={() => setShowQuotePreview(false)} className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700">Editar cotización</button><div className="flex flex-wrap justify-end gap-2"><button type="button" onClick={() => window.print()} className="inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-white px-4 py-2.5 text-sm font-semibold text-indigo-700 hover:bg-indigo-50"><span className="material-symbols-outlined text-lg">print</span>Imprimir / PDF</button><button type="button" onClick={sendQuoteWhatsApp} className="inline-flex items-center gap-2 rounded-lg bg-green-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-green-700"><span className="material-symbols-outlined text-lg">chat</span>Enviar por WhatsApp</button></div></div>
+          </div>}
+          <form hidden={showQuotePreview} onSubmit={saveAndPrintQuote}>
             <div className="flex items-start justify-between border-b border-slate-100 p-5">
               <div><p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Cotización de producto</p><h2 id="quote-title" className="mt-1 text-xl font-bold text-slate-900">{quoteProduct.nombre}</h2><p className="mt-1 text-sm text-slate-500">{quoteProduct.marca_nombre} · {quoteProduct.sku || quoteProduct.codigo_qr}</p></div>
               <button type="button" onClick={() => setQuoteProduct(null)} aria-label="Cerrar" className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"><span className="material-symbols-outlined">close</span></button>
@@ -124,7 +167,7 @@ export default function CatalogoQRPage() {
             </div>
             <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 bg-slate-50 p-4">
               <button type="button" onClick={() => setQuoteProduct(null)} className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700">Cancelar</button>
-              <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"><span className="material-symbols-outlined text-lg">print</span>{saving ? 'Guardando…' : 'Guardar e imprimir cotización'}</button>
+              <button type="submit" disabled={saving} className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-60"><span className="material-symbols-outlined text-lg">visibility</span>{saving ? 'Guardando…' : 'Guardar y ver cotización'}</button>
             </div>
           </form>
         </section>
