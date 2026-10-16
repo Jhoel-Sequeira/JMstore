@@ -29,6 +29,12 @@ Para bases Supabase que ya existían antes de agregar el inventario, ejecuta una
 
 En Inventario, el costo de compra, env?o asignado y margen se guardan en c?rdobas. El costo total, utilidad y precio sugerido se calculan en la base de datos. F?rmula: costo total = compra + env?o; utilidad = costo total ? margen; precio sugerido = costo total + utilidad. El precio de venta final se puede ajustar.
 
+## Imágenes de productos
+
+Para guardar fotos de forma persistente y mostrarlas en el catálogo, ejecuta una vez [`supabase_product_images.sql`](supabase_product_images.sql) en el SQL Editor de Supabase. Esto crea el bucket público `product-images`, limitado a PNG/JPG de hasta 5 MB. Las imágenes se pueden cargar al editar un producto desde Inventario o al registrar una compra; el catálogo toma la imagen guardada en `productos.imagen_url`.
+
+Configura `SUPABASE_URL` (la URL del proyecto) y `SUPABASE_SECRET_KEY` como variables de entorno del backend y en Vercel para Production/Preview según necesites. En Vercel, agrega ambas en **Project Settings > Environment Variables** y vuelve a desplegar. La clave secreta debe permanecer solo en el backend, nunca en una variable `VITE_*` ni en el frontend.
+
 ## Facturaci?n
 
 La pantalla de Facturación permite buscar productos con existencias, asignar o crear un cliente, ajustar cantidades y descuentos, registrar un pago completo o parcial y emitir la factura. La pestaña **Ventas y cuentas** resume totales cobrados y pendientes, agrupa los saldos por cliente y muestra cuotas por factura. Los abonos posteriores quedan registrados con método, monto y fecha. Al emitir la venta, la API valida el stock en una transacción y reduce las existencias. La factura puede imprimirse o guardarse como PDF desde el navegador. El número de factura se forma con el prefijo `FV-` y el ID de venta.

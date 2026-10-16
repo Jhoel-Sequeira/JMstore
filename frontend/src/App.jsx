@@ -10,7 +10,7 @@ import CatalogoQRPage from './pages/CatalogoQR';
 import ComprasPage from './pages/Compras';
 import POSPage from './pages/POS';
 import LoginPage from './pages/Login';
-import api, { AUTH_STORAGE_KEY } from './services/api';
+import { AUTH_STORAGE_KEY } from './services/api';
 
 export default function App() {
   return <BrowserRouter><AuthenticatedApp /></BrowserRouter>;
@@ -23,15 +23,10 @@ function AuthenticatedApp() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem(AUTH_STORAGE_KEY);
-    if (!token) {
-      setAuthReady(true);
-      return;
-    }
-    api.get('/auth/me')
-      .then(({ data }) => setUser(data))
-      .catch(() => sessionStorage.removeItem(AUTH_STORAGE_KEY))
-      .finally(() => setAuthReady(true));
+    // Require a fresh login whenever the app is opened or reloaded.
+    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+    setUser(null);
+    setAuthReady(true);
   }, []);
 
   useEffect(() => {

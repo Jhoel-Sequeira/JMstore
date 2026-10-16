@@ -20,6 +20,8 @@ export default function InventarioPage() {
   const [stockFilter, setStockFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [file, setFile] = useState(null);
+  const [productImage, setProductImage] = useState(null);
+  const productImagePreview = useMemo(() => productImage ? URL.createObjectURL(productImage) : '', [productImage]);
   const [importBrand, setImportBrand] = useState('');
   const [showImport, setShowImport] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -41,6 +43,8 @@ export default function InventarioPage() {
   useEffect(() => {
     loadData().catch((e) => setError(apiError(e))).finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => () => { if (productImagePreview) URL.revokeObjectURL(productImagePreview); }, [productImagePreview]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -76,11 +80,11 @@ export default function InventarioPage() {
   const suggestedPrice = costTotal + suggestedProfit;
   const setField = (key, value) => setForm((current) => ({ ...current, [key]: value }));
 
-  const resetForm = () => { setForm(emptyForm); setEditingId(null); setShowForm(false); };
+  const resetForm = () => { setForm(emptyForm); setEditingId(null); setProductImage(null); setShowForm(false); };
   const startCreate = () => {
     const defaultState = states.find((state) => state.modulo?.toLowerCase() === 'inventario') || states[0];
     setForm({ ...emptyForm, estado_id: defaultState ? String(defaultState.id) : '' });
-    setEditingId(null); setShowForm(true); setError(''); setMessage('');
+    setProductImage(null); setEditingId(null); setShowForm(true); setError(''); setMessage('');
   };
 
   const saveProduct = async (event) => {
@@ -104,6 +108,11 @@ export default function InventarioPage() {
     try {
       if (editingId) {
         await api.put(`/inventario/${editingId}`, payload);
+        if (productImage) {
+          const imagePayload = new FormData();
+          imagePayload.append('file', productImage);
+          await api.post(`/inventario/${editingId}/imagen`, imagePayload);
+        }
         setMessage('Cambios guardados.');
       } else {
         await api.post('/inventario/', payload);
@@ -117,7 +126,7 @@ export default function InventarioPage() {
   const editProduct = (product) => {
     setEditingId(product.id);
     setForm({ marca_id: String(product.marca_id), codigo_qr: product.codigo_qr || '', sku: product.sku || '', nombre: product.nombre || '', descripcion: product.descripcion || '', precio: String(product.precio), costo_nio: product.costo_nio ?? 0, costo_envio_nio: product.costo_envio_nio ?? 0, margen_utilidad_pct: product.margen_utilidad_pct ?? 30, stock: product.stock, stock_critico: product.stock_critico, imagen_url: product.imagen_url || '', estado_id: String(product.estado_id) });
-    setShowForm(true); setError(''); setMessage('');
+    setProductImage(null); setShowForm(true); setError(''); setMessage('');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -184,7 +193,14 @@ export default function InventarioPage() {
           <SelectField label="Estado *" value={form.estado_id} onChange={(v) => setField('estado_id', v)} required><option value="">Seleccionar estado</option>{states.map((state) => <option key={state.id} value={state.id}>{state.nombre} · {state.modulo}</option>)}</SelectField>
           <Field label="Existencias actuales" type="number" value={form.stock} onChange={() => {}} disabled />
           <Field label="Avisar cuando llegue a *" type="number" min="0" step="1" value={form.stock_critico} onChange={(v) => setField('stock_critico', v)} required />
-          <Field label="URL de imagen" type="url" value={form.imagen_url} onChange={(v) => setField('imagen_url', v)} placeholder="https://…" />
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-semibold text-slate-600">Imagen del producto (PNG o JPG, máximo 5 MB)
+              <input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" onChange={(event) => setProductImage(event.target.files?.[0] || null)} className={`${inputClass} file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:font-semibold file:text-indigo-700`} />
+            </label>
+            {productImage && <div className="mt-2 flex items-center gap-3"><img src={productImagePreview} alt="Vista previa" className="h-16 w-16 rounded-lg border border-slate-200 object-cover"/><span className="text-xs text-slate-500">{productImage.name}</span></div>}
+            {!productImage && form.imagen_url && <div className="mt-2 flex items-center gap-3"><img src={form.imagen_url} alt="Imagen actual del producto" className="h-16 w-16 rounded-lg border border-slate-200 object-cover"/><span className="text-xs text-slate-500">Imagen actual</span></div>}
+          </div>
+          <Field label="URL de imagen (opcional)" type="url" value={form.imagen_url} onChange={(v) => setField('imagen_url', v)} placeholder="https://…" />
           <label className="text-sm font-medium text-slate-700 sm:col-span-2">Descripción<textarea value={form.descripcion} onChange={(e) => setField('descripcion', e.target.value)} rows="3" className={inputClass} placeholder="Detalles, presentación o notas del producto" /></label>
           <div className="rounded-xl border border-indigo-100 bg-indigo-50/70 p-4 sm:col-span-2"><div className="grid gap-3 sm:grid-cols-4"><Calc label="Precio mínimo" value={costTotal}/><Calc label={`Utilidad (${Number(form.margen_utilidad_pct || 0)}%)`} value={suggestedProfit}/><Calc label="Precio sugerido" value={suggestedPrice} highlight/><div className="flex items-end"><button type="button" onClick={() => setField('precio', suggestedPrice.toFixed(2))} className="w-full rounded-lg bg-indigo-600 px-3 py-2.5 text-xs font-semibold text-white hover:bg-indigo-700">Usar precio sugerido</button></div></div><p className="mt-2 text-xs text-slate-500">El precio mínimo cubre compra y envío sin utilidad. El sugerido suma el porcentaje de utilidad. Puedes ajustar manualmente el precio de venta.</p></div>
           <div className="sticky bottom-0 -mx-5 flex flex-wrap justify-end gap-2 border-t border-slate-100 bg-white px-5 py-3 sm:col-span-2 sm:-mx-6 sm:px-6"><button type="button" onClick={resetForm} className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">Cancelar</button><button disabled={busy} className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">{busy ? 'Guardando…' : editingId ? 'Guardar cambios' : 'Crear producto'}</button></div>

@@ -7,7 +7,7 @@ const today = () => {
 };
 const money = (value) => new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' }).format(Number(value || 0));
 const inputClass = 'mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100';
-const emptyLine = () => ({ producto_id: '', cantidad: 1, costo_unitario_nio: '', nuevo_producto: null });
+const emptyLine = () => ({ producto_id: '', cantidad: 1, costo_unitario_nio: '', nuevo_producto: null, image_file: null });
 const apiError = (error) => error.response?.data?.detail || 'No se pudo completar la operación.';
 
 export default function ComprasPage() {
@@ -75,6 +75,13 @@ export default function ComprasPage() {
 
   const savePurchase = async (event) => {
     event.preventDefault();
+    const invalidImage = form.items.find(({ image_file }) => image_file && (
+      !['image/png', 'image/jpeg'].includes(image_file.type) || image_file.size > 5 * 1024 * 1024
+    ));
+    if (invalidImage) {
+      setError('Cada imagen debe ser PNG o JPG y no superar 5 MB.');
+      return;
+    }
     setBusy(true); setError(''); setMessage('');
     const payload = {
       marca_id: Number(form.marca_id),
@@ -97,7 +104,18 @@ export default function ComprasPage() {
     };
     try {
       const { data } = await api.post('/compras/', payload);
-      setMessage(`Compra #${data.id} registrada. Se actualizaron las existencias y costos de los productos.`);
+      let imageUploadFailed = false;
+      for (const [index, item] of form.items.entries()) {
+        if (!item.image_file) continue;
+        const imagePayload = new FormData();
+        imagePayload.append('file', item.image_file);
+        try {
+          await api.post(`/inventario/${data.items[index].producto_id}/imagen`, imagePayload);
+        } catch {
+          imageUploadFailed = true;
+        }
+      }
+      setMessage(`Compra #${data.id} registrada. Se actualizaron las existencias y costos de los productos.${imageUploadFailed ? ' La compra se guardó, pero alguna imagen no pudo subirse; puedes intentarlo desde Inventario.' : ''}`);
       setForm({ marca_id: '', referencia: '', fecha_compra: today(), costo_envio_nio: '', pago_efectivo_nio: '', pago_cuenta_nio: '', observaciones: '', items: [emptyLine()] });
       await loadData();
     } catch (e) { setError(apiError(e)); }
@@ -170,6 +188,8 @@ export default function ComprasPage() {
                   return <div key={index} className="grid gap-2 rounded-xl border border-slate-200 bg-slate-50/70 p-3 sm:grid-cols-[minmax(0,1fr)_88px_118px_34px] sm:items-end">
                     <label className="min-w-0 text-xs font-semibold text-slate-600">Producto<select value={item.producto_id} onChange={(e) => selectProduct(index, e.target.value)} required className={inputClass}><option value="">Selecciona producto</option><option value="nuevo">+ Crear producto nuevo</option>{availableProducts.map((product) => <option key={product.id} value={product.id}>{product.nombre}{product.sku ? ` · ${product.sku}` : ''} ({product.stock} disp.)</option>)}</select>{selected && <span className="mt-1 block truncate text-[11px] font-normal text-slate-400">{selected.marca_nombre || 'Sin marca'} · {selected.stock} en existencia</span>}</label>
                     {item.producto_id === 'nuevo' && <div className="grid gap-2 sm:col-span-4 sm:grid-cols-2"><Field label="Nombre del producto *" value={item.nuevo_producto?.nombre || ''} onChange={(value) => updateLine(index, 'nuevo_producto', { ...item.nuevo_producto, nombre: value })} required maxLength={255} placeholder="Nombre del producto" /><Field label="SKU" value={item.nuevo_producto?.sku || ''} onChange={(value) => updateLine(index, 'nuevo_producto', { ...item.nuevo_producto, sku: value })} maxLength={100} placeholder="Opcional" /><Field label="Precio de venta" type="number" min="0" step="0.01" value={item.nuevo_producto?.precio || ''} onChange={(value) => updateLine(index, 'nuevo_producto', { ...item.nuevo_producto, precio: value })} placeholder="Vacío: costo + 30%" /><Field label="Stock crítico" type="number" min="0" step="1" value={item.nuevo_producto?.stock_critico ?? 5} onChange={(value) => updateLine(index, 'nuevo_producto', { ...item.nuevo_producto, stock_critico: value })} /></div>}
+                    {item.producto_id && item.producto_id !== 'nuevo' && <label className="text-xs font-semibold text-slate-600 sm:col-span-4">Imagen del producto (PNG o JPG, máximo 5 MB)<input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" onChange={(event) => updateLine(index, 'image_file', event.target.files?.[0] || null)} className={`${inputClass} file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:font-semibold file:text-indigo-700`} />{item.image_file && <span className="mt-1 block font-normal text-slate-500">{item.image_file.name}</span>}</label>}
+                    {item.producto_id === 'nuevo' && <label className="text-xs font-semibold text-slate-600 sm:col-span-4">Imagen del producto (PNG o JPG, máximo 5 MB)<input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" onChange={(event) => updateLine(index, 'image_file', event.target.files?.[0] || null)} className={`${inputClass} file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-50 file:px-3 file:py-1.5 file:font-semibold file:text-indigo-700`} />{item.image_file && <span className="mt-1 block font-normal text-slate-500">{item.image_file.name}</span>}</label>}
                     <Field label="Cantidad" type="number" min="1" step="1" value={item.cantidad} onChange={(v) => updateLine(index, 'cantidad', v)} required />
                     <Field label="Costo / unidad" type="number" min="0" step="0.01" value={item.costo_unitario_nio} onChange={(v) => updateLine(index, 'costo_unitario_nio', v)} required placeholder="0.00" />
                     <button type="button" disabled={form.items.length === 1} onClick={() => removeLine(index)} aria-label="Quitar producto" className="mb-0.5 flex h-10 w-9 items-center justify-center rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 disabled:opacity-30"><span className="material-symbols-outlined text-xl">close</span></button>

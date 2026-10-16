@@ -14,6 +14,7 @@ from app.models.compras import CompraDetalle
 from app.models.inventario import Inventario, Producto
 from app.models.marcas import Estado, Marca
 from app.schemas.inventario import ImportResult, ProductoCreate, ProductoResponse, ProductoUpdate
+from app.services.product_image_storage import MAX_PRODUCT_IMAGE_BYTES, upload_product_image, validate_image
 from app.services.stock_service import available_stock_by_product, critical_stock_by_product
 
 router = APIRouter()
@@ -110,6 +111,27 @@ def update_product(product_id: int, payload: ProductoUpdate, db: Session = Depen
             db.add(inventory)
         inventory.stock_critico = critical
     db.commit()
+    db.refresh(product)
+    result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar())
+    result["stock"] = available_stock_by_product(db, [product.id]).get(product.id, 0)
+    result["stock_critico"] = critical_stock_by_product(db, [product.id]).get(product.id, 5)
+    return result
+
+
+@router.post("/{product_id}/imagen", response_model=ProductoResponse)
+async def upload_product_photo(product_id: int, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    product = db.query(Producto).filter(Producto.id == product_id).first()
+    if not product:
+        raise HTTPException(404, "Producto no encontrado")
+    content = await file.read(MAX_PRODUCT_IMAGE_BYTES + 1)
+    extension = validate_image(content, file.content_type)
+    image_url = upload_product_image(product_id, extension, file.content_type or "", content)
+    product.imagen_url = image_url
+    try:
+        db.commit()
+    except Exception as exc:
+        db.rollback()
+        raise HTTPException(500, "La imagen se subió, pero no se pudo actualizar el producto") from exc
     db.refresh(product)
     result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar())
     result["stock"] = available_stock_by_product(db, [product.id]).get(product.id, 0)
