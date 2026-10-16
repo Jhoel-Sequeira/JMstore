@@ -1,14 +1,20 @@
+from pathlib import Path
+
 from pydantic_settings import BaseSettings
+
+BACKEND_DIR = Path(__file__).resolve().parents[2]
 
 class Settings(BaseSettings):
     PROJECT_NAME: str = "Sistema Multimarca"
     API_V1_STR: str = "/api/v1"
     SECRET_KEY: str = "multimarca_secret_key_jwt_default_dev"
     ALGORITHM: str = "HS256"
-    DATABASE_URL: str = "mysql+pymysql://root:@localhost:3306/room_concept_store?charset=utf8mb4"
+    # PostgreSQL URL from Supabase.
+    DATABASE_URL: str = "postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require"
+    CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
     class Config:
-        env_file = ".env"
+        env_file = BACKEND_DIR / ".env"
         extra = "ignore"
         case_sensitive = True
 

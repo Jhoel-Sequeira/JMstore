@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import marcasService from '../services/marcasService';
 
+const API_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/api\/v1\/?$/, '').replace(/\/$/, '');
+
 // Generador de colores e iniciales para avatar visual de marca
 const getBrandVisuals = (name, index = 0) => {
   const initials = (name || 'MB')
@@ -131,7 +133,7 @@ export default function MarcasPage() {
   const handleOpenEdit = (brand) => {
     setBrandToEdit(brand);
     setLogoFile(null);
-    setLogoPreview(brand.logo ? `http://localhost:8000${brand.logo}` : null);
+    setLogoPreview(brand.logo ? `${API_ORIGIN}${brand.logo}` : null);
     const phoneParts = (brand.telefono || '').split(' ');
     const prefix = phoneParts[0]?.startsWith('+') ? phoneParts[0] : '+505';
     const number = phoneParts.slice(1).join(' ') || brand.telefono || '';
@@ -549,7 +551,7 @@ export default function MarcasPage() {
                       <div className="flex items-center gap-3">
                         {brand.logo ? (
                           <img
-                            src={`http://localhost:8000${brand.logo}`}
+                            src={`${API_ORIGIN}${brand.logo}`}
                             alt={brand.nombre_marca}
                             className="w-10 h-10 rounded-full object-cover border border-slate-200 shadow-sm shrink-0"
                             onError={(e) => {
@@ -725,7 +727,7 @@ export default function MarcasPage() {
                 <div className="relative group/logo">
                   {selectedBrandForDetail.logo ? (
                     <img
-                      src={`http://localhost:8000${selectedBrandForDetail.logo}`}
+                      src={`${API_ORIGIN}${selectedBrandForDetail.logo}`}
                       alt={selectedBrandForDetail.nombre_marca}
                       className="w-14 h-14 rounded-xl object-cover border border-slate-200 shadow-sm"
                     />

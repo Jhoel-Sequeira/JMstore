@@ -1,1 +1,12 @@
-node_modules
+**/node_modules/
+**/__pycache__/
+*.py[cod]
+**/.venv/
+**/venv/
+**/.env
+**/.env.*
+!**/.env.example
+**/dist/
+.vercel/
+backend/uploads/
+backend/ui_smoke.db

@@ -5,8 +5,10 @@ pydantic-settings
 sqlalchemy
 alembic
 python-jose[cryptography]
-passlib[bcrypt]
+bcrypt>=5,<6
 python-multipart
 qrcode[pil]
 pillow
 python-dotenv
+openpyxl==3.1.5
+psycopg[binary]==3.3.6

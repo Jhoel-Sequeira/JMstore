@@ -1,295 +1,184 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import api from '../services/api';
+
+const money = (value) => new Intl.NumberFormat('es-NI', {
+  style: 'currency', currency: 'NIO', maximumFractionDigits: 2,
+}).format(Number(value || 0));
+const number = (value) => new Intl.NumberFormat('es-NI').format(Number(value || 0));
+const date = (value, options = { day: '2-digit', month: 'short' }) => value
+  ? new Date(value).toLocaleDateString('es-NI', { ...options, timeZone: 'America/Managua' })
+  : '—';
+const periodOptions = [
+  ['today', 'Hoy'], ['week', 'Últimos 7 días'], ['month', 'Este mes'], ['year', 'Este año'],
+];
 
 export default function DashboardPage() {
+  const [period, setPeriod] = useState('month');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [refresh, setRefresh] = useState(0);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setError('');
+    api.get('/dashboard/', { params: { periodo: period } })
+      .then(({ data: response }) => { if (active) setData(response); })
+      .catch((requestError) => {
+        if (active) setError(requestError.response?.data?.detail || 'No se pudo cargar el resumen. Intenta actualizar.');
+      })
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [period, refresh]);
+
+  const sales = data?.ventas || {};
+  const purchases = data?.compras || {};
+  const inventory = data?.inventario || {};
+  const profit = data?.utilidad || {};
+  const purchaseProfitability = data?.rentabilidad_compras || {};
+  const receipts = data?.cobros || {};
+  const missingCostLines = Number(profit.lineas_sin_costo || 0);
+  const variation = sales.variacion_pct;
+
   return (
-    <div className="flex flex-col w-full gap-space-xl">
-      {/* Page Header & Action Controls */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
-        <div className="flex flex-col gap-0.5">
-          <div className="flex items-center gap-2">
-            <span className="font-headline-lg text-headline-lg text-on-surface tracking-tight font-bold">Dashboard General</span>
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-secondary mr-1.5 animate-pulse"></span>En Vivo
-            </span>
-          </div>
-          <p className="font-body-md text-body-md text-on-surface-variant">
-            Métricas consolidadas de ventas multimarca y operaciones en tiempo real
-          </p>
+    <div className="flex w-full flex-col gap-5 pb-8">
+      <header className="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:px-6">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[.2em] text-indigo-600">JMstore · Resumen del negocio</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">Dashboard</h1>
+          <p className="mt-1 text-sm text-slate-500">Ventas, compras, rentabilidad e inventario en un solo lugar.</p>
         </div>
-        <div className="flex items-center gap-space-sm flex-wrap">
-          <div className="relative inline-flex items-center bg-surface-container-low rounded-lg px-3 py-1.5 cursor-pointer hover:bg-surface-container transition-colors">
-            <span className="material-symbols-outlined text-outline text-[18px] mr-2">calendar_today</span>
-            <span className="font-label-md text-label-md text-on-surface">Hoy: 14 Octubre 2024</span>
-            <span className="material-symbols-outlined text-outline text-[18px] ml-1.5">expand_more</span>
-          </div>
-          <button className="inline-flex items-center gap-2 bg-surface-container-low text-on-surface font-label-md text-label-md px-3.5 py-1.5 rounded-lg hover:bg-surface-container active:scale-98 transition-all" type="button">
-            <span className="material-symbols-outlined text-outline text-[18px]">download</span>
-            <span>Exportar Resumen</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <label className="sr-only" htmlFor="dashboard-period">Período</label>
+          <select id="dashboard-period" value={period} onChange={(event) => setPeriod(event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
+            {periodOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+          <button type="button" onClick={() => setRefresh((value) => value + 1)} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50" aria-label="Actualizar resumen">
+            <span className={`material-symbols-outlined text-lg ${loading ? 'animate-spin' : ''}`}>refresh</span>
+            <span className="hidden sm:inline">Actualizar</span>
           </button>
-          <button className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-surface-container-low text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors" title="Actualizar datos" type="button">
-            <span className="material-symbols-outlined text-[18px]">sync</span>
-          </button>
         </div>
-      </div>
+      </header>
 
-      {/* 4 Key Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-lg">
-        {/* Stat 1: Ventas del Día */}
-        <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Ventas del Día</span>
-              <span className="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">$4,850.00 <span className="font-label-md text-label-md text-outline font-normal">USD</span></span>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-primary-fixed flex items-center justify-center text-primary">
-              <span className="material-symbols-outlined text-[22px]">shopping_bag</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
-            <div className="inline-flex items-center text-secondary font-label-sm text-label-sm font-semibold">
-              <span className="material-symbols-outlined text-[16px] mr-0.5">trending_up</span>
-              <span>+14.2%</span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant font-normal ml-1">vs ayer</span>
-            </div>
-            <span className="font-label-sm text-label-sm text-on-surface-variant">38 transacciones</span>
-          </div>
+      {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span>{error}</span><button onClick={() => setRefresh((value) => value + 1)} className="font-semibold underline">Reintentar</button></div>}
+
+      <section aria-label="Indicadores del período" className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
+        <MetricCard label={`Ventas · ${data?.periodo_label || 'Este mes'}`} value={money(sales.total_nio)} icon="point_of_sale" tone="indigo" loading={loading}>
+          <span>{number(sales.facturas)} facturas · Promedio {money(sales.ticket_promedio_nio)}</span>
+          {variation !== null && variation !== undefined && <span className={Number(variation) >= 0 ? 'font-semibold text-emerald-700' : 'font-semibold text-rose-700'}>{Number(variation) >= 0 ? '↑ ' : '↓ '}{Math.abs(Number(variation)).toFixed(1)}% vs período anterior</span>}
+          {(variation === null || variation === undefined) && <span>Sin ventas en el período anterior</span>}
+        </MetricCard>
+        <MetricCard label="Utilidad estimada" value={profit.utilidad_estimada_nio == null ? '—' : money(profit.utilidad_estimada_nio)} icon="trending_up" tone="emerald" loading={loading}>
+          {profit.margen_estimado_pct == null ? <span>{missingCostLines ? `${missingCostLines} líneas sin costo registrado` : 'Se calculará al registrar ventas'}</span> : <span>Margen estimado {Number(profit.margen_estimado_pct).toFixed(1)}% · menos comisión POS</span>}
+          <span>Usa el costo actual del producto</span>
+        </MetricCard>
+        <MetricCard label={`Compras · ${data?.periodo_label || 'Este mes'}`} value={money(purchases.total_nio)} icon="shopping_bag" tone="amber" loading={loading}>
+          <span>{number(purchases.cantidad)} compras registradas</span>
+          <span>{number(purchases.unidades)} unidades recibidas</span>
+        </MetricCard>
+        <MetricCard label="Inventario disponible" value={`${number(inventory.unidades)} uds.`} icon="inventory_2" tone="blue" loading={loading}>
+          <span>{number(inventory.productos)} productos con compras</span>
+          <span className={Number(inventory.stock_bajo) ? 'font-semibold text-amber-700' : ''}>{number(inventory.stock_bajo)} alertas de stock bajo</span>
+        </MetricCard>
+      </section>
+
+      <section aria-label="Resumen financiero e inventario" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        <MiniMetric label="Cuentas por cobrar" value={money(data?.cuentas_por_cobrar_nio)} caption="Saldo pendiente de facturas" icon="request_quote" />
+        <MiniMetric label="Costo conocido en stock" value={money(inventory.valor_costo_conocido_nio)} caption={inventory.productos_sin_costo ? `${inventory.productos_sin_costo} productos requieren costo` : 'Valor calculado al costo actual'} icon="warehouse" />
+        <MiniMetric label="Valor de venta del stock" value={money(inventory.valor_venta_nio)} caption="Precio actual × unidades disponibles" icon="sell" />
+        <MiniMetric label="Utilidad potencial conocida" value={money(inventory.utilidad_potencial_conocida_nio)} caption="A precio actual y con costos registrados" icon="payments" />
+      </section>
+
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="border-b border-slate-100 p-5"><h2 className="font-bold text-slate-900">¿Cuánto debería haber en caja y en cuenta?</h2><p className="mt-1 text-sm text-slate-500">Cobros registrados de ventas de {data?.periodo_label?.toLowerCase() || 'este mes'}</p></div>
+        <div className="grid gap-3 p-5 sm:grid-cols-3">
+          <ProfitabilityMetric label="Efectivo disponible estimado" value={money(receipts.efectivo_nio)} tone="text-emerald-700" />
+          <ProfitabilityMetric label="En cuenta, neto estimado" value={money(receipts.cuenta_esperada_nio)} tone="text-indigo-700" />
+          <ProfitabilityMetric label="Saldo sin pago registrado" value={money(receipts.pendiente_nio)} tone="text-amber-700" />
         </div>
+        {receipts.por_metodo?.length > 0 && <div className="border-t border-slate-100 px-5 py-4"><p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500">Desglose por método</p><div className="flex flex-wrap gap-2">{receipts.por_metodo.map((method) => <div key={method.metodo} className="rounded-lg bg-slate-50 px-3 py-2 text-xs"><span className="font-medium text-slate-500">{method.metodo}</span><span className="ml-2 font-bold text-slate-800">{money(method.monto_nio)}</span>{Number(method.comision_nio) > 0 && <span className="ml-1 text-slate-400">(comisión {money(method.comision_nio)})</span>}</div>)}</div></div>}
+        <p className="border-t border-slate-100 bg-slate-50 px-5 py-3 text-xs leading-relaxed text-slate-500">Del efectivo recibido ({money(receipts.efectivo_recibido_nio)}) se restan {money(receipts.efectivo_usado_compras_nio)} pagados en efectivo a proveedores. De los cobros de cuenta se descuentan las comisiones y {money(receipts.cuenta_usada_compras_nio)} usados para compras. No incluye otros gastos, retiros ni depósitos manuales; el saldo cubre el período seleccionado y no es una conciliación bancaria.</p>
+      </section>
 
-        {/* Stat 2: Ganancia Comisión Tienda */}
-        <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Ganancia Comisión Tienda</span>
-              <span className="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">$970.00 <span className="font-label-md text-label-md text-outline font-normal">USD</span></span>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-surface-container-high flex items-center justify-center text-primary-container">
-              <span className="material-symbols-outlined text-[22px]">percent</span>
-            </div>
+      <section className="grid gap-4 xl:grid-cols-12">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-7">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div><h2 className="font-bold text-slate-900">Ritmo de operaciones</h2><p className="mt-1 text-sm text-slate-500">Ventas emitidas y compras registradas · últimos 7 días</p></div>
+            <div className="flex gap-3 text-xs font-medium text-slate-500"><Legend color="bg-indigo-500" label="Ventas"/><Legend color="bg-amber-400" label="Compras"/></div>
           </div>
-          <div className="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
-            <span className="font-label-sm text-label-sm text-primary font-medium">Tasa promedio consolidada</span>
-            <span className="font-label-md text-label-md text-on-surface font-bold">20.0%</span>
-          </div>
+          <TrendChart rows={data?.tendencia_7_dias || []} loading={loading} />
         </div>
-
-        {/* Stat 3: Liquidaciones Pendientes */}
-        <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Liquidaciones Pendientes</span>
-              <span className="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">$12,430.00 <span className="font-label-md text-label-md text-outline font-normal">USD</span></span>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-tertiary-fixed flex items-center justify-center text-tertiary">
-              <span className="material-symbols-outlined text-[22px]">pending_actions</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
-            <div className="inline-flex items-center text-tertiary font-label-sm text-label-sm font-semibold">
-              <span className="material-symbols-outlined text-[16px] mr-1">schedule</span>
-              <span>8 marcas por liquidar</span>
-            </div>
-            <span className="font-label-sm text-label-sm text-primary hover:underline cursor-pointer">Ver detalle</span>
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm xl:col-span-5">
+          <div className="flex items-center justify-between gap-3"><div><h2 className="font-bold text-slate-900">Por reponer</h2><p className="mt-1 text-sm text-slate-500">Productos en o debajo del mínimo</p></div><Link to="/inventario" className="shrink-0 text-xs font-semibold text-indigo-700 hover:underline">Ver inventario</Link></div>
+          <div className="mt-4 divide-y divide-slate-100">
+            {loading ? <LoadingRows /> : inventory.alertas?.length ? inventory.alertas.map((item) => <div key={item.producto_id} className="flex items-center justify-between gap-3 py-3 first:pt-0 last:pb-0"><div className="min-w-0"><p className="truncate text-sm font-semibold text-slate-800">{item.nombre}</p><p className="text-xs text-slate-400">{item.sku || 'Sin SKU'} · mínimo {number(item.stock_critico)}</p></div><span className={`shrink-0 rounded-lg px-2.5 py-1.5 text-xs font-bold ${item.stock === 0 ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-800'}`}>{item.stock === 0 ? 'Agotado' : `${number(item.stock)} uds.`}</span></div>) : <EmptyState title="Todo en orden" text="No hay productos por debajo de su mínimo." />}
           </div>
         </div>
+      </section>
 
-        {/* Stat 4: Total Stock Unidades */}
-        <div className="bg-surface-container-lowest p-space-lg rounded-xl shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
-          <div className="flex items-start justify-between">
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Total Stock Unidades</span>
-              <span className="font-headline-xl text-headline-xl text-on-surface font-bold mt-1 tracking-tight">3,420 <span className="font-label-md text-label-md text-outline font-normal">uds</span></span>
-            </div>
-            <div className="w-10 h-10 rounded-lg bg-secondary-fixed flex items-center justify-center text-secondary">
-              <span className="material-symbols-outlined text-[22px]">inventory_2</span>
-            </div>
-          </div>
-          <div className="mt-4 pt-3 flex items-center justify-between bg-surface-container-low/50 px-2.5 py-1 rounded">
-            <span className="font-label-sm text-label-sm text-on-surface-variant">12 marcas activas</span>
-            <span className="inline-flex items-center text-error font-label-sm text-label-sm font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-error mr-1"></span>4 alertas stock bajo
-            </span>
-          </div>
+      <section className="grid gap-4 xl:grid-cols-2">
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100 p-5"><div><h2 className="font-bold text-slate-900">Productos destacados</h2><p className="mt-1 text-sm text-slate-500">Mayor venta · {data?.periodo_label?.toLowerCase() || 'este mes'}</p></div><Link to="/pos" className="text-xs font-semibold text-indigo-700 hover:underline">Ver ventas</Link></div>
+          {loading ? <LoadingRows /> : data?.productos_destacados?.length ? <div className="overflow-x-auto"><table className="w-full min-w-[480px] text-left text-sm"><thead className="bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500"><tr><th className="px-5 py-3">Producto</th><th className="px-3 py-3 text-right">Unidades</th><th className="px-5 py-3 text-right">Ventas</th></tr></thead><tbody className="divide-y divide-slate-100">{data.productos_destacados.map((product) => <tr key={product.producto_id}><td className="px-5 py-3"><p className="font-semibold text-slate-800">{product.nombre}</p><p className="font-mono text-xs text-slate-400">{product.sku || 'Sin SKU'}</p></td><td className="px-3 py-3 text-right text-slate-600">{number(product.unidades)}</td><td className="px-5 py-3 text-right font-semibold text-slate-800">{money(product.ventas_nio)}</td></tr>)}</tbody></table></div> : <EmptyState title="Sin ventas en este período" text="Los productos aparecerán aquí cuando se emitan facturas." />}
         </div>
-      </div>
-
-      {/* Main Section (7fr / 5fr Grid) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
-        {/* Left Column: Ventas por Marca */}
-        <div className="lg:col-span-7 flex flex-col gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">Ventas por Marca</h2>
-              <span className="font-body-sm text-body-sm text-on-surface-variant">Rendimiento y volumen acumulado · Top 6 del Mes</span>
-            </div>
-            <div className="inline-flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded text-on-surface-variant font-label-sm text-label-sm">
-              <span>Mes en curso</span>
-              <span className="material-symbols-outlined text-[16px]">tune</span>
-            </div>
-          </div>
-
-          {/* Financial Snapshot Summary Row */}
-          <div className="grid grid-cols-3 gap-2 p-3 bg-surface-container-low/70 rounded-lg">
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm text-on-surface-variant">Ventas Brutas Top 6</span>
-              <span className="font-headline-sm text-headline-sm text-on-surface font-bold mt-0.5">$26,150</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm text-on-surface-variant">Comisión Retenida</span>
-              <span className="font-headline-sm text-headline-sm text-primary font-bold mt-0.5">$5,230</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-label-sm text-label-sm text-on-surface-variant">Margen Tienda</span>
-              <span className="font-headline-sm text-headline-sm text-secondary font-bold mt-0.5">20.0%</span>
-            </div>
-          </div>
-
-          {/* Multi-brand Progress Bars */}
-          <div className="flex flex-col gap-4 mt-2">
-            <BrandBar name="Nordic Home" category="Hogar & Deco" percent={32} amount="$8,450.00" color="bg-primary-container" />
-            <BrandBar name="Vera Studio" category="Moda & Textil" percent={24} amount="$6,200.00" color="bg-primary" />
-            <BrandBar name="Aura Botanics" category="Cosmética" percent={16} amount="$4,120.00" color="bg-secondary" />
-            <BrandBar name="Loom & Thread" category="Accesorios" percent={13} amount="$3,280.00" color="bg-surface-tint" />
-            <BrandBar name="Siena Leather" category="Marroquinería" percent={9} amount="$2,450.00" color="bg-tertiary" />
-            <BrandBar name="Komorebi Crafts" category="Cerámica" percent={6} amount="$1,650.00" color="bg-outline" />
-          </div>
-
-          {/* Chart */}
-          <div className="mt-2 pt-3 bg-surface-container-low/40 rounded-lg p-3 flex flex-col gap-2">
-            <div className="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm">
-              <span>Distribución de Ventas por Turno (Hoy)</span>
-              <span className="font-semibold text-primary">Pico: 11:30 AM ($1,120)</span>
-            </div>
-            <div className="h-14 w-full">
-              <svg className="w-full h-full overflow-visible" preserveAspectRatio="none" viewBox="0 0 500 50">
-                <defs>
-                  <linearGradient id="brandGradient" x1="0%" x2="0%" y1="0%" y2="100%">
-                    <stop offset="0%" stopColor="#4f46e5" stopOpacity="0.3"></stop>
-                    <stop offset="100%" stopColor="#4f46e5" stopOpacity="0.0"></stop>
-                  </linearGradient>
-                </defs>
-                <path d="M0,45 L40,38 L80,42 L130,25 L180,30 L230,12 L280,18 L330,8 L380,22 L430,15 L470,28 L500,20 L500,50 L0,50 Z" fill="url(#brandGradient)"></path>
-                <path d="M0,45 L40,38 L80,42 L130,25 L180,30 L230,12 L280,18 L330,8 L380,22 L430,15 L470,28 L500,20" fill="none" stroke="#4f46e5" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5"></path>
-                <circle cx="330" cy="8" fill="#3525cd" r="4"></circle>
-                <circle cx="330" cy="8" fill="#3525cd" fillOpacity="0.25" r="7"></circle>
-              </svg>
-            </div>
-            <div className="flex items-center justify-between font-label-sm text-label-sm text-outline">
-              <span>09:00 AM</span>
-              <span>11:00 AM</span>
-              <span>01:00 PM</span>
-              <span>03:00 PM</span>
-              <span>05:00 PM</span>
-            </div>
-          </div>
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div className="flex items-center justify-between gap-3 border-b border-slate-100 p-5"><div><h2 className="font-bold text-slate-900">Movimientos recientes</h2><p className="mt-1 text-sm text-slate-500">Últimas facturas y compras ingresadas</p></div><Link to="/compras" className="text-xs font-semibold text-indigo-700 hover:underline">Ver compras</Link></div>
+          {loading ? <LoadingRows /> : <div className="grid divide-y divide-slate-100 sm:grid-cols-2 sm:divide-x sm:divide-y-0"><MovementList title="Ventas" icon="receipt_long" rows={data?.ventas_recientes || []} /><MovementList title="Compras" icon="shopping_bag" rows={data?.compras_recientes || []} purchases /></div>}
         </div>
-
-        {/* Right Column: Últimas Ventas en Vivo */}
-        <div className="lg:col-span-5 flex flex-col gap-space-md bg-surface-container-lowest p-space-lg rounded-xl shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <div className="flex items-center gap-2">
-                <h2 className="font-headline-sm text-headline-sm text-on-surface font-bold">Últimas Ventas en Vivo</h2>
-                <span className="w-2 h-2 rounded-full bg-secondary animate-ping"></span>
-              </div>
-              <span className="font-body-sm text-body-sm text-on-surface-variant">Transacciones registradas en caja</span>
-            </div>
-            <span className="bg-surface-container font-label-sm text-label-sm text-primary px-2 py-0.5 rounded font-semibold">Terminal POS #1</span>
-          </div>
-
-          <div className="flex flex-col gap-2.5">
-            <SaleItem ticket="#TK-9841" brand="Nordic Home" brandBg="bg-primary-fixed text-on-primary-fixed-variant" amount="$145.00" product="Lámpara Cerámica Nórdica" method="credit_card" methodLabel="Tarjeta" time="10:42 AM" />
-            <SaleItem ticket="#TK-9840" brand="Aura Botanics" brandBg="bg-secondary-fixed text-on-secondary-fixed-variant" amount="$78.50" product="Set Serum Facial 50ml" method="payments" methodLabel="Efectivo" time="10:35 AM" />
-            <SaleItem ticket="#TK-9839" brand="Vera Studio" brandBg="bg-surface-variant text-primary" amount="$220.00" product="Chaqueta Lino Natural (M)" method="account_balance" methodLabel="Transferencia" time="10:18 AM" />
-            <SaleItem ticket="#TK-9838" brand="Loom & Thread" brandBg="bg-surface-container text-on-surface-variant" amount="$42.00" product="Cojín Bordado Terciopelo" method="credit_card" methodLabel="Tarjeta" time="09:55 AM" />
-            <SaleItem ticket="#TK-9837" brand="Siena Leather" brandBg="bg-tertiary-fixed text-on-tertiary-fixed-variant" amount="$65.00" product="Billetera Cuero Café" method="credit_card" methodLabel="Tarjeta" time="09:30 AM" />
-          </div>
-
-          <a className="mt-2 inline-flex items-center justify-center gap-1.5 text-primary font-label-md text-label-md hover:underline py-1.5 text-center" href="#">
-            <span>Ver historial completo de tickets</span>
-            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-          </a>
+      </section>
+      <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 p-5">
+          <div><h2 className="font-bold text-slate-900">Utilidad potencial por compra a proveedores</h2><p className="mt-1 text-sm text-slate-500">Compras de {data?.periodo_label?.toLowerCase() || 'este mes'} · proyección al precio actual</p></div>
+          <Link to="/compras" className="text-xs font-semibold text-indigo-700 hover:underline">Ver compras</Link>
         </div>
-      </div>
-
-      {/* Alertas Operativas Rápidas */}
-      <div className="flex flex-col gap-space-sm">
-        <div className="flex items-center justify-between px-1">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-[20px]">notifications_active</span>
-            <h3 className="font-headline-sm text-headline-sm text-on-surface font-bold">Alertas Operativas Rápidas</h3>
-          </div>
-          <span className="font-label-sm text-label-sm text-on-surface-variant">3 tareas prioritarias</span>
+        <div className="grid gap-3 border-b border-slate-100 p-5 sm:grid-cols-3">
+          <ProfitabilityMetric label="Inversión en compras" value={money(purchaseProfitability.inversion_nio)} tone="text-slate-800" />
+          <ProfitabilityMetric label="Venta potencial" value={money(purchaseProfitability.venta_potencial_nio)} tone="text-indigo-700" />
+          <ProfitabilityMetric label="Ganancia potencial" value={money(purchaseProfitability.utilidad_potencial_nio)} tone={Number(purchaseProfitability.utilidad_potencial_nio) >= 0 ? 'text-emerald-700' : 'text-rose-700'} />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
-          <AlertCard icon="move_to_inbox" iconBg="bg-surface-container-high text-primary" title="Recepción pendiente" subtitle="2 guías de Nordic Home" action="Recibir" actionClass="bg-surface-container text-primary hover:bg-primary hover:text-on-primary" />
-          <AlertCard icon="payments" iconBg="bg-secondary-fixed text-secondary" title="Arqueo de caja" subtitle="65% alcanzado de la meta diaria" action="Revisar" actionClass="bg-surface-container text-on-surface hover:bg-surface-container-high" />
-          <AlertCard icon="assignment_turned_in" iconBg="bg-tertiary-fixed text-tertiary" title="Liquidación quincenal" subtitle="Lista para autorizar y desembolso" action="Autorizar" actionClass="bg-primary text-on-primary hover:bg-primary-container" />
-        </div>
-      </div>
+        {loading ? <LoadingRows /> : purchaseProfitability.compras?.length ? <div className="overflow-x-auto"><table className="w-full min-w-[760px] text-left text-sm"><thead className="bg-slate-50 text-[11px] uppercase tracking-wide text-slate-500"><tr><th className="px-5 py-3">Proveedor y productos</th><th className="px-3 py-3">Fecha</th><th className="px-3 py-3 text-right">Inversión</th><th className="px-3 py-3 text-right">Venta potencial</th><th className="px-5 py-3 text-right">Ganancia</th></tr></thead><tbody className="divide-y divide-slate-100">{purchaseProfitability.compras.map((purchase) => <tr key={purchase.id}><td className="px-5 py-3"><p className="font-semibold text-slate-800">{purchase.proveedor}</p><p className="max-w-sm truncate text-xs text-slate-400">{purchase.productos?.join(', ') || 'Sin detalle'}{purchase.referencia ? ` · ${purchase.referencia}` : ''}</p></td><td className="px-3 py-3 text-slate-500">{date(purchase.fecha, { day: '2-digit', month: 'short', year: 'numeric' })}</td><td className="px-3 py-3 text-right text-slate-600">{money(purchase.inversion_nio)}</td><td className="px-3 py-3 text-right text-slate-600">{money(purchase.venta_potencial_nio)}</td><td className={`px-5 py-3 text-right font-bold ${Number(purchase.utilidad_potencial_nio) >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>{money(purchase.utilidad_potencial_nio)}<span className="mt-0.5 block text-[10px] font-medium text-slate-400">{purchase.margen_potencial_pct == null ? '—' : `${Number(purchase.margen_potencial_pct).toFixed(1)}% margen`}</span></td></tr>)}</tbody></table></div> : <EmptyState title="Sin compras en este período" text="Registra compras con productos para estimar su rentabilidad potencial." />}
+        <p className="border-t border-slate-100 bg-amber-50/60 px-5 py-3 text-xs leading-relaxed text-amber-900">Estimación suponiendo que se venden todas las unidades al precio actual de cada producto. Es ganancia potencial, no utilidad realizada; las ventas no están vinculadas a lotes específicos de compra.</p>
+      </section>
+      <p className="px-1 text-xs leading-relaxed text-slate-400">La utilidad es estimada con el costo actual guardado para cada producto; cambios de costo no reescriben el costo histórico de una venta. Los pedidos pendientes no se suman al inventario hasta registrar la compra recibida.{data?.actualizado_en && <span> Actualizado {new Date(data.actualizado_en).toLocaleTimeString('es-NI', { hour: '2-digit', minute: '2-digit', timeZone: 'America/Managua' })}.</span>}</p>
     </div>
   );
 }
 
-function BrandBar({ name, category, percent, amount, color }) {
-  const dotColor = color.replace('bg-', 'bg-');
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className={`w-2.5 h-2.5 rounded-full ${color}`}></span>
-          <span className="font-label-md text-label-md text-on-surface font-semibold">{name}</span>
-          <span className="bg-surface-container text-on-surface-variant font-label-sm text-label-sm px-1.5 py-0.5 rounded">{category}</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="font-body-sm text-body-sm text-on-surface-variant">{percent}% cuota</span>
-          <span className="font-label-md text-label-md text-on-surface font-bold">{amount}</span>
-        </div>
-      </div>
-      <div className="w-full bg-surface-container h-2.5 rounded-full overflow-hidden">
-        <div className={`${color} h-full rounded-full transition-all duration-500`} style={{ width: `${percent}%` }}></div>
-      </div>
-    </div>
-  );
+function MetricCard({ label, value, icon, tone, loading, children }) {
+  const tones = {
+    indigo: 'bg-indigo-50 text-indigo-700', emerald: 'bg-emerald-50 text-emerald-700',
+    amber: 'bg-amber-50 text-amber-700', blue: 'bg-sky-50 text-sky-700',
+  };
+  return <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</p><p className="mt-2 truncate text-2xl font-bold tracking-tight text-slate-900">{loading ? <Skeleton className="h-8 w-36"/> : value}</p></div><span className={`material-symbols-outlined flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${tones[tone]}`}>{icon}</span></div><div className="mt-4 flex min-h-8 flex-col gap-1 border-t border-slate-100 pt-3 text-xs text-slate-500">{loading ? <Skeleton className="h-3 w-32"/> : children}</div></div>;
 }
 
-function SaleItem({ ticket, brand, brandBg, amount, product, method, methodLabel, time }) {
-  return (
-    <div className="p-3 bg-surface-container-low rounded-lg hover:bg-surface-container transition-colors flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="font-label-sm text-label-sm font-semibold text-primary">{ticket}</span>
-          <span className={`inline-flex items-center px-1.5 py-0.5 rounded ${brandBg} font-label-sm text-label-sm`}>{brand}</span>
-        </div>
-        <span className="font-headline-sm text-headline-sm text-on-surface font-bold">{amount}</span>
-      </div>
-      <div className="flex items-center justify-between">
-        <span className="font-body-sm text-body-sm text-on-surface font-medium truncate max-w-[210px]">{product}</span>
-        <div className="flex items-center gap-2 text-on-surface-variant font-label-sm text-label-sm">
-          <span className="material-symbols-outlined text-[14px]">{method}</span>
-          <span>{methodLabel}</span>
-          <span>·</span>
-          <span>{time}</span>
-        </div>
-      </div>
-    </div>
-  );
+function MiniMetric({ label, value, caption, icon }) {
+  return <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><div className="flex items-center justify-between gap-2"><p className="text-xs font-semibold text-slate-500">{label}</p><span className="material-symbols-outlined text-lg text-indigo-500">{icon}</span></div><p className="mt-2 truncate text-lg font-bold text-slate-900">{value}</p><p className="mt-1 text-[11px] text-slate-400">{caption}</p></div>;
 }
 
-function AlertCard({ icon, iconBg, title, subtitle, action, actionClass }) {
-  return (
-    <div className="bg-surface-container-lowest p-space-md rounded-xl shadow-sm flex items-center justify-between gap-space-md hover:shadow-md transition-shadow">
-      <div className="flex items-center gap-3">
-        <div className={`w-10 h-10 rounded-lg ${iconBg} flex-shrink-0 flex items-center justify-center`}>
-          <span className="material-symbols-outlined text-[20px]">{icon}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="font-label-md text-label-md text-on-surface font-semibold leading-tight">{title}</span>
-          <span className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{subtitle}</span>
-        </div>
-      </div>
-      <button className={`${actionClass} font-label-sm text-label-sm px-2.5 py-1.5 rounded transition-all whitespace-nowrap`} type="button">
-        {action}
-      </button>
-    </div>
-  );
+function ProfitabilityMetric({ label, value, tone }) {
+  return <div className="rounded-xl bg-slate-50 px-4 py-3"><p className="text-xs font-medium text-slate-500">{label}</p><p className={`mt-1 text-xl font-bold tracking-tight ${tone}`}>{value}</p></div>;
 }
+
+function TrendChart({ rows, loading }) {
+  const max = Math.max(1, ...rows.flatMap((row) => [Number(row.ventas_nio || 0), Number(row.compras_nio || 0)]));
+  if (loading) return <div className="mt-6 flex h-48 items-end gap-3 px-1">{Array.from({ length: 7 }, (_, index) => <div key={index} className="flex flex-1 justify-center gap-1"><Skeleton className={`w-4 rounded-t-md ${['h-20', 'h-32', 'h-16', 'h-24', 'h-36', 'h-28', 'h-16'][index]}`} /><Skeleton className="h-24 w-4 rounded-t-md" /></div>)}</div>;
+  return <div className="mt-5"><div className="flex h-44 items-end gap-2 border-b border-slate-100 px-1 sm:gap-3">{rows.map((row) => <div key={row.fecha} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2"><div className="flex h-full w-full items-end justify-center gap-1"><Bar amount={row.ventas_nio} max={max} color="bg-indigo-500" label={`Ventas ${money(row.ventas_nio)}`} /><Bar amount={row.compras_nio} max={max} color="bg-amber-400" label={`Compras ${money(row.compras_nio)}`} /></div><span className="pb-2 text-[10px] text-slate-400">{new Date(`${row.fecha}T12:00:00`).toLocaleDateString('es-NI', { weekday: 'short', day: 'numeric', timeZone: 'America/Managua' })}</span></div>)}</div>{rows.every((row) => !Number(row.ventas_nio) && !Number(row.compras_nio)) && <p className="mt-3 text-center text-xs text-slate-400">Todavía no hay movimientos en estos días.</p>}</div>;
+}
+
+function Bar({ amount, max, color, label }) {
+  const value = Number(amount || 0);
+  return <div title={label} className={`w-3 rounded-t-md transition-all ${value ? color : 'bg-slate-100'}`} style={{ height: `${value ? Math.max(5, value / max * 100) : 3}%` }} />;
+}
+
+function Legend({ color, label }) { return <span className="inline-flex items-center gap-1.5"><i className={`h-2.5 w-2.5 rounded-sm ${color}`} />{label}</span>; }
+
+function MovementList({ title, icon, rows, purchases = false }) {
+  return <div className="min-w-0 p-4"><h3 className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-slate-400"><span className="material-symbols-outlined text-base text-indigo-500">{icon}</span>{title}</h3>{rows.length ? <div className="space-y-1">{rows.slice(0, 5).map((row) => <div key={row.id} className="flex items-center justify-between gap-2 rounded-lg px-2 py-2 hover:bg-slate-50"><div className="min-w-0"><p className="truncate text-xs font-semibold text-slate-700">{purchases ? row.proveedor : `Factura #${row.id} · ${row.cliente}`}</p><p className="text-[10px] text-slate-400">{date(row.fecha, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p></div><span className="shrink-0 text-xs font-bold text-slate-800">{money(row.total_nio)}</span></div>)}</div> : <p className="px-2 py-6 text-center text-xs text-slate-400">Sin movimientos aún.</p>}</div>;
+}
+
+function EmptyState({ title, text }) { return <div className="px-5 py-10 text-center"><p className="text-sm font-semibold text-slate-600">{title}</p><p className="mt-1 text-xs text-slate-400">{text}</p></div>; }
+function LoadingRows() { return <div className="space-y-3 p-5"><Skeleton className="h-9 w-full"/><Skeleton className="h-9 w-full"/><Skeleton className="h-9 w-4/5"/></div>; }
+function Skeleton({ className }) { return <span className={`block animate-pulse rounded bg-slate-100 ${className}`} />; }

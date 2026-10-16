@@ -36,8 +36,7 @@ class MarcasService:
                     JOIN productos p ON vd.producto_id = p.id
                     JOIN ventas v ON vd.venta_id = v.id
                     WHERE p.marca_id = :marca_id
-                    AND MONTH(v.fecha_venta) = MONTH(CURRENT_DATE())
-                    AND YEAR(v.fecha_venta) = YEAR(CURRENT_DATE())
+                    AND date_trunc('month', v.fecha_venta) = date_trunc('month', CURRENT_DATE)
                 """),
                 {"marca_id": m.id}
             ).scalar() or 0.0
@@ -88,8 +87,7 @@ class MarcasService:
                 JOIN productos p ON vd.producto_id = p.id
                 JOIN ventas v ON vd.venta_id = v.id
                 WHERE p.marca_id = :marca_id
-                AND MONTH(v.fecha_venta) = MONTH(CURRENT_DATE())
-                AND YEAR(v.fecha_venta) = YEAR(CURRENT_DATE())
+                AND date_trunc('month', v.fecha_venta) = date_trunc('month', CURRENT_DATE)
             """),
             {"marca_id": m.id}
         ).scalar() or 0.0
@@ -212,10 +210,11 @@ class MarcasService:
         # Consultar productos de la marca
         productos = db.execute(
             text("""
-                SELECT id, sku, nombre, descripcion, precio, stock_critico 
-                FROM productos 
-                WHERE marca_id = :marca_id 
-                ORDER BY nombre ASC
+                SELECT p.id, p.sku, p.nombre, p.descripcion, p.precio, i.stock_critico
+                FROM productos p
+                LEFT JOIN inventario i ON i.producto_id = p.id
+                WHERE p.marca_id = :marca_id
+                ORDER BY p.nombre ASC
             """),
             {"marca_id": marca_id}
         ).fetchall()
