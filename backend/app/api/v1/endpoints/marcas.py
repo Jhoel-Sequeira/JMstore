@@ -5,6 +5,7 @@ from typing import List
 from app.core.database import get_db
 from app.schemas.marcas import MarcaCreate, MarcaUpdate, MarcaResponse
 from app.services.marcas_service import MarcasService
+from app.core.uploads import LOGOS_DIR
 
 router = APIRouter()
 
@@ -99,9 +100,9 @@ def upload_logo(
         )
 
     # Nombre de archivo único
-    os.makedirs("uploads/logos", exist_ok=True)
+    LOGOS_DIR.mkdir(parents=True, exist_ok=True)
     filename = f"marca_{marca_id}_{uuid.uuid4().hex[:8]}{ext}"
-    file_path = os.path.join("uploads", "logos", filename)
+    file_path = LOGOS_DIR / filename
 
     with open(file_path, "wb") as buffer:
         buffer.write(file.file.read())

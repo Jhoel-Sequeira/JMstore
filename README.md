@@ -41,12 +41,13 @@ En el primer acceso, si la tabla `usuarios` esta vacia, la pantalla de login per
 
 ## Desplegar en Vercel
 
-Este repositorio contiene dos aplicaciones y se despliega como dos proyectos Vercel conectados al mismo repositorio:
+El archivo `vercel.json` configura el frontend Vite y el backend FastAPI como dos Vercel Services bajo un mismo dominio.
 
-1. Importa el repositorio en Vercel y crea el proyecto del frontend con **Root Directory** `frontend`. Vercel detecta Vite; usa `npm run build` y `dist`.
-2. Crea otro proyecto desde el mismo repositorio con **Root Directory** `backend`. El archivo `index.py` expone la aplicacion FastAPI al runtime de Python.
-3. En el proyecto del backend configura `DATABASE_URL`, `SECRET_KEY` y `CORS_ORIGINS` como variables de entorno. Usa valores nuevos y privados; `CORS_ORIGINS` debe incluir el dominio exacto del frontend, por ejemplo `https://tu-tienda.vercel.app`.
-4. En el proyecto del frontend configura `VITE_API_URL` con el dominio del backend terminado en `/api/v1`, por ejemplo `https://tu-api.vercel.app/api/v1`, y vuelve a desplegar.
-5. Ejecuta `schema.supabase.sql` en el SQL Editor del proyecto Supabase antes del primer uso.
+1. Importa el repositorio en Vercel. Deja **Root Directory** en la raíz del repositorio y selecciona **Services** como framework del proyecto.
+2. En las variables de entorno del proyecto configura `DATABASE_URL` con la conexión de Supabase y `SECRET_KEY` con una clave aleatoria privada de al menos 32 caracteres. Si `VITE_API_URL` está definida, usa `/api/v1`; elimina cualquier valor que apunte a `localhost`.
+3. Despliega de nuevo. El rewrite de `/api/*` envía las solicitudes al backend y el resto de rutas al frontend.
+4. Ejecuta `schema.supabase.sql` en el SQL Editor del proyecto Supabase antes del primer uso.
+
+Los logos cargados se guardan temporalmente en `/tmp` cuando se ejecuta en Vercel; el almacenamiento temporal no persiste entre instancias o despliegues. Para conservarlos, configura un almacenamiento de objetos externo.
 
 No subas archivos `.env`; configuralos en **Project Settings > Environment Variables** de Vercel. Los archivos cargados al disco local del backend no son almacenamiento persistente en Vercel; usa almacenamiento externo si la aplicacion necesita conservar logos o imagenes subidos.
