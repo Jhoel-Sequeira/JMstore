@@ -16,7 +16,6 @@ export const DEFAULT_THEME = {
   quoteStyle: 'minimalista',
   quoteTagline: 'Perfumería · Cotización personalizada',
   quoteFooter: 'Fragancias para cada momento',
-  quoteShowImage: true,
   invoiceStyle: 'minimalista',
   invoiceFooter: 'Gracias por tu compra.',
 };

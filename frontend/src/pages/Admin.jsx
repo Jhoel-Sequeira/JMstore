@@ -124,7 +124,6 @@ export default function AdminPage() {
             <div className="sm:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
               <div className="mb-4"><h3 className="font-bold text-slate-900">Plantillas de cotización y factura</h3><p className="mt-1 text-sm text-slate-500">Ajusta la apariencia y revisa ambos documentos en la vista previa.</p></div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="flex items-center gap-3 self-end rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700"><input type="checkbox" checked={theme.quoteShowImage !== false} onChange={(e) => updateTheme('quoteShowImage', e.target.checked)} className="h-4 w-4 accent-indigo-600" />Mostrar imagen del perfume</label>
                 <label className="text-sm font-semibold text-slate-700 sm:col-span-2">Texto bajo el nombre<input value={theme.quoteTagline ?? DEFAULT_THEME.quoteTagline} onChange={(e) => updateTheme('quoteTagline', e.target.value)} maxLength="100" className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal" /></label>
                 <label className="text-sm font-semibold text-slate-700 sm:col-span-2">Pie de cotización<input value={theme.quoteFooter ?? DEFAULT_THEME.quoteFooter} onChange={(e) => updateTheme('quoteFooter', e.target.value)} maxLength="120" className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal" /></label>
                 <label className="text-sm font-semibold text-slate-700">Pie de factura<input value={theme.invoiceFooter ?? DEFAULT_THEME.invoiceFooter} onChange={(e) => updateTheme('invoiceFooter', e.target.value)} maxLength="120" className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal" /></label>
@@ -170,63 +169,35 @@ function TabButton({ active, onClick, icon, children }) {
 
 function DocumentPreview({ type, theme }) {
   const isQuote = type === 'cotizacion';
-  const style = isQuote ? (theme.quoteStyle || 'vibrante') : (theme.invoiceStyle || 'minimalista');
   const now = new Date();
   const date = new Intl.DateTimeFormat('es-NI', { dateStyle: 'medium' }).format(now);
   const time = new Intl.DateTimeFormat('es-NI', { timeStyle: 'short' }).format(now);
-  const colors = style === 'elegante'
-    ? { header: 'linear-gradient(120deg,#172033,#344256 62%,#8b6a3e)', accent: '#b8945d', surface: '#f7f5f1', ink: '#172033' }
-    : style === 'minimalista'
-      ? { header: '#ffffff', accent: theme.primary, surface: '#ffffff', ink: '#172033' }
-      : { header: `linear-gradient(120deg,${theme.primary},color-mix(in srgb,${theme.primary} 62%,${theme.secondary}),color-mix(in srgb,${theme.primary} 48%,${theme.accent}))`, accent: theme.accent, surface: '#ffffff', ink: '#172033' };
-  const title = isQuote ? 'COTIZACIÓN' : 'FACTURA';
 
   if (isQuote) {
     return (
-      <article className="space-y-3 border p-4" style={{ fontFamily: `'${theme.font}', sans-serif`, borderColor: '#D9CBC2', backgroundColor: '#F5F0E9', color: '#112250' }}>
-        <header className="flex items-start justify-between gap-3 border-b pb-3" style={{ borderColor: '#D9CBC2' }}>
-          <div className="flex min-w-0 items-center gap-2">
-            {theme.logo && <img src={theme.logo} alt="Logo" className="h-9 w-10 object-contain" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}
-            <div><p className="text-sm font-bold">{theme.brandName || 'Tu negocio'}</p><p className="text-xs" style={{ color: '#3C507D' }}>Cotización</p></div>
-          </div>
-          <p className="shrink-0 text-right text-[9px]" style={{ color: '#3C507D' }}>{date}<br />{time}</p>
+      <article className="border border-slate-200 bg-white p-4 text-slate-900" style={{ fontFamily: `'${theme.font}', sans-serif` }}>
+        <header className="flex items-center justify-between gap-2 border-b-2 border-[#112250] pb-3">
+          <div className="flex min-w-0 items-center gap-2">{theme.logo && <img src={theme.logo} alt="Logo" className="h-9 w-12 object-contain" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}<div className="min-w-0"><p className="truncate text-xs font-bold text-[#112250]">{theme.brandName || 'Tu negocio'}</p><p className="truncate text-[9px] text-[#3C507D]">{theme.quoteTagline || 'Perfumería'}</p></div></div>
+          <div className="shrink-0 text-right"><p className="text-[9px] font-bold uppercase text-[#112250]">Cotización</p><p className="mt-1 text-[8px] text-[#3C507D]">{date} · {time}</p></div>
         </header>
-        <div><p className="text-[9px]" style={{ color: '#3C507D' }}>Producto</p><h4 className="mt-0.5 text-sm font-bold">Club de Nuit Urban Elixir</h4><p className="text-[10px]" style={{ color: '#3C507D' }}>Armaf · SKU CAT-8</p></div>
-        {theme.quoteShowImage !== false && <div className="flex h-20 items-center"><span className="material-symbols-outlined text-4xl" style={{ color: '#3C507D' }}>perfume</span></div>}
-        <div className="flex justify-between border-t pt-2 text-xs" style={{ borderColor: '#D9CBC2' }}><span>1 unidad × C$ 1,450.00</span><span className="font-semibold">C$ 1,450.00</span></div>
-        <div className="flex justify-between border-t pt-2 text-sm font-bold" style={{ borderColor: '#D9CBC2' }}><span>Total</span><span className="px-1" style={{ backgroundColor: '#E0C58F' }}>C$ 1,450.00</span></div>
-        <p className="border-t pt-2 text-[9px]" style={{ borderColor: '#D9CBC2', color: '#3C507D' }}>{theme.quoteFooter || 'Gracias por tu preferencia.'}</p>
+        <section className="grid grid-cols-2 gap-2 border-b border-slate-200 py-3 text-[9px]"><p><span className="text-slate-500">Cliente:</span> Cliente de ejemplo</p><p><span className="text-slate-500">Teléfono:</span> +505 8888 8888</p></section>
+        <table className="w-full text-left text-[9px]"><thead className="border-y border-slate-200 bg-slate-50 uppercase text-slate-500"><tr><th className="py-1.5">Producto</th><th className="py-1.5 text-right">Cant.</th><th className="py-1.5 text-right">Precio</th><th className="py-1.5 text-right">Desc.</th><th className="py-1.5 text-right">Importe</th></tr></thead><tbody><tr className="border-b border-slate-100"><td className="py-2">Club de Nuit Urban Elixir<small className="block text-slate-400">CAT-8</small></td><td className="py-2 text-right">1</td><td className="py-2 text-right">C$ 1,450.00</td><td className="py-2 text-right">C$ 0.00</td><td className="py-2 text-right font-semibold">C$ 1,450.00</td></tr><tr className="border-b border-slate-100"><td className="py-2">9 AM Dive<small className="block text-slate-400">CAT-24</small></td><td className="py-2 text-right">2</td><td className="py-2 text-right">C$ 1,207.80</td><td className="py-2 text-right">C$ 0.00</td><td className="py-2 text-right font-semibold">C$ 2,415.60</td></tr></tbody></table>
+        <div className="ml-auto mt-3 max-w-[160px] border-t border-slate-200 pt-2"><PreviewAmount label="Total" value="C$ 3,865.60" strong color="#112250" /></div>
+        <p className="mt-4 border-t border-slate-200 pt-2 text-center text-[8px] text-slate-500">{theme.quoteFooter || 'Gracias por tu preferencia.'}</p>
       </article>
     );
   }
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-slate-200 shadow-lg shadow-slate-900/10" style={{ fontFamily: `'${theme.font}', sans-serif`, backgroundColor: colors.surface, color: colors.ink }}>
-      <header className={`flex items-center justify-between gap-3 px-4 py-4 sm:px-5 ${style === 'minimalista' ? 'border-b-2' : 'text-white'}`} style={{ background: colors.header, borderColor: colors.accent }}>
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="relative flex h-12 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/95 p-1">
-            <><span className="font-black" style={{ color: theme.primary }}>{(theme.brandName || 'JM').slice(0, 2).toUpperCase()}</span>{theme.logo && <img src={theme.logo} alt="Logo" className="absolute inset-1 h-[calc(100%-8px)] w-[calc(100%-8px)] object-contain" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}</>
-          </div>
-          <div className="min-w-0"><p className="truncate text-sm font-extrabold">{theme.brandName || 'Tu negocio'}</p><p className={`mt-0.5 line-clamp-2 text-[10px] ${style === 'minimalista' ? 'text-slate-500' : 'text-white/75'}`}>{theme.quoteTagline || 'Perfumería · Atención personalizada'}</p></div>
-        </div>
-        <div className="shrink-0 text-right"><p className="text-[10px] font-black tracking-[.16em]" style={{ color: style === 'minimalista' ? theme.primary : colors.accent }}>{title}</p><p className={`mt-1 text-[9px] ${style === 'minimalista' ? 'text-slate-500' : 'text-white/75'}`}>{date}</p><p className={`text-[9px] ${style === 'minimalista' ? 'text-slate-500' : 'text-white/75'}`}>{time}</p></div>
+    <article className="border border-slate-200 bg-white p-4 text-slate-900" style={{ fontFamily: `'${theme.font}', sans-serif` }}>
+      <header className="flex items-center justify-between gap-2 border-b-2 border-[#112250] pb-3">
+        <div className="flex min-w-0 items-center gap-2">{theme.logo && <img src={theme.logo} alt="Logo" className="h-9 w-12 object-contain" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}<div className="min-w-0"><p className="truncate text-xs font-bold text-[#112250]">{theme.brandName || 'Tu negocio'}</p><p className="truncate text-[9px] text-[#3C507D]">{theme.quoteTagline || 'Perfumería'}</p></div></div>
+        <div className="shrink-0 text-right"><p className="text-[9px] font-bold uppercase text-[#112250]">Factura #0001</p><p className="mt-1 text-[8px] text-[#3C507D]">{date} · {time}</p></div>
       </header>
-      <div className="h-1" style={{ background: colors.accent }} />
-      <div className="space-y-4 p-4 sm:p-5">
-        <div className="flex items-end justify-between gap-2"><div><p className="text-[9px] font-bold uppercase tracking-[.18em] text-slate-400">{isQuote ? 'Propuesta para ti' : 'Comprobante de compra'}</p><h4 className="mt-1 text-base font-extrabold leading-tight">Club de Nuit Urban Elixir</h4><p className="mt-1 text-[10px] text-slate-500">Armaf · SKU CAT-8</p></div><span className="rounded-full px-2.5 py-1 text-[9px] font-bold" style={{ color: theme.primary, backgroundColor: `color-mix(in srgb, ${theme.primary} 10%, white)` }}>EJEMPLO</span></div>
-        {isQuote ? <>
-          {theme.quoteShowImage !== false && <div className="flex h-24 items-center justify-center rounded-xl border border-slate-100 bg-gradient-to-br from-slate-50 via-white to-slate-100"><span className="material-symbols-outlined text-5xl" style={{ color: theme.primary }}>flair</span></div>}
-          <div className="flex items-center justify-between rounded-xl p-3" style={{ backgroundColor: `color-mix(in srgb, ${theme.primary} 8%, white)` }}><div><p className="text-[9px] font-bold uppercase tracking-wider text-slate-500">Precio por unidad</p><p className="mt-1 text-[10px] text-slate-500">Incluye utilidad y envío</p></div><strong className="text-lg" style={{ color: theme.primary }}>C$ 1,450.00</strong></div>
-          <p className="border-t border-slate-100 pt-3 text-center text-[10px] text-slate-500">{theme.quoteFooter || 'Fragancias para cada momento'}</p>
-        </> : <>
-          <div className="rounded-xl border border-slate-100">
-            <div className="grid grid-cols-[1fr_auto] border-b border-slate-100 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-400"><span>Producto</span><span>Total</span></div>
-            <div className="flex items-center justify-between gap-2 px-3 py-3 text-xs"><span>Club de Nuit Urban Elixir <small className="block text-[9px] text-slate-400">1 × C$ 1,450.00</small></span><strong>C$ 1,450.00</strong></div>
-          </div>
-          <div className="space-y-2 rounded-xl p-3" style={{ backgroundColor: `color-mix(in srgb, ${theme.primary} 7%, white)` }}><PreviewAmount label="Total" value="C$ 1,450.00" strong color={theme.primary} /><PreviewAmount label="Abonado" value="C$ 800.00" /><PreviewAmount label="Saldo pendiente" value="C$ 650.00" strong /></div>
-          <p className="border-t border-slate-100 pt-3 text-center text-[10px] text-slate-500">{theme.invoiceFooter || 'Gracias por tu compra.'}</p>
-        </>}
-      </div>
+      <section className="grid grid-cols-2 gap-2 border-b border-slate-200 py-3 text-[9px]"><p><span className="text-slate-500">Cliente:</span> Cliente de ejemplo</p><p><span className="text-slate-500">Teléfono:</span> +505 8888 8888</p><p><span className="text-slate-500">Correo:</span> cliente@ejemplo.com</p><p><span className="text-slate-500">Estado de pago:</span> Parcial</p></section>
+      <table className="w-full text-left text-[9px]"><thead className="border-y border-slate-200 bg-slate-50 uppercase text-slate-500"><tr><th className="py-1.5">Producto</th><th className="py-1.5 text-right">Cant.</th><th className="py-1.5 text-right">Precio</th><th className="py-1.5 text-right">Desc.</th><th className="py-1.5 text-right">Importe</th></tr></thead><tbody><tr className="border-b border-slate-100"><td className="py-2">Club de Nuit Urban Elixir<small className="block text-slate-400">CAT-8</small></td><td className="py-2 text-right">1</td><td className="py-2 text-right">C$ 1,450.00</td><td className="py-2 text-right">C$ 0.00</td><td className="py-2 text-right font-semibold">C$ 1,450.00</td></tr></tbody></table>
+      <div className="ml-auto mt-3 max-w-[160px] border-t border-slate-200 pt-2"><PreviewAmount label="Total" value="C$ 1,450.00" strong color="#112250" /><PreviewAmount label="Abonado" value="C$ 800.00" /><PreviewAmount label="Saldo pendiente" value="C$ 650.00" strong /></div>
+      <p className="mt-4 border-t border-slate-200 pt-2 text-center text-[8px] text-slate-500">{theme.invoiceFooter || 'Gracias por tu compra.'}</p>
     </article>
   );
 }
