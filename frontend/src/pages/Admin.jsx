@@ -189,6 +189,25 @@ function DocumentPreview({ type, theme }) {
       : { header: `linear-gradient(120deg,${theme.primary},color-mix(in srgb,${theme.primary} 62%,${theme.secondary}),color-mix(in srgb,${theme.primary} 48%,${theme.accent}))`, accent: theme.accent, surface: '#ffffff', ink: '#172033' };
   const title = isQuote ? 'COTIZACIÓN' : 'FACTURA';
 
+  if (isQuote) {
+    return (
+      <article className="space-y-3 border p-4" style={{ fontFamily: `'${theme.font}', sans-serif`, borderColor: '#D9CBC2', backgroundColor: '#F5F0E9', color: '#112250' }}>
+        <header className="flex items-start justify-between gap-3 border-b pb-3" style={{ borderColor: '#D9CBC2' }}>
+          <div className="flex min-w-0 items-center gap-2">
+            {theme.logo && <img src={theme.logo} alt="Logo" className="h-9 w-10 object-contain" onError={(event) => { event.currentTarget.style.display = 'none'; }} />}
+            <div><p className="text-sm font-bold">{theme.brandName || 'Tu negocio'}</p><p className="text-xs" style={{ color: '#3C507D' }}>Cotización</p></div>
+          </div>
+          <p className="shrink-0 text-right text-[9px]" style={{ color: '#3C507D' }}>{date}<br />{time}</p>
+        </header>
+        <div><p className="text-[9px]" style={{ color: '#3C507D' }}>Producto</p><h4 className="mt-0.5 text-sm font-bold">Club de Nuit Urban Elixir</h4><p className="text-[10px]" style={{ color: '#3C507D' }}>Armaf · SKU CAT-8</p></div>
+        {theme.quoteShowImage !== false && <div className="flex h-20 items-center"><span className="material-symbols-outlined text-4xl" style={{ color: '#3C507D' }}>perfume</span></div>}
+        <div className="flex justify-between border-t pt-2 text-xs" style={{ borderColor: '#D9CBC2' }}><span>1 unidad × C$ 1,450.00</span><span className="font-semibold">C$ 1,450.00</span></div>
+        <div className="flex justify-between border-t pt-2 text-sm font-bold" style={{ borderColor: '#D9CBC2' }}><span>Total</span><span className="px-1" style={{ backgroundColor: '#E0C58F' }}>C$ 1,450.00</span></div>
+        <p className="border-t pt-2 text-[9px]" style={{ borderColor: '#D9CBC2', color: '#3C507D' }}>{theme.quoteFooter || 'Gracias por tu preferencia.'}</p>
+      </article>
+    );
+  }
+
   return (
     <article className="overflow-hidden rounded-2xl border border-slate-200 shadow-lg shadow-slate-900/10" style={{ fontFamily: `'${theme.font}', sans-serif`, backgroundColor: colors.surface, color: colors.ink }}>
       <header className={`flex items-center justify-between gap-3 px-4 py-4 sm:px-5 ${style === 'minimalista' ? 'border-b-2' : 'text-white'}`} style={{ background: colors.header, borderColor: colors.accent }}>

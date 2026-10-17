@@ -30,19 +30,27 @@ def validate_image(content: bytes, content_type: str | None) -> str:
 
 def upload_product_image(product_id: int, extension: str, content_type: str, content: bytes) -> str:
     base_url = settings.SUPABASE_URL.rstrip("/")
-    api_key = settings.SUPABASE_SECRET_KEY or settings.SUPABASE_SERVICE_ROLE_KEY
-    service_role_key = settings.SUPABASE_SERVICE_ROLE_KEY
+    api_key = (settings.SUPABASE_SECRET_KEY or settings.SUPABASE_SERVICE_ROLE_KEY).strip().strip("\"'")
+    service_role_key = settings.SUPABASE_SERVICE_ROLE_KEY.strip().strip("\"'")
     bucket = settings.SUPABASE_PRODUCT_IMAGES_BUCKET
     if not base_url or not api_key:
         raise HTTPException(503, "Configura SUPABASE_URL y una clave de Supabase en el backend")
+    if any(char in api_key for char in "\r\n"):
+        raise HTTPException(503, "SUPABASE_SECRET_KEY debe contener solo la clave, en una sola línea y sin comillas")
     # Storage needs an Authorization identity in addition to the API key.
     # New sb_secret keys are not JWTs, so pair them with this project's legacy
     # service_role JWT rather than incorrectly sending sb_secret as a Bearer.
     authorization_token = service_role_key or (api_key if api_key.startswith("eyJ") else "")
-    if not authorization_token:
+    if (
+        not authorization_token
+        or "\r" in authorization_token
+        or "\n" in authorization_token
+        or not authorization_token.startswith("eyJ")
+        or len(authorization_token.split(".")) != 3
+    ):
         raise HTTPException(
             503,
-            "Storage requiere SUPABASE_SERVICE_ROLE_KEY: agrega la clave service_role JWT de este proyecto en el backend",
+            "SUPABASE_SERVICE_ROLE_KEY no es válida. Configura la clave service_role JWT de Supabase, no la SECRET_KEY de JMstore",
         )
 
     object_path = f"products/{product_id}/{uuid.uuid4().hex}.{extension}"
