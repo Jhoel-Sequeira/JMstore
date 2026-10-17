@@ -5,7 +5,7 @@ const emptyForm = { marca_id: '', codigo_qr: '', sku: '', nombre: '', descripcio
 const money = (value) => new Intl.NumberFormat('es-NI', { style: 'currency', currency: 'NIO' }).format(Number(value || 0));
 const inputClass = 'mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm text-slate-800 outline-none transition focus:border-indigo-400 focus:ring-4 focus:ring-indigo-100';
 const apiError = (error) => error.response?.data?.detail || (error.response?.status === 500
-  ? 'No se pudo guardar o consultar Supabase. Revisa la conexión del backend.'
+  ? `El backend respondió HTTP 500${error.config?.url ? ` en ${error.config.url}` : ''}. Revisa los logs de Vercel del servicio backend.`
   : 'No se pudo completar la operación.');
 
 export default function InventarioPage() {

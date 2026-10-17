@@ -1,5 +1,6 @@
 import csv
 import io
+import logging
 import unicodedata
 import uuid
 from decimal import Decimal, InvalidOperation
@@ -7,7 +8,7 @@ from decimal import Decimal, InvalidOperation
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from openpyxl import load_workbook
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.core.database import get_db
 from app.models.compras import CompraDetalle
@@ -18,6 +19,7 @@ from app.services.product_image_storage import MAX_PRODUCT_IMAGE_BYTES, upload_p
 from app.services.stock_service import available_stock_by_product, critical_stock_by_product
 
 router = APIRouter()
+logger = logging.getLogger("jmstore.inventory")
 
 
 def _product_response(product: Producto, brand_name: str | None) -> dict:
@@ -129,8 +131,9 @@ async def upload_product_photo(product_id: int, file: UploadFile = File(...), db
     product.imagen_url = image_url
     try:
         db.commit()
-    except Exception as exc:
+    except SQLAlchemyError as exc:
         db.rollback()
+        logger.exception("Could not save uploaded image URL for product_id=%s", product_id)
         raise HTTPException(500, "La imagen se subió, pero no se pudo actualizar el producto") from exc
     db.refresh(product)
     result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar())
