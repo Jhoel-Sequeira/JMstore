@@ -11,10 +11,8 @@ export default function CatalogoQRPage() {
   const [search, setSearch] = useState('');
   const [error, setError] = useState('');
   const [quoteProduct, setQuoteProduct] = useState(null);
-  const [quoteCost, setQuoteCost] = useState('');
-  const [quoteShippingCost, setQuoteShippingCost] = useState('0');
-  const [quoteMargin, setQuoteMargin] = useState('30');
-  const [quoteQuantity, setQuoteQuantity] = useState('1');
+  const [quoteItems, setQuoteItems] = useState([]);
+  const [productToAdd, setProductToAdd] = useState('');
   const [quoteCustomer, setQuoteCustomer] = useState('');
   const [quotePhone, setQuotePhone] = useState('');
   const [quoteCreatedAt, setQuoteCreatedAt] = useState(new Date());
@@ -41,17 +39,27 @@ export default function CatalogoQRPage() {
     return matchesBrand && matchesTerm;
   }), [products, brandId, search]);
 
-  const unitCost = Math.max(0, Number(quoteCost) || 0) + Math.max(0, Number(quoteShippingCost) || 0);
-  const margin = Math.max(0, Number(quoteMargin) || 0);
-  const quantity = Math.max(1, Number.parseInt(quoteQuantity, 10) || 1);
-  const quotePrice = Math.round((unitCost * (1 + margin / 100) + Number.EPSILON) * 100) / 100;
+  const quoteLines = quoteItems.map((item) => {
+    const unitCost = Math.max(0, Number(item.cost) || 0) + Math.max(0, Number(item.shipping) || 0);
+    const margin = Math.max(0, Number(item.margin) || 0);
+    const price = Math.round((unitCost * (1 + margin / 100) + Number.EPSILON) * 100) / 100;
+    const quantity = Math.max(1, Number.parseInt(item.quantity, 10) || 1);
+    return { ...item, price, quantity, total: price * quantity };
+  });
+  const quoteTotal = quoteLines.reduce((sum, item) => sum + item.total, 0);
+
+  const makeQuoteItem = (product) => ({
+    product,
+    cost: product.costo_nio ?? '',
+    shipping: product.costo_envio_nio ?? 0,
+    margin: product.margen_utilidad_pct ?? 30,
+    quantity: 1,
+  });
 
   const openQuote = (product) => {
     setQuoteProduct(product);
-    setQuoteCost(product.costo_nio ?? '');
-    setQuoteShippingCost(product.costo_envio_nio ?? 0);
-    setQuoteMargin(product.margen_utilidad_pct ?? 30);
-    setQuoteQuantity('1');
+    setQuoteItems([makeQuoteItem(product)]);
+    setProductToAdd('');
     setQuoteCustomer('');
     setQuotePhone('');
     setQuoteCreatedAt(new Date());
@@ -61,27 +69,50 @@ export default function CatalogoQRPage() {
 
   const saveAndPrintQuote = async (event) => {
     event.preventDefault();
-    if (!quoteProduct) return;
-    if (quoteCost === '' || Number(quoteCost) < 0 || Number(quoteShippingCost) < 0 || Number(quoteMargin) < 0) {
+    if (!quoteItems.length) return;
+    if (quoteItems.some((item) => item.cost === '' || Number(item.cost) < 0 || Number(item.shipping) < 0 || Number(item.margin) < 0 || Number(item.quantity) < 1)) {
       setError('Ingresa un costo y una utilidad válidos.');
       return;
     }
     setSaving(true);
     setError('');
     try {
-      const { data } = await api.put(`/inventario/${quoteProduct.id}`, {
-        costo_nio: Number(quoteCost),
-        costo_envio_nio: Number(quoteShippingCost),
-        margen_utilidad_pct: Number(quoteMargin),
-      });
-      setProducts((current) => current.map((product) => product.id === data.id ? { ...product, ...data } : product));
-      setQuoteProduct((current) => ({ ...current, ...data }));
+      const updatedItems = await Promise.all(quoteItems.map(async (item) => {
+        const { data } = await api.put(`/inventario/${item.product.id}`, {
+          costo_nio: Number(item.cost),
+          costo_envio_nio: Number(item.shipping),
+          margen_utilidad_pct: Number(item.margin),
+        });
+        return { ...item, product: { ...item.product, ...data } };
+      }));
+      setQuoteItems(updatedItems);
+      setProducts((current) => current.map((product) => updatedItems.find((item) => item.product.id === product.id)?.product || product));
+      setQuoteProduct(updatedItems[0].product);
       setShowQuotePreview(true);
     } catch (saveError) {
       setError(saveError.response?.data?.detail || 'No se pudo guardar el costo y la utilidad.');
     } finally {
       setSaving(false);
     }
+  };
+
+  const addQuoteProduct = (productId) => {
+    const product = products.find((item) => String(item.id) === String(productId));
+    if (!product || quoteItems.some((item) => item.product.id === product.id)) return;
+    const nextItems = [...quoteItems, makeQuoteItem(product)];
+    setQuoteItems(nextItems);
+    setQuoteProduct(nextItems[0].product);
+    setProductToAdd('');
+  };
+
+  const updateQuoteItem = (productId, field, value) => {
+    setQuoteItems((current) => current.map((item) => item.product.id === productId ? { ...item, [field]: value } : item));
+  };
+
+  const removeQuoteItem = (productId) => {
+    const nextItems = quoteItems.filter((item) => item.product.id !== productId);
+    setQuoteItems(nextItems);
+    setQuoteProduct(nextItems[0]?.product || null);
   };
 
   const sendQuoteWhatsApp = () => {
@@ -95,11 +126,15 @@ export default function CatalogoQRPage() {
     const message = [
       `Hola${quoteCustomer.trim() ? ` ${quoteCustomer.trim()}` : ''}, te comparto tu cotización de ${theme.brandName || 'nuestra tienda'}:`,
       '',
-      `Producto: ${quoteProduct.nombre}`,
-      `Marca: ${quoteProduct.marca_nombre || '—'}`,
-      `Cantidad: ${quantity}`,
-      `Precio por unidad: ${money(quotePrice)}`,
-      `Total: ${money(quotePrice * quantity)}`,
+      ...quoteLines.flatMap((item) => [
+        `Producto: ${item.product.nombre}`,
+        `Marca: ${item.product.marca_nombre || '—'}`,
+        `Cantidad: ${item.quantity}`,
+        `Precio por unidad: ${money(item.price)}`,
+        `Subtotal: ${money(item.total)}`,
+        '',
+      ]),
+      `Total: ${money(quoteTotal)}`,
       `Fecha: ${date}`,
       theme.quoteFooter || 'Gracias por tu preferencia.',
     ].join('\n');
@@ -129,17 +164,16 @@ export default function CatalogoQRPage() {
       <p className="text-right text-xs text-slate-400">{visible.length} productos</p>
 
       {quoteProduct && <div className="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-950/50 p-4" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setQuoteProduct(null); }}>
-        <section role="dialog" aria-modal="true" aria-labelledby={showQuotePreview ? 'quote-preview-title' : 'quote-title'} className="w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
+        <section role="dialog" aria-modal="true" aria-labelledby={showQuotePreview ? 'quote-preview-title' : 'quote-title'} className="w-full max-w-3xl overflow-hidden rounded-2xl bg-white shadow-2xl">
           {showQuotePreview && <div>
             <div className="flex items-start justify-between border-b border-slate-100 p-5"><div><p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Vista previa</p><h2 id="quote-preview-title" className="mt-1 text-xl font-bold text-slate-900">Revisa tu cotización</h2><p className="mt-1 text-sm text-slate-500">Así verá la propuesta tu cliente.</p></div><button type="button" onClick={() => setQuoteProduct(null)} aria-label="Cerrar" className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"><span className="material-symbols-outlined">close</span></button></div>
             <div className="max-h-[65vh] space-y-4 overflow-y-auto p-5">
-              <article className="space-y-4 border p-5 text-slate-900" style={{ borderColor: '#D9CBC2', backgroundColor: '#F5F0E9' }}>
-                <header className="flex items-start justify-between gap-4 border-b pb-3" style={{ borderColor: '#D9CBC2' }}><div><p className="font-bold" style={{ color: '#112250' }}>{theme.brandName || 'Tu negocio'}</p><p className="mt-1 text-sm" style={{ color: '#3C507D' }}>Cotización</p></div><p className="text-right text-xs" style={{ color: '#3C507D' }}>{new Intl.DateTimeFormat('es-NI', { dateStyle: 'medium', timeStyle: 'short' }).format(quoteCreatedAt)}</p></header>
-                <div><h3 className="font-semibold" style={{ color: '#112250' }}>{quoteProduct.nombre}</h3><p className="text-sm" style={{ color: '#3C507D' }}>{quoteProduct.marca_nombre || 'Perfumería'} · {quoteProduct.sku || quoteProduct.codigo_qr}</p></div>
-                {theme.quoteShowImage !== false && quoteProduct.imagen_url && <div className="flex h-32 justify-start"><img src={quoteProduct.imagen_url} alt={quoteProduct.nombre} className="max-h-full max-w-full object-contain" /></div>}
-                {quoteCustomer.trim() && <p className="text-sm">Cliente: {quoteCustomer.trim()}</p>}
-                <div className="space-y-2 border-t pt-3 text-sm" style={{ borderColor: '#D9CBC2' }}><div className="flex justify-between" style={{ color: '#3C507D' }}><span>{quantity} {quantity === 1 ? 'unidad' : 'unidades'} × {money(quotePrice)}</span><span>{money(quotePrice * quantity)}</span></div><div className="flex justify-between border-t pt-2 font-bold" style={{ borderColor: '#D9CBC2', color: '#112250' }}><span>Total</span><span className="px-2" style={{ backgroundColor: '#E0C58F' }}>{money(quotePrice * quantity)}</span></div></div>
-                <footer className="border-t pt-3 text-xs" style={{ borderColor: '#D9CBC2', color: '#3C507D' }}>{theme.quoteFooter || 'Gracias por tu preferencia.'}</footer>
+              <article className="space-y-4 border border-slate-200 bg-white p-5 text-slate-900">
+                <header className="flex items-start justify-between gap-4 border-b border-slate-200 pb-3"><div><p className="font-bold text-[#112250]">{theme.brandName || 'Tu negocio'}</p><p className="mt-1 text-sm text-[#3C507D]">Cotización</p></div><p className="text-right text-xs text-[#3C507D]">{new Intl.DateTimeFormat('es-NI', { dateStyle: 'medium', timeStyle: 'short' }).format(quoteCreatedAt)}</p></header>
+                {quoteCustomer.trim() && <p className="text-sm text-[#3C507D]">Cliente: <strong className="text-[#112250]">{quoteCustomer.trim()}</strong></p>}
+                <div className="divide-y divide-slate-200">{quoteLines.map((item) => <div key={item.product.id} className="flex items-center gap-3 py-3"><div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden bg-white">{theme.quoteShowImage !== false && item.product.imagen_url && <img src={item.product.imagen_url} alt={item.product.nombre} className="max-h-full max-w-full object-contain" />}</div><div className="min-w-0 flex-1"><p className="truncate font-semibold text-[#112250]">{item.product.nombre}</p><p className="text-xs text-[#3C507D]">{item.product.marca_nombre || 'Perfumería'} · {item.quantity} × {money(item.price)}</p></div><strong className="shrink-0 text-[#112250]">{money(item.total)}</strong></div>)}</div>
+                <div className="flex justify-between border-t border-slate-200 pt-3 text-base font-bold text-[#112250]"><span>Total</span><span className="border-b-2 border-[#E0C58F]">{money(quoteTotal)}</span></div>
+                <footer className="border-t border-slate-200 pt-3 text-xs text-[#3C507D]">{theme.quoteFooter || 'Gracias por tu preferencia.'}</footer>
               </article>
               <label className="block text-sm font-semibold text-slate-700">Número de WhatsApp del cliente<input type="tel" autoComplete="tel" value={quotePhone} onChange={(event) => setQuotePhone(event.target.value)} placeholder="+505 8888 8888" className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /><span className="mt-1 block text-xs font-normal text-slate-500">Puedes ingresar los 8 dígitos locales de Nicaragua o incluir el código de país.</span></label>
               {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
@@ -151,18 +185,12 @@ export default function CatalogoQRPage() {
               <div><p className="text-xs font-semibold uppercase tracking-wider text-indigo-600">Cotización de producto</p><h2 id="quote-title" className="mt-1 text-xl font-bold text-slate-900">{quoteProduct.nombre}</h2><p className="mt-1 text-sm text-slate-500">{quoteProduct.marca_nombre} · {quoteProduct.sku || quoteProduct.codigo_qr}</p></div>
               <button type="button" onClick={() => setQuoteProduct(null)} aria-label="Cerrar" className="rounded-lg p-2 text-slate-400 hover:bg-slate-100"><span className="material-symbols-outlined">close</span></button>
             </div>
-            <div className="grid gap-4 p-5 sm:grid-cols-2">
-              <label className="text-sm font-semibold text-slate-700">Costo del producto (C$)<input required type="number" min="0" step="0.01" value={quoteCost} onChange={(e) => setQuoteCost(e.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /></label>
-              <label className="text-sm font-semibold text-slate-700">Envío por unidad (C$)<input required type="number" min="0" step="0.01" value={quoteShippingCost} onChange={(e) => setQuoteShippingCost(e.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /></label>
-              <label className="text-sm font-semibold text-slate-700">Utilidad (%)<input required type="number" min="0" step="0.01" value={quoteMargin} onChange={(e) => setQuoteMargin(e.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /></label>
-              <label className="text-sm font-semibold text-slate-700">Cliente (opcional)<input value={quoteCustomer} onChange={(e) => setQuoteCustomer(e.target.value)} maxLength="120" placeholder="Nombre del cliente" className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /></label>
-              <label className="text-sm font-semibold text-slate-700">Cantidad<input required type="number" min="1" step="1" value={quoteQuantity} onChange={(e) => setQuoteQuantity(e.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /></label>
-              <div className="sm:col-span-2 rounded-xl bg-indigo-50 p-4">
-                <div className="flex flex-wrap items-center justify-between gap-2 text-sm"><span className="text-slate-600">Precio cotizado por unidad</span><strong className="text-lg text-indigo-800">{money(quotePrice)}</strong></div>
-                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 border-t border-indigo-100 pt-2 text-sm"><span className="text-slate-600">Total por {quantity} {quantity === 1 ? 'unidad' : 'unidades'}</span><strong className="text-lg text-slate-900">{money(quotePrice * quantity)}</strong></div>
-                <p className="mt-2 text-xs text-slate-500">El costo y el porcentaje de utilidad se guardan en el producto. El precio cotizado no modifica el precio de venta del punto de venta.</p>
-              </div>
-              {error && <div role="alert" className="sm:col-span-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
+            <div className="space-y-4 p-5">
+              <div className="flex flex-wrap items-end gap-3"><label className="min-w-[220px] flex-1 text-sm font-semibold text-slate-700">Agregar producto<select value={productToAdd} onChange={(event) => addQuoteProduct(event.target.value)} className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 font-normal"><option value="">Selecciona un producto</option>{products.filter((product) => !quoteItems.some((item) => item.product.id === product.id)).map((product) => <option key={product.id} value={product.id}>{product.nombre} · {product.marca_nombre || 'Marca'}</option>)}</select></label><label className="min-w-[220px] flex-1 text-sm font-semibold text-slate-700">Cliente (opcional)<input value={quoteCustomer} onChange={(e) => setQuoteCustomer(e.target.value)} maxLength="120" placeholder="Nombre del cliente" className="mt-1.5 w-full rounded-lg border border-slate-300 px-3 py-2.5 font-normal" /></label></div>
+              <div className="space-y-3">{quoteLines.map((item) => <article key={item.product.id} className="rounded-xl border border-slate-200 p-4"><div className="mb-3 flex items-start justify-between gap-3"><div><p className="font-semibold text-[#112250]">{item.product.nombre}</p><p className="text-xs text-slate-500">{item.product.marca_nombre || 'Marca'} · {item.product.sku || item.product.codigo_qr}</p></div><button type="button" disabled={quoteItems.length === 1} onClick={() => removeQuoteItem(item.product.id)} className="text-xs font-semibold text-slate-500 hover:text-red-600 disabled:opacity-30">Quitar</button></div><div className="grid gap-3 sm:grid-cols-4"><label className="text-xs font-semibold text-slate-600">Costo C$<input required type="number" min="0" step="0.01" value={item.cost} onChange={(event) => updateQuoteItem(item.product.id, 'cost', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label><label className="text-xs font-semibold text-slate-600">Envío C$<input required type="number" min="0" step="0.01" value={item.shipping} onChange={(event) => updateQuoteItem(item.product.id, 'shipping', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label><label className="text-xs font-semibold text-slate-600">Utilidad %<input required type="number" min="0" step="0.01" value={item.margin} onChange={(event) => updateQuoteItem(item.product.id, 'margin', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label><label className="text-xs font-semibold text-slate-600">Cantidad<input required type="number" min="1" step="1" value={item.quantity} onChange={(event) => updateQuoteItem(item.product.id, 'quantity', event.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-2 text-sm font-normal" /></label></div><p className="mt-3 text-right text-sm text-[#3C507D]">{item.quantity} × {money(item.price)} = <strong className="text-[#112250]">{money(item.total)}</strong></p></article>)}</div>
+              <div className="flex justify-between border-t border-slate-200 pt-3 text-sm font-bold text-[#112250]"><span>Total de la cotización</span><span>{money(quoteTotal)}</span></div>
+              <p className="text-xs text-slate-500">El costo y la utilidad se guardan en cada producto. El precio cotizado no modifica el precio del punto de venta.</p>
+              {error && <div role="alert" className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
             </div>
             <div className="flex flex-wrap justify-end gap-2 border-t border-slate-100 bg-slate-50 p-4">
               <button type="button" onClick={() => setQuoteProduct(null)} className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700">Cancelar</button>
@@ -180,16 +208,11 @@ export default function CatalogoQRPage() {
             <div className="quote-accent" />
             <main className="quote-body">
               <p className="quote-eyebrow">PROPUESTA PARA TI</p>
-              <h1>{quoteProduct.nombre}</h1>
-              <p className="quote-brand-name">{quoteProduct.marca_nombre || 'Perfumería'} <span>·</span> {quoteProduct.sku || quoteProduct.codigo_qr}</p>
-              <div className={`quote-product-card ${theme.quoteShowImage === false ? 'quote-product-no-image' : ''}`}>
-                {theme.quoteShowImage !== false && <div className="quote-product-image">{quoteProduct.imagen_url ? <img src={quoteProduct.imagen_url} alt={quoteProduct.nombre} /> : <span>JM</span>}</div>}
-                <div className="quote-product-info"><span className="quote-chip">PRODUCTO SELECCIONADO</span><h2>{quoteProduct.nombre}</h2><p>{quoteProduct.marca_nombre || 'Fragancia seleccionada'}</p></div>
-              </div>
-              {quoteCustomer.trim() && <div className="quote-customer"><span>PREPARADA PARA</span><strong>{quoteCustomer.trim()}</strong></div>}
+              <h1>{quoteLines.length === 1 ? quoteLines[0].product.nombre : 'Cotización de productos'}</h1>
+              {quoteCustomer.trim() && <div className="quote-customer"><span>CLIENTE</span><strong>{quoteCustomer.trim()}</strong></div>}
               <div className="quote-items-heading"><span>DETALLE</span><span>IMPORTE</span></div>
-              <div className="quote-line"><span>{quantity} {quantity === 1 ? 'unidad' : 'unidades'} <small>{money(quotePrice)} por unidad</small></span><strong>{money(quotePrice * quantity)}</strong></div>
-              <div className="quote-total"><span>Total de la cotización</span><strong>{money(quotePrice * quantity)}</strong></div>
+              {quoteLines.map((item) => <div key={item.product.id} className="quote-line"><span>{item.product.nombre} <small>{item.quantity} × {money(item.price)} por unidad</small></span><strong>{money(item.total)}</strong></div>)}
+              <div className="quote-total"><span>Total de la cotización</span><strong>{money(quoteTotal)}</strong></div>
               <p className="quote-thanks">Gracias por elegirnos. Será un placer ayudarte a encontrar tu próxima fragancia.</p>
             </main>
             <footer className="quote-footer"><span>{theme.brandName} · {theme.quoteFooter || 'Fragancias para cada momento'}</span><span>{new Intl.DateTimeFormat('es-NI', { dateStyle: 'long', timeStyle: 'short' }).format(quoteCreatedAt)}</span></footer>
@@ -199,6 +222,7 @@ export default function CatalogoQRPage() {
       <style>{`@media print { @page { size: A4; margin: 0; } body * { visibility: hidden !important; } .quote-print-root, .quote-print-root * { visibility: visible !important; } .quote-print-root { position: fixed !important; inset: 0 !important; z-index: 99999 !important; display: block !important; width: 100% !important; min-height: 100vh !important; background: #fff !important; } .quote-print-sheet { box-sizing: border-box; width: 100%; min-height: 100vh; margin: 0 auto; color: #142033; background: white; font-family: Arial, sans-serif; } .quote-header { display:flex; align-items:center; justify-content:space-between; padding:32px 48px 26px; background:#111c35; color:white; } .quote-brand { display:flex; align-items:center; gap:16px; } .quote-brand img { width:76px; height:58px; object-fit:contain; border-radius:8px; background:white; padding:4px; } .quote-brand strong { display:block; font-size:22px; letter-spacing:.04em; } .quote-brand span { display:block; margin-top:5px; color:#d0d8eb; font-size:11px; letter-spacing:.04em; } .quote-label { display:flex; flex-direction:column; align-items:flex-end; gap:5px; } .quote-label span { color:#e9bd78; font-size:12px; font-weight:700; letter-spacing:.18em; } .quote-label small { color:#d0d8eb; font-size:10px; } .quote-accent { height:6px; background:linear-gradient(90deg,#d6a962,#f0d8aa,#6574a4); } .quote-body { max-width:760px; margin:0 auto; padding:42px 48px 30px; } .quote-eyebrow { color:#aa7d3c !important; font-size:10px; font-weight:700; letter-spacing:.2em; } .quote-body h1 { margin:10px 0 7px; color:#142033; font-family:Georgia,serif; font-size:32px; line-height:1.15; } .quote-brand-name { margin:0 !important; color:#64748b !important; font-size:13px; } .quote-brand-name span { padding:0 4px; color:#c49a5b; } .quote-product-card { display:flex; align-items:center; gap:24px; margin:28px 0 26px; padding:18px; border:1px solid #e7e9ef; border-radius:14px; background:#faf9f6; } .quote-product-image { display:flex; flex:0 0 150px; align-items:center; justify-content:center; width:150px; height:155px; overflow:hidden; border-radius:10px; background:#f0eee9; color:#b38a4c; font-family:Georgia,serif; font-size:32px; } .quote-product-image img { width:100%; height:100%; object-fit:contain; } .quote-product-info { flex:1; } .quote-chip { display:inline-block; padding:6px 9px; border-radius:20px; background:#eee8dc; color:#8b6a38; font-size:8px; font-weight:700; letter-spacing:.12em; } .quote-product-info h2 { margin:12px 0 5px; color:#18243b; font-family:Georgia,serif; font-size:20px; } .quote-product-info p { margin:0 !important; color:#64748b !important; font-size:12px; } .quote-customer { margin:20px 0 !important; padding:12px 15px; border-left:3px solid #c49a5b; background:#faf9f6; } .quote-customer span { display:block; color:#8b6a38; font-size:8px; font-weight:700; letter-spacing:.14em; } .quote-customer strong { display:block; margin-top:5px; color:#26334a; font-size:13px; } .quote-items-heading { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #dfe3eb; color:#8992a2; font-size:9px; font-weight:700; letter-spacing:.14em; } .quote-line { display:flex; justify-content:space-between; align-items:center; padding:17px 0; color:#26334a; font-size:13px; } .quote-line small { display:block; margin-top:5px; color:#8992a2; font-size:10px; } .quote-line strong { font-size:14px; } .quote-total { display:flex; justify-content:space-between; align-items:center; margin-top:6px; padding:17px 18px; border-radius:10px; background:#18243b; color:white; font-size:13px; } .quote-total strong { color:#f0d8aa; font-size:21px; } .quote-thanks { margin:28px 0 0 !important; color:#64748b !important; font-family:Georgia,serif; font-size:12px; font-style:italic; text-align:center; } .quote-footer { display:flex; justify-content:space-between; gap:10px; margin-top:22px; padding:16px 48px; border-top:1px solid #e7e9ef; color:#8992a2; font-size:9px; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; } .quote-header { position:relative; overflow:hidden; background:linear-gradient(118deg,#3924a8 0%,#7838d6 52%,#d8369a 100%) !important; } .quote-header:after { content:''; position:absolute; width:250px; height:250px; right:135px; top:-170px; border:1px solid rgba(255,255,255,.25); border-radius:50%; box-shadow:0 0 0 24px rgba(255,255,255,.06),0 0 0 52px rgba(255,255,255,.05); } .quote-brand img { position:relative; z-index:1; width:82px; height:66px; border:2px solid rgba(255,255,255,.65); box-shadow:0 6px 18px rgba(20,10,70,.24); } .quote-brand div,.quote-label { position:relative; z-index:1; } .quote-label span { padding:8px 11px; border:1px solid rgba(255,255,255,.35); border-radius:20px; background:rgba(255,255,255,.14); color:#fff1b8; } .quote-accent { height:8px; background:linear-gradient(90deg,#ffb84a,#ffe17b,#28d7cb,#7f67ff,#ff65b6) !important; } .quote-eyebrow { display:inline-block; padding:8px 12px; border-radius:20px; background:#fff0f7; color:#c02685 !important; } .quote-body h1 { color:#26145b; } .quote-product-card { border:1px solid #e6d9ff; background:linear-gradient(115deg,#f5f0ff 0%,#fff4f9 55%,#effcff 100%) !important; box-shadow:0 12px 28px rgba(77,50,145,.09); } .quote-product-image { border:1px solid #e4d9fa; background:linear-gradient(145deg,#fff,#f0eaff 60%,#e3fbfa) !important; color:#7446c7; } .quote-chip { background:#6d3acb; color:white; } .quote-product-info h2 { color:#38206f; } .quote-customer { border-left-color:#e43d9d; border-radius:0 10px 10px 0; background:linear-gradient(90deg,#fff0f8,#fffafd) !important; } .quote-customer span { color:#c02685; } .quote-total { background:linear-gradient(105deg,#3824a8,#7438d2 55%,#c92e91) !important; box-shadow:0 8px 18px rgba(82,43,157,.2); } .quote-total strong { color:#fff0a8; } .quote-thanks { color:#6c3aba !important; } .quote-footer { margin-top:26px; border-top:0; background:linear-gradient(90deg,#f1ebff,#fff0f8,#edfffd); color:#594188; } } @media screen { .quote-print-root { display: none; } }`}</style>
       <style>{`@media print { .quote-header { background:linear-gradient(118deg,var(--jm-primary),color-mix(in srgb,var(--jm-primary) 72%,var(--jm-secondary)),color-mix(in srgb,var(--jm-primary) 55%,var(--jm-accent))) !important; } .quote-total { background:linear-gradient(105deg,var(--jm-primary),color-mix(in srgb,var(--jm-primary) 70%,var(--jm-secondary)),color-mix(in srgb,var(--jm-primary) 50%,var(--jm-accent))) !important; } .quote-print-sheet[data-quote-style="elegante"] .quote-header { background:linear-gradient(120deg,#172033,#344256 58%,#8b6a3e) !important; } .quote-print-sheet[data-quote-style="elegante"] .quote-accent { background:linear-gradient(90deg,#8b6a3e,#e6d2a8,#8b6a3e) !important; } .quote-print-sheet[data-quote-style="elegante"] .quote-total { background:linear-gradient(110deg,#172033,#344256) !important; } .quote-print-sheet[data-quote-style="elegante"] .quote-chip { background:#8b6a3e !important; } .quote-print-sheet[data-quote-style="minimalista"] .quote-header { background:#fff !important; color:#172033 !important; border-bottom:2px solid var(--jm-primary); } .quote-print-sheet[data-quote-style="minimalista"] .quote-brand span,.quote-print-sheet[data-quote-style="minimalista"] .quote-label small { color:#64748b !important; } .quote-print-sheet[data-quote-style="minimalista"] .quote-label span { color:var(--jm-primary) !important; border-color:var(--jm-primary); } .quote-print-sheet[data-quote-style="minimalista"] .quote-accent { height:3px !important; background:var(--jm-primary) !important; } .quote-print-sheet[data-quote-style="minimalista"] .quote-product-card { background:#fff !important; box-shadow:none !important; border-color:#dce1e8 !important; } .quote-print-sheet[data-quote-style="minimalista"] .quote-total { background:var(--jm-primary) !important; box-shadow:none !important; } .quote-print-sheet[data-quote-style="minimalista"] .quote-chip { background:#eef0f4 !important; color:#344256 !important; } .quote-product-no-image .quote-product-info { padding:12px; } }`}</style>
       <style>{`@media print { .quote-header { background:#112250 !important; color:#F5F0E9 !important; padding:12px 0 !important; border-bottom:3px solid #E0C58F !important; } .quote-brand img,.quote-accent,.quote-eyebrow,.quote-chip,.quote-thanks { display:none !important; } .quote-brand strong,.quote-brand span,.quote-label span,.quote-label small { color:#F5F0E9 !important; } .quote-brand strong { font-size:16px !important; } .quote-body { padding:20px 0 !important; } .quote-body h1 { font: bold 20px Arial,sans-serif !important; color:#112250 !important; } .quote-product-card { margin:14px 0 !important; padding:0 !important; border:0 !important; border-radius:0 !important; background:#F5F0E9 !important; box-shadow:none !important; } .quote-product-image { flex-basis:90px !important; width:90px !important; height:90px !important; background:#F5F0E9 !important; } .quote-customer { padding:8px 0 !important; border:0 !important; background:#F5F0E9 !important; } .quote-customer span,.quote-customer strong,.quote-product-info h2,.quote-product-info p { color:#112250 !important; } .quote-items-heading { border-color:#D9CBC2 !important; color:#3C507D !important; } .quote-line { padding:10px 0 !important; color:#3C507D !important; } .quote-total { margin-top:0 !important; padding:10px 0 !important; border-radius:0 !important; border-top:1px solid #D9CBC2 !important; background:#F5F0E9 !important; color:#112250 !important; } .quote-total strong { color:#112250 !important; } .quote-footer { margin-top:10px !important; padding:10px 0 !important; border-top:1px solid #D9CBC2 !important; color:#3C507D !important; background:#F5F0E9 !important; } }`}</style>
+      <style>{`@media print { .quote-print-sheet { background:#fff !important; color:#112250 !important; } .quote-header,.quote-product-card,.quote-customer,.quote-total,.quote-footer { background:#fff !important; color:#112250 !important; } .quote-header { border-bottom:2px solid #112250 !important; } .quote-brand strong,.quote-brand span,.quote-label span,.quote-label small,.quote-body h1,.quote-product-info h2,.quote-product-info p,.quote-customer span,.quote-customer strong,.quote-line,.quote-total,.quote-total strong,.quote-footer { color:#112250 !important; } .quote-items-heading,.quote-footer { border-color:#3C507D !important; } .quote-line { border-bottom:1px solid #D9CBC2 !important; } }`}</style>
     </div>
   );
 }
