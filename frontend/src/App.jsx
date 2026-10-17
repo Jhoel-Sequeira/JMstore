@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import DashboardPage from './pages/Dashboard';
 import AdminPage from './pages/Admin';
@@ -19,7 +19,6 @@ export default function App() {
 function AuthenticatedApp() {
   const [user, setUser] = useState(null);
   const [authReady, setAuthReady] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,6 +63,6 @@ function AuthenticatedApp() {
       <Route path="/compras" element={<ComprasPage />} />
       <Route path="/pos" element={<POSPage />} />
       <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes></Layout> : <Navigate to="/login" replace state={{ from: location.pathname }} />} />
+    </Routes></Layout> : <Navigate to="/login" replace />} />
   </Routes>;
 }
