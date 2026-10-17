@@ -23,7 +23,7 @@
 @theme {
   /* Colors */
   --color-outline-variant: #c7c4d8;
-  --color-primary: #3525cd;
+  --color-primary: #3C507D;
   --color-on-primary: #ffffff;
   --color-on-secondary-fixed-variant: #005236;
   --color-on-error-container: #93000a;
@@ -42,13 +42,13 @@
   --color-on-background: #131b2e;
   --color-primary-fixed-dim: #c3c0ff;
   --color-surface-container-lowest: #ffffff;
-  --color-secondary: #006c49;
+  --color-secondary: #112250;
   --color-on-error: #ffffff;
   --color-outline: #777587;
   --color-surface-bright: #faf8ff;
   --color-surface-container-low: #f2f3ff;
-  --color-surface: #faf8ff;
-  --color-tertiary: #684000;
+  --color-surface: #F5F0E9;
+  --color-tertiary: #E0C58F;
   --color-surface-dim: #d2d9f4;
   --color-surface-variant: #dae2fd;
   --color-surface-container: #eaedff;

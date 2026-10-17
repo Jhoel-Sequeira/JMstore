@@ -1,14 +1,19 @@
 const STORAGE_KEY = 'jmstore.theme.v1';
 
+export const BRAND_PALETTE = {
+  primary: '#3C507D',
+  secondary: '#112250',
+  accent: '#E0C58F',
+  surface: '#F5F0E9',
+  border: '#D9CBC2',
+};
+
 export const DEFAULT_THEME = {
-  primary: '#3525cd',
-  secondary: '#087f5b',
-  accent: '#e19a35',
-  surface: '#f7f7fc',
+  ...BRAND_PALETTE,
   font: 'Arial',
   logo: 'https://lh3.googleusercontent.com/d/1BjZBopvdyYJLvUbcvLZo_3tLYbtBsPX-=w1000?authuser=0',
   brandName: 'JMscents',
-  quoteStyle: 'vibrante',
+  quoteStyle: 'minimalista',
   quoteTagline: 'Perfumería · Cotización personalizada',
   quoteFooter: 'Fragancias para cada momento',
   quoteShowImage: true,
@@ -18,25 +23,26 @@ export const DEFAULT_THEME = {
 
 export function getTheme() {
   try {
-    return { ...DEFAULT_THEME, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') };
+    return { ...DEFAULT_THEME, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'), ...BRAND_PALETTE, quoteStyle: 'minimalista', invoiceStyle: 'minimalista' };
   } catch {
     return { ...DEFAULT_THEME };
   }
 }
 
 export function saveTheme(theme) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(theme));
-  applyTheme(theme);
-  window.dispatchEvent(new CustomEvent('jmstore-theme-change', { detail: theme }));
+  const fixedTheme = { ...theme, ...BRAND_PALETTE, quoteStyle: 'minimalista', invoiceStyle: 'minimalista' };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(fixedTheme));
+  applyTheme(fixedTheme);
+  window.dispatchEvent(new CustomEvent('jmstore-theme-change', { detail: fixedTheme }));
 }
 
 export function applyTheme(theme) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
-  const primary = theme.primary || DEFAULT_THEME.primary;
-  const secondary = theme.secondary || DEFAULT_THEME.secondary;
-  const accent = theme.accent || DEFAULT_THEME.accent;
-  const surface = theme.surface || DEFAULT_THEME.surface;
+  const primary = BRAND_PALETTE.primary;
+  const secondary = BRAND_PALETTE.secondary;
+  const accent = BRAND_PALETTE.accent;
+  const surface = BRAND_PALETTE.surface;
   const font = theme.font || DEFAULT_THEME.font;
   root.style.setProperty('--jm-font', `'${font}', sans-serif`);
   document.body.style.fontFamily = `'${font}', sans-serif`;

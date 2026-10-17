@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import { applyTheme, DEFAULT_THEME, getTheme, saveTheme } from '../services/theme';
+import { applyTheme, BRAND_PALETTE, DEFAULT_THEME, getTheme, saveTheme } from '../services/theme';
 
 const roles = [
   ['administrador', 'Administrador'],
@@ -116,20 +116,17 @@ export default function AdminPage() {
           <div className="mb-6"><h2 className="text-lg font-bold text-slate-900">Identidad visual</h2><p className="mt-1 text-sm text-slate-500">Los cambios se aplican a los módulos de esta aplicación en este navegador.</p></div>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="text-sm font-semibold text-slate-700 sm:col-span-2">Nombre del negocio<input value={theme.brandName} onChange={(e) => updateTheme('brandName', e.target.value)} maxLength="60" placeholder="JMscents" className="mt-1.5 w-full rounded-xl border border-slate-300 px-3 py-2.5 font-normal outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100" /></label>
-            <ColorInput label="Color principal" value={theme.primary} onChange={(value) => updateTheme('primary', value)} help="Botones y elementos activos" />
-            <ColorInput label="Color secundario" value={theme.secondary} onChange={(value) => updateTheme('secondary', value)} help="Estados positivos y detalles" />
-            <ColorInput label="Color de acento" value={theme.accent} onChange={(value) => updateTheme('accent', value)} help="Avisos y elementos destacados" />
-            <ColorInput label="Fondo de la aplicación" value={theme.surface} onChange={(value) => updateTheme('surface', value)} help="Superficie general de las páginas" />
+            <div className="sm:col-span-2"><p className="text-sm font-semibold text-slate-700">Paleta fija del negocio</p><p className="mt-1 text-xs text-slate-500">Estos colores se aplican al sistema y a los documentos; no se pueden modificar.</p><div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-5">{[
+              ['Azul zafiro', BRAND_PALETTE.primary], ['Azul real', BRAND_PALETTE.secondary], ['Arena', BRAND_PALETTE.accent], ['Marfil', BRAND_PALETTE.surface], ['Piedra', BRAND_PALETTE.border],
+            ].map(([name, color]) => <div key={name} className="overflow-hidden rounded-xl border border-slate-200"><div className="h-12 border-b border-black/5" style={{ backgroundColor: color }} /><div className="p-2"><p className="text-xs font-semibold text-slate-700">{name}</p><p className="font-mono text-[10px] text-slate-500">{color}</p></div></div>)}</div></div>
             <label className="text-sm font-semibold text-slate-700 sm:col-span-2">Tipografía<select value={theme.font} onChange={(e) => updateTheme('font', e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal outline-none transition focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100">{['Arial', 'Trebuchet MS', 'Verdana', 'Tahoma', 'Georgia', 'system-ui'].map((font) => <option key={font} value={font}>{font}</option>)}</select></label>
             <div className="sm:col-span-2"><label className="text-sm font-semibold text-slate-700">Logo del negocio</label><div className="mt-1.5 flex flex-wrap items-center gap-4 rounded-xl border border-dashed border-slate-300 p-4"><img src={theme.logo} alt="Logo seleccionado" className="h-16 w-24 rounded-lg border border-slate-200 bg-white object-contain p-2" /><label className="cursor-pointer rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200"><span className="material-symbols-outlined mr-1 inline-block align-middle text-lg">upload</span>Subir imagen<input type="file" accept="image/*" onChange={selectLogo} className="sr-only" /></label><span className="text-xs text-slate-500">PNG, JPG o SVG · máximo 1.5 MB</span></div>{logoError && <p className="mt-2 text-sm text-rose-600">{logoError}</p>}<label className="mt-3 block text-xs font-medium text-slate-500">O pega el enlace de una imagen<input value={theme.logo.startsWith('data:') ? '' : theme.logo} onChange={(e) => updateTheme('logo', e.target.value)} placeholder="https://…" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-normal text-slate-700 outline-none focus:border-indigo-500" /></label></div>
             <div className="sm:col-span-2 mt-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
               <div className="mb-4"><h3 className="font-bold text-slate-900">Plantillas de cotización y factura</h3><p className="mt-1 text-sm text-slate-500">Ajusta la apariencia y revisa ambos documentos en la vista previa.</p></div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="text-sm font-semibold text-slate-700">Estilo de cotización<select value={theme.quoteStyle || DEFAULT_THEME.quoteStyle} onChange={(e) => updateTheme('quoteStyle', e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal"><option value="vibrante">Colorida</option><option value="elegante">Elegante</option><option value="minimalista">Minimalista</option></select></label>
                 <label className="flex items-center gap-3 self-end rounded-xl border border-slate-200 bg-white p-3 text-sm font-medium text-slate-700"><input type="checkbox" checked={theme.quoteShowImage !== false} onChange={(e) => updateTheme('quoteShowImage', e.target.checked)} className="h-4 w-4 accent-indigo-600" />Mostrar imagen del perfume</label>
                 <label className="text-sm font-semibold text-slate-700 sm:col-span-2">Texto bajo el nombre<input value={theme.quoteTagline ?? DEFAULT_THEME.quoteTagline} onChange={(e) => updateTheme('quoteTagline', e.target.value)} maxLength="100" className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal" /></label>
                 <label className="text-sm font-semibold text-slate-700 sm:col-span-2">Pie de cotización<input value={theme.quoteFooter ?? DEFAULT_THEME.quoteFooter} onChange={(e) => updateTheme('quoteFooter', e.target.value)} maxLength="120" className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal" /></label>
-                <label className="text-sm font-semibold text-slate-700">Estilo de factura<select value={theme.invoiceStyle || DEFAULT_THEME.invoiceStyle} onChange={(e) => updateTheme('invoiceStyle', e.target.value)} className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal"><option value="vibrante">Colorida</option><option value="elegante">Elegante</option><option value="minimalista">Minimalista</option></select></label>
                 <label className="text-sm font-semibold text-slate-700">Pie de factura<input value={theme.invoiceFooter ?? DEFAULT_THEME.invoiceFooter} onChange={(e) => updateTheme('invoiceFooter', e.target.value)} maxLength="120" className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 font-normal" /></label>
               </div>
             </div>
@@ -170,11 +167,6 @@ export default function AdminPage() {
 function TabButton({ active, onClick, icon, children }) {
   return <button type="button" onClick={onClick} className={`inline-flex shrink-0 items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${active ? 'bg-primary text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'}`}><span className="material-symbols-outlined text-lg">{icon}</span>{children}</button>;
 }
-
-function ColorInput({ label, value, onChange, help }) {
-  return <label className="text-sm font-semibold text-slate-700">{label}<div className="mt-1.5 flex items-center gap-3 rounded-xl border border-slate-300 p-2"><input type="color" value={value} onChange={(e) => onChange(e.target.value)} className="h-9 w-12 cursor-pointer rounded border-0 bg-transparent p-0" /><input value={value} onChange={(e) => onChange(e.target.value)} maxLength="7" className="min-w-0 flex-1 border-0 bg-transparent px-1 font-mono text-sm uppercase outline-none" /></div><span className="mt-1 block text-xs font-normal text-slate-500">{help}</span></label>;
-}
-
 
 function DocumentPreview({ type, theme }) {
   const isQuote = type === 'cotizacion';
