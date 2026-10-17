@@ -13,6 +13,7 @@ export default function CatalogoQRPage() {
   const [quoteProduct, setQuoteProduct] = useState(null);
   const [quoteItems, setQuoteItems] = useState([]);
   const [productsToAdd, setProductsToAdd] = useState([]);
+  const [selectedCatalogProducts, setSelectedCatalogProducts] = useState([]);
   const [uploadingProductId, setUploadingProductId] = useState(null);
   const [quoteCustomer, setQuoteCustomer] = useState('');
   const [quotePhone, setQuotePhone] = useState('');
@@ -57,15 +58,31 @@ export default function CatalogoQRPage() {
     quantity: 1,
   });
 
-  const openQuote = (product) => {
-    setQuoteProduct(product);
-    setQuoteItems([makeQuoteItem(product)]);
+  const openQuoteProducts = (selectedProducts) => {
+    if (!selectedProducts.length) return;
+    setSelectedCatalogProducts([]);
+    setQuoteProduct(selectedProducts[0]);
+    setQuoteItems(selectedProducts.map(makeQuoteItem));
     setProductsToAdd([]);
     setQuoteCustomer('');
     setQuotePhone('');
     setQuoteCreatedAt(new Date());
     setShowQuotePreview(false);
     setError('');
+  };
+
+  const openQuote = (product) => openQuoteProducts([product]);
+
+  const toggleCatalogProduct = (productId) => {
+    setSelectedCatalogProducts((current) => current.includes(productId)
+      ? current.filter((id) => id !== productId)
+      : [...current, productId]);
+  };
+
+  const openSelectedCatalogQuote = () => {
+    const selected = products.filter((product) => selectedCatalogProducts.includes(product.id));
+    openQuoteProducts(selected);
+    setSelectedCatalogProducts([]);
   };
 
   const saveAndPrintQuote = async (event) => {
@@ -181,10 +198,11 @@ export default function CatalogoQRPage() {
         <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar producto o SKU…" className="min-w-[220px] flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm" />
         <select value={brandId} onChange={(e) => setBrandId(e.target.value)} className="min-w-[200px] rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm"><option value="">Todas las marcas</option>{brands.map((b) => <option key={b.id} value={b.id}>{b.nombre_marca}</option>)}</select>
       </div>
+      {selectedCatalogProducts.length > 0 && <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#3C507D]/20 bg-white px-4 py-3 shadow-sm"><p className="text-sm font-medium text-[#112250]">{selectedCatalogProducts.length} producto{selectedCatalogProducts.length === 1 ? '' : 's'} seleccionado{selectedCatalogProducts.length === 1 ? '' : 's'} para cotizar</p><button type="button" onClick={openSelectedCatalogQuote} className="inline-flex items-center gap-2 rounded-lg bg-[#112250] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#3C507D]"><span className="material-symbols-outlined text-lg">request_quote</span>Cotizar seleccionados</button></div>}
       {visible.length === 0 ? <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center text-sm text-slate-500">{products.length ? 'No hay productos para esos filtros.' : 'El catálogo aparecerá cuando registres compras de productos.'}</div> :
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">{visible.map((product) => <article key={product.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="flex h-44 items-center justify-center bg-slate-50 p-4">{product.imagen_url ? <img src={product.imagen_url} alt={product.nombre} className="h-full max-w-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <span className="material-symbols-outlined text-5xl text-slate-300">inventory_2</span>}</div>
-          <div className="space-y-2 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">{product.marca_nombre || 'Marca'}</p><h2 className="line-clamp-2 min-h-12 font-bold text-slate-900">{product.nombre}</h2><div className="flex justify-between gap-2 text-sm"><span className="truncate font-mono text-slate-500">{product.sku || product.codigo_qr}</span><span className="shrink-0 font-semibold text-slate-800">{money(product.precio)}</span></div><div className="flex items-center justify-between border-t border-slate-100 pt-3"><span className="text-xs text-slate-500">Stock: {product.stock}</span><div className="flex gap-2"><button onClick={() => openQuote(product)} className="inline-flex items-center gap-1 rounded-lg border border-indigo-200 px-2.5 py-2 text-xs font-semibold text-indigo-700 hover:bg-indigo-50"><span className="material-symbols-outlined text-base">request_quote</span>Cotizar</button><button onClick={() => downloadQr(product)} title="Descargar QR" aria-label={`Descargar QR de ${product.nombre}`} className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700"><span className="material-symbols-outlined text-base">qr_code_2</span>QR</button></div></div><label className={`inline-flex cursor-pointer items-center gap-1.5 pt-1 text-xs font-semibold text-[#112250] hover:underline ${uploadingProductId === product.id ? 'pointer-events-none opacity-60' : ''}`}><span className="material-symbols-outlined text-base">add_photo_alternate</span>{uploadingProductId === product.id ? 'Subiendo foto…' : product.imagen_url ? 'Cambiar foto' : 'Adjuntar foto'}<input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" className="sr-only" disabled={uploadingProductId === product.id} onChange={(event) => { uploadProductImage(product, event.target.files?.[0]); event.target.value = ''; }} /></label></div>
+          <div className="relative flex h-44 items-center justify-center bg-slate-50 p-4">{product.imagen_url ? <img src={product.imagen_url} alt={product.nombre} className="h-full max-w-full object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; }} /> : <span className="material-symbols-outlined text-5xl text-slate-300">inventory_2</span>}<label className="absolute left-3 top-3 flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white/95 px-2.5 py-2 text-xs font-semibold text-[#112250] shadow-sm"><input type="checkbox" checked={selectedCatalogProducts.includes(product.id)} onChange={() => toggleCatalogProduct(product.id)} className="h-4 w-4 rounded border-slate-300 text-[#112250] focus:ring-[#112250]" /><span>Agregar a cotización</span></label></div>
+          <div className="space-y-2 p-4"><p className="text-xs font-semibold uppercase tracking-wide text-indigo-600">{product.marca_nombre || 'Marca'}</p><h2 className="line-clamp-2 min-h-12 font-bold text-slate-900">{product.nombre}</h2><div className="flex justify-between gap-2 text-sm"><span className="truncate font-mono text-slate-500">{product.sku || product.codigo_qr}</span><span className="shrink-0 font-semibold text-slate-800">{money(product.precio)}</span></div><div className="flex items-center justify-between border-t border-slate-100 pt-3"><span className="text-xs text-slate-500">Stock: {product.stock}</span><div className="flex gap-2"><button onClick={() => openQuote(product)} className="inline-flex items-center gap-1 rounded-lg border border-indigo-200 px-2.5 py-2 text-xs font-semibold text-indigo-700 hover:bg-indigo-50"><span className="material-symbols-outlined text-base">request_quote</span>Cotizar</button><button onClick={() => downloadQr(product)} title="Descargar QR" aria-label={`Descargar QR de ${product.nombre}`} className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white hover:bg-indigo-700"><span className="material-symbols-outlined text-base">qr_code_2</span>QR</button></div></div><label className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#3C507D]/30 bg-white px-3 py-2 text-xs font-semibold text-[#112250] hover:bg-slate-50 ${uploadingProductId === product.id ? 'pointer-events-none opacity-60' : ''}`}><span className="material-symbols-outlined text-base">add_photo_alternate</span>{uploadingProductId === product.id ? 'Subiendo foto…' : product.imagen_url ? 'Cambiar foto' : 'Subir foto del perfume'}<input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" className="sr-only" disabled={uploadingProductId === product.id} onChange={(event) => { uploadProductImage(product, event.target.files?.[0]); event.target.value = ''; }} /></label></div>
         </article>)}</div>}
       <p className="text-right text-xs text-slate-400">{visible.length} productos</p>
 
