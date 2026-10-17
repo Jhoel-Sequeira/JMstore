@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = "postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres?sslmode=require"
     SUPABASE_URL: str = ""
     SUPABASE_SECRET_KEY: str = ""
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
     SUPABASE_PRODUCT_IMAGES_BUCKET: str = "product-images"
     CORS_ORIGINS: str = "http://localhost:5173,http://127.0.0.1:5173"
 
