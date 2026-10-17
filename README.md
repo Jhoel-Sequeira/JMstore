@@ -33,7 +33,7 @@ En Inventario, el costo de compra, env?o asignado y margen se guardan en c?rdoba
 
 Para guardar fotos de forma persistente y mostrarlas en el catálogo, ejecuta una vez [`supabase_product_images.sql`](supabase_product_images.sql) en el SQL Editor de Supabase. Esto crea el bucket público `product-images`, limitado a PNG/JPG de hasta 5 MB. Las imágenes se pueden cargar al editar un producto desde Inventario o al registrar una compra; el catálogo toma la imagen guardada en `productos.imagen_url`.
 
-Configura `SUPABASE_URL` (la URL del proyecto) y `SUPABASE_SECRET_KEY` como variables de entorno del backend y en Vercel para Production/Preview según necesites. En Vercel, agrega ambas en **Project Settings > Environment Variables** y vuelve a desplegar. La clave secreta debe permanecer solo en el backend, nunca en una variable `VITE_*` ni en el frontend.
+Configura `SUPABASE_URL` (la URL del proyecto), `SUPABASE_SECRET_KEY` (clave secreta moderna) y `SUPABASE_SERVICE_ROLE_KEY` (JWT `service_role` legado) como variables de entorno del backend. Storage requiere la clave `service_role` en `Authorization: Bearer`; la clave moderna se envía como `apikey`. En Vercel, agrega las claves en **Project Settings > Environment Variables** para Production/Preview según corresponda y vuelve a desplegar. Ambas claves secretas deben permanecer solo en el backend, nunca en variables `VITE_*` ni en el frontend.
 
 ## Facturaci?n
 

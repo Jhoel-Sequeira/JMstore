@@ -30,24 +30,30 @@ def validate_image(content: bytes, content_type: str | None) -> str:
 
 def upload_product_image(product_id: int, extension: str, content_type: str, content: bytes) -> str:
     base_url = settings.SUPABASE_URL.rstrip("/")
-    secret_key = settings.SUPABASE_SECRET_KEY or settings.SUPABASE_SERVICE_ROLE_KEY
+    api_key = settings.SUPABASE_SECRET_KEY or settings.SUPABASE_SERVICE_ROLE_KEY
+    service_role_key = settings.SUPABASE_SERVICE_ROLE_KEY
     bucket = settings.SUPABASE_PRODUCT_IMAGES_BUCKET
-    if not base_url or not secret_key:
-        raise HTTPException(503, "Configura SUPABASE_URL y SUPABASE_SECRET_KEY en el backend")
+    if not base_url or not api_key:
+        raise HTTPException(503, "Configura SUPABASE_URL y una clave de Supabase en el backend")
+    # Storage needs an Authorization identity in addition to the API key.
+    # New sb_secret keys are not JWTs, so pair them with this project's legacy
+    # service_role JWT rather than incorrectly sending sb_secret as a Bearer.
+    authorization_token = service_role_key or (api_key if api_key.startswith("eyJ") else "")
+    if not authorization_token:
+        raise HTTPException(
+            503,
+            "Storage requiere SUPABASE_SERVICE_ROLE_KEY: agrega la clave service_role JWT de este proyecto en el backend",
+        )
 
     object_path = f"products/{product_id}/{uuid.uuid4().hex}.{extension}"
     encoded_path = "/".join(quote(part, safe="") for part in object_path.split("/"))
     endpoint = f"{base_url}/storage/v1/object/{quote(bucket, safe='')}/{encoded_path}"
     headers = {
-        "apikey": secret_key,
+        "apikey": api_key,
+        "Authorization": f"Bearer {authorization_token}",
         "Content-Type": content_type,
         "x-upsert": "false",
     }
-    # Legacy service_role keys are JWTs and Storage uses them as the bearer
-    # identity. New sb_secret keys are API keys, not JWTs, so keep them only
-    # in apikey (sending them as Bearer would produce Invalid JWT).
-    if secret_key.startswith("eyJ"):
-        headers["Authorization"] = f"Bearer {secret_key}"
     request = Request(endpoint, data=content, method="POST", headers=headers)
     try:
         with urlopen(request, timeout=20) as response:
