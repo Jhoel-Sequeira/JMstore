@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import func, inspect, text
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -51,60 +51,6 @@ def list_client_purchase_history(db: Session = Depends(get_db)):
             "saldo": balance,
             "abonos": payment_count or 0,
         })
-
-    # Older sales were imported into ventas_excel and are not invoices in ventas.
-    # Include them in the buyer history, clearly marked as imported records.
-    if inspect(db.bind).has_table("ventas_excel"):
-        historical_rows = db.execute(text('''
-            SELECT v.id, v.cliente_id, v.nombre_producto, v.marca_perfume,
-                   v.cantidad, v.precio_nio, v.total_abonado_nio,
-                   v.fecha_pago_excel, c.nombre_cliente, c.telefono, c.correo
-            FROM ventas_excel v
-            JOIN clientes c ON c.id = v.cliente_id
-            ORDER BY v.fecha_pago_excel DESC NULLS LAST, v.id DESC
-        ''')).mappings().all()
-
-        for sale in historical_rows:
-            entry = clients.setdefault(sale["cliente_id"], {
-                "id": sale["cliente_id"],
-                "nombre_cliente": sale["nombre_cliente"],
-                "telefono": sale["telefono"],
-                "correo": sale["correo"],
-                "facturas": 0,
-                "total_comprado": 0,
-                "total_abonado": 0,
-                "saldo_pendiente": 0,
-                "ultima_compra": sale["fecha_pago_excel"],
-                "historial": [],
-            })
-            total = (sale["precio_nio"] or 0) * (sale["cantidad"] or 0)
-            paid = sale["total_abonado_nio"] or 0
-            balance = max(0, total - paid)
-            entry["facturas"] += 1
-            entry["total_comprado"] += total
-            entry["total_abonado"] += paid
-            entry["saldo_pendiente"] += balance
-            imported_date = sale["fecha_pago_excel"]
-            latest_date = entry["ultima_compra"]
-            if imported_date and (
-                not latest_date
-                or (imported_date.date() if hasattr(imported_date, "date") else imported_date)
-                > (latest_date.date() if hasattr(latest_date, "date") else latest_date)
-            ):
-                entry["ultima_compra"] = imported_date
-            entry["historial"].append({
-                "venta_id": None,
-                "registro_id": sale["id"],
-                "origen": "importada",
-                "fecha": sale["fecha_pago_excel"],
-                "producto": sale["nombre_producto"],
-                "marca": sale["marca_perfume"],
-                "cantidad": sale["cantidad"],
-                "total": total,
-                "abonado": paid,
-                "saldo": balance,
-                "abonos": 0,
-            })
 
     for client in clients.values():
         client["historial"].sort(key=lambda sale: str(sale["fecha"] or ""), reverse=True)
