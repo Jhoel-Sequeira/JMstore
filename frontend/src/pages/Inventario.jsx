@@ -164,8 +164,8 @@ export default function InventarioPage() {
   return (
     <main className="w-full min-w-0 space-y-6 pb-10">
       <header className="flex flex-wrap items-end justify-between gap-4">
-        <div><p className="text-xs font-bold uppercase tracking-[.2em] text-indigo-600">Control de productos</p><h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">Inventario</h1><p className="mt-1 text-sm text-slate-500">Aquí se muestran los productos que ya ingresaron mediante compras.</p></div>
-        <a href="/compras" className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">Registrar compra</a>
+        <div><p className="text-xs font-bold uppercase tracking-[.2em] text-indigo-600">Control de productos</p><h1 className="mt-1 text-3xl font-bold tracking-tight text-slate-900">Inventario</h1><p className="mt-1 text-sm text-slate-500">Agrega productos, edita sus datos y controla las existencias.</p></div>
+        <div className="flex flex-wrap gap-2"><button type="button" onClick={startCreate} className="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700">Agregar producto</button><a href="/compras" className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm hover:bg-slate-50">Registrar compra</a></div>
       </header>
 
       {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div>}

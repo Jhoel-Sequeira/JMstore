@@ -11,7 +11,6 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.core.database import get_db
-from app.models.compras import CompraDetalle
 from app.models.inventario import Inventario, Producto
 from app.models.marcas import Estado, Marca
 from app.schemas.inventario import ImportResult, ProductoCreate, ProductoResponse, ProductoUpdate
@@ -50,10 +49,8 @@ def list_products(
     marca_id: int | None = None,
     db: Session = Depends(get_db),
 ):
-    purchased_product_ids = db.query(CompraDetalle.producto_id).distinct()
     query = (db.query(Producto, Marca.nombre_marca)
-             .outerjoin(Marca, Marca.id == Producto.marca_id)
-             .filter(Producto.id.in_(purchased_product_ids)))
+             .outerjoin(Marca, Marca.id == Producto.marca_id))
     if marca_id:
         query = query.filter(Producto.marca_id == marca_id)
     if q.strip():
@@ -91,7 +88,34 @@ def list_product_catalog(
 
 @router.post("/", response_model=ProductoResponse, status_code=status.HTTP_201_CREATED)
 def create_product(payload: ProductoCreate, db: Session = Depends(get_db)):
-    raise HTTPException(405, "Registra los productos desde una compra a un proveedor")
+    if not db.query(Marca).filter(Marca.id == payload.marca_id).first():
+        raise HTTPException(400, "La marca seleccionada no existe")
+    state_id = payload.estado_id
+    if not db.query(Estado).filter(Estado.id == state_id).first():
+        raise HTTPException(400, "El estado seleccionado no existe")
+    sku = payload.sku.strip() if payload.sku else None
+    product = Producto(
+        marca_id=payload.marca_id,
+        codigo_qr=(payload.codigo_qr.strip() if payload.codigo_qr else None) or sku or f"JM-{uuid.uuid4().hex[:10].upper()}",
+        sku=sku,
+        nombre=payload.nombre.strip(),
+        descripcion=payload.descripcion.strip() if payload.descripcion else None,
+        precio=payload.precio,
+        costo_nio=payload.costo_nio,
+        costo_envio_nio=payload.costo_envio_nio,
+        margen_utilidad_pct=payload.margen_utilidad_pct,
+        imagen_url=payload.imagen_url,
+        estado_id=state_id,
+    )
+    db.add(product)
+    db.flush()
+    db.add(Inventario(producto_id=product.id, stock=payload.stock, stock_critico=payload.stock_critico))
+    db.commit()
+    db.refresh(product)
+    result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar())
+    result["stock"] = available_stock_by_product(db, [product.id]).get(product.id, 0)
+    result["stock_critico"] = critical_stock_by_product(db, [product.id]).get(product.id, 5)
+    return result
 
 
 @router.put("/{product_id}", response_model=ProductoResponse)
@@ -103,15 +127,18 @@ def update_product(product_id: int, payload: ProductoUpdate, db: Session = Depen
     if "marca_id" in changes and not db.query(Marca).filter(Marca.id == changes["marca_id"]).first():
         raise HTTPException(400, "La marca seleccionada no existe")
     critical = changes.pop("stock_critico", None)
-    changes.pop("stock", None)
+    stock = changes.pop("stock", None)
     for field, value in changes.items():
         setattr(product, field, value)
-    if critical is not None:
+    if critical is not None or stock is not None:
         inventory = db.query(Inventario).filter(Inventario.producto_id == product.id).first()
         if inventory is None:
             inventory = Inventario(producto_id=product.id, stock=0)
             db.add(inventory)
-        inventory.stock_critico = critical
+        if critical is not None:
+            inventory.stock_critico = critical
+        if stock is not None:
+            inventory.stock = stock
     db.commit()
     db.refresh(product)
     result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar())
