@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.models.clientes import Cliente
 from app.models.compras import Compra, CompraDetalle
 from app.models.inventario import Inventario, Producto
+from app.models.marcas import Marca
 from app.models.pos import PagoVenta, Venta, VentaDetalle
 
 
@@ -376,6 +377,7 @@ def get_dashboard_data(db: Session, period: str = "month") -> dict:
     sales, invoice_count = _sales_totals(db, start, end)
     previous_sales, _ = _sales_totals(db, previous_start, previous_end)
     purchases, purchase_count, purchased_units = _purchase_totals(db, start, end)
+    # ponytail: Sales use current product costs because the sale lines do not snapshot cost; store unit cost on VentaDetalle to upgrade to historical COGS.
     profit = _profit_summary(db, start, end)
     inventory = _inventory_summary(db)
     sales_change_pct = ((sales - previous_sales) / previous_sales * 100) if previous_sales else None
@@ -406,4 +408,136 @@ def get_dashboard_data(db: Session, period: str = "month") -> dict:
         "ventas_recientes": _recent_sales(db),
         "compras_recientes": _recent_purchases(db),
         "actualizado_en": datetime.now(BUSINESS_TIMEZONE).isoformat(),
+    }
+
+
+def get_monthly_report(db: Session, year: int, month: int) -> dict:
+    """Build a complete monthly business cut, with invoice and collection dates kept distinct."""
+    start_date = date(year, month, 1)
+    end_date = date(year + (month == 12), 1 if month == 12 else month + 1, 1)
+    start = datetime.combine(start_date, time.min)
+    end = datetime.combine(end_date, time.min)
+
+    sales = (db.query(Venta, Cliente.nombre_cliente)
+             .join(Cliente, Cliente.id == Venta.cliente_id)
+             .filter(Venta.fecha_venta >= start, Venta.fecha_venta < end)
+             .order_by(Venta.fecha_venta, Venta.id).all())
+    sale_ids = [sale.id for sale, _ in sales]
+    payment_rows = (db.query(PagoVenta, Venta.id, Cliente.nombre_cliente)
+                    .join(Venta, Venta.id == PagoVenta.venta_id)
+                    .join(Cliente, Cliente.id == Venta.cliente_id)
+                    .filter(PagoVenta.fecha_pago >= start, PagoVenta.fecha_pago < end)
+                    .order_by(PagoVenta.fecha_pago, PagoVenta.id).all())
+    all_invoice_payments = (db.query(PagoVenta).filter(PagoVenta.venta_id.in_(sale_ids))
+                            .order_by(PagoVenta.fecha_pago, PagoVenta.id).all()) if sale_ids else []
+    payments_by_sale: dict[int, list] = {}
+    for payment in all_invoice_payments:
+        payments_by_sale.setdefault(payment.venta_id, []).append(payment)
+
+    sale_details = (db.query(VentaDetalle, Producto.nombre, Producto.sku)
+                    .join(Producto, Producto.id == VentaDetalle.producto_id)
+                    .filter(VentaDetalle.venta_id.in_(sale_ids))
+                    .order_by(VentaDetalle.venta_id, VentaDetalle.id).all()) if sale_ids else []
+    details_by_sale: dict[int, list] = {}
+    for line, name, sku in sale_details:
+        details_by_sale.setdefault(line.venta_id, []).append({
+            "producto": name, "sku": sku, "cantidad": line.cantidad,
+            "precio_unitario_nio": _as_float(line.precio_unitario),
+            "descuento_nio": _as_float(line.descuento), "subtotal_nio": _as_float(line.subtotal),
+        })
+
+    sale_records = []
+    for sale, client_name in sales:
+        invoice_payments = payments_by_sale.get(sale.id, [])
+        paid = sum((_as_float(payment.monto) for payment in invoice_payments), 0.0)
+        sale_records.append({
+            "id": sale.id, "fecha": sale.fecha_venta, "cliente": client_name,
+            "total_nio": _as_float(sale.total), "abonado_nio": paid,
+            "saldo_nio": max(0.0, _as_float(sale.total) - paid),
+            "comision_pos_nio": _as_float(sale.comision_pos),
+            "items": details_by_sale.get(sale.id, []),
+            "pagos": [{"fecha": p.fecha_pago, "metodo": p.metodo_pago, "monto_nio": _as_float(p.monto),
+                       "comision_nio": _as_float(p.monto_comision)} for p in invoice_payments],
+        })
+
+    method_totals: dict[str, float] = {}
+    payment_records = []
+    for payment, sale_id, client_name in payment_rows:
+        method_totals[payment.metodo_pago] = method_totals.get(payment.metodo_pago, 0.0) + _as_float(payment.monto)
+        payment_records.append({
+            "fecha": payment.fecha_pago, "factura_id": sale_id, "cliente": client_name,
+            "metodo": payment.metodo_pago, "monto_nio": _as_float(payment.monto),
+            "comision_nio": _as_float(payment.monto_comision),
+        })
+
+    purchases = (db.query(Compra).filter(Compra.fecha_compra >= start, Compra.fecha_compra < end)
+                 .order_by(Compra.fecha_compra, Compra.id).all())
+    purchase_ids = [purchase.id for purchase in purchases]
+    purchase_details = (db.query(CompraDetalle, Producto.nombre, Producto.sku)
+                        .join(Producto, Producto.id == CompraDetalle.producto_id)
+                        .filter(CompraDetalle.compra_id.in_(purchase_ids))
+                        .order_by(CompraDetalle.compra_id, CompraDetalle.id).all()) if purchase_ids else []
+    details_by_purchase: dict[int, list] = {}
+    for line, name, sku in purchase_details:
+        details_by_purchase.setdefault(line.compra_id, []).append({
+            "producto": name, "sku": sku, "cantidad": line.cantidad,
+            "costo_unitario_nio": _as_float(line.costo_unitario_nio),
+            "costo_envio_unitario_nio": _as_float(line.costo_envio_unitario_nio),
+            "subtotal_nio": _as_float(line.subtotal_nio),
+        })
+    purchase_records = []
+    for purchase in purchases:
+        paid = _as_float(purchase.pago_efectivo_nio) + _as_float(purchase.pago_cuenta_nio)
+        purchase_records.append({
+            "id": purchase.id, "fecha": purchase.fecha_compra, "proveedor": purchase.proveedor,
+            "referencia": purchase.referencia, "total_nio": _as_float(purchase.total_nio),
+            "abonado_nio": paid, "saldo_nio": max(0.0, _as_float(purchase.total_nio) - paid),
+            "pago_efectivo_nio": _as_float(purchase.pago_efectivo_nio),
+            "pago_cuenta_nio": _as_float(purchase.pago_cuenta_nio),
+            "items": details_by_purchase.get(purchase.id, []),
+        })
+
+    products = (db.query(Producto, Marca.nombre_marca, Inventario)
+                .join(Inventario, Inventario.producto_id == Producto.id)
+                .outerjoin(Marca, Marca.id == Producto.marca_id)
+                .filter(Producto.id.in_(db.query(CompraDetalle.producto_id).distinct()))
+                .order_by(Producto.nombre).all())
+    inventory = []
+    for product, brand, stock in products:
+        quantity = int(stock.stock or 0)
+        cost = None if product.costo_nio is None else _as_float(product.costo_nio) + _as_float(product.costo_envio_nio)
+        inventory.append({
+            "producto": product.nombre, "sku": product.sku, "marca": brand,
+            "stock": quantity, "stock_minimo": int(stock.stock_critico or 0),
+            "costo_unitario_nio": cost, "precio_unitario_nio": _as_float(product.precio),
+            "valor_costo_nio": None if cost is None else quantity * cost,
+            "valor_venta_nio": quantity * _as_float(product.precio),
+        })
+
+    sales_total = sum(item["total_nio"] for item in sale_records)
+    purchases_total = sum(item["total_nio"] for item in purchase_records)
+    collected_total = sum(item["monto_nio"] for item in payment_records)
+    paid_purchases = sum(item["abonado_nio"] for item in purchase_records)
+    inventory_cost = sum(item["valor_costo_nio"] or 0 for item in inventory)
+    inventory_retail = sum(item["valor_venta_nio"] for item in inventory)
+    profit = _profit_summary(db, start, end)
+    return {
+        "year": year, "month": month, "desde": start_date.isoformat(),
+        "hasta": (end_date - timedelta(days=1)).isoformat(),
+        "resumen": {
+            "ventas_nio": sales_total, "compras_nio": purchases_total,
+            "cobros_mes_nio": collected_total,
+            "saldo_facturas_mes_nio": sum(item["saldo_nio"] for item in sale_records),
+            "abonado_facturas_mes_nio": sum(item["abonado_nio"] for item in sale_records),
+            "saldo_compras_mes_nio": sum(item["saldo_nio"] for item in purchase_records),
+            "pagado_compras_mes_nio": paid_purchases,
+            "movimiento_neto_mes_nio": collected_total - paid_purchases,
+            "ventas_menos_compras_nio": sales_total - purchases_total,
+            "utilidad_estimada_nio": profit["utilidad_estimada_nio"],
+            "lineas_sin_costo": profit["lineas_sin_costo"],
+            "cobros_por_metodo": [{"metodo": name, "monto_nio": amount} for name, amount in sorted(method_totals.items())],
+            "valor_inventario_costo_nio": inventory_cost, "valor_inventario_venta_nio": inventory_retail,
+        },
+        "ventas": sale_records, "compras": purchase_records, "abonos_mes": payment_records,
+        "inventario": inventory,
     }

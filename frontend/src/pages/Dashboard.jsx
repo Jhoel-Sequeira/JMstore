@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
+import { openMonthlyReport } from '../services/monthlyReport';
+
+const currentBusinessMonth = () => new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric', month: '2-digit', timeZone: 'America/Managua',
+}).format(new Date());
 
 const money = (value) => new Intl.NumberFormat('es-NI', {
   style: 'currency', currency: 'NIO', maximumFractionDigits: 2,
@@ -19,6 +24,30 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [refresh, setRefresh] = useState(0);
+  const [reportMonth, setReportMonth] = useState(currentBusinessMonth);
+  const [reportLoading, setReportLoading] = useState(false);
+  const [reportError, setReportError] = useState('');
+
+  const exportMonthlyReport = async () => {
+    const reportWindow = window.open('', '_blank');
+    if (!reportWindow) {
+      setReportError('Permite las ventanas emergentes para abrir el reporte.');
+      return;
+    }
+    reportWindow.document.write('<p style="font:14px Arial;padding:24px">Preparando el corte mensual…</p>');
+    const [year, month] = reportMonth.split('-').map(Number);
+    setReportLoading(true);
+    setReportError('');
+    try {
+      const { data: report } = await api.get('/dashboard/reporte-mensual', { params: { anio: year, mes: month } });
+      openMonthlyReport(report, reportWindow);
+    } catch (requestError) {
+      reportWindow.close();
+      setReportError(requestError.response?.data?.detail || 'No se pudo preparar el reporte. Intenta de nuevo.');
+    } finally {
+      setReportLoading(false);
+    }
+  };
 
   useEffect(() => {
     let active = true;
@@ -55,6 +84,12 @@ export default function DashboardPage() {
           <select id="dashboard-period" value={period} onChange={(event) => setPeriod(event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100">
             {periodOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
+          <label className="sr-only" htmlFor="report-month">Mes del corte</label>
+          <input id="report-month" type="month" value={reportMonth} onChange={(event) => setReportMonth(event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+          <button type="button" onClick={exportMonthlyReport} disabled={reportLoading || !reportMonth} className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
+            <span className={`material-symbols-outlined text-lg ${reportLoading ? 'animate-spin' : ''}`}>{reportLoading ? 'progress_activity' : 'picture_as_pdf'}</span>
+            <span>{reportLoading ? 'Preparando…' : 'Exportar corte PDF'}</span>
+          </button>
           <button type="button" onClick={() => setRefresh((value) => value + 1)} disabled={loading} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50" aria-label="Actualizar resumen">
             <span className={`material-symbols-outlined text-lg ${loading ? 'animate-spin' : ''}`}>refresh</span>
             <span className="hidden sm:inline">Actualizar</span>
@@ -62,6 +97,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
+      {reportError && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{reportError}</div>}
       {error && <div role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><span>{error}</span><button onClick={() => setRefresh((value) => value + 1)} className="font-semibold underline">Reintentar</button></div>}
 
       <section aria-label="Indicadores del período" className="grid gap-3 sm:grid-cols-2 2xl:grid-cols-4">
