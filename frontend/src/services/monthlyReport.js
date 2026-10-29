@@ -26,18 +26,6 @@ export function openMonthlyReport(report, win = window.open('', '_blank')) {
   const grossProfit = summary.costo_ventas_estimado_nio == null
     ? 'No disponible'
     : money(summary.ventas_nio - summary.costo_ventas_estimado_nio);
-  const missingCostProducts = new Map();
-  for (const sale of report.ventas) {
-    for (const item of sale.items) {
-      if (item.costo_unitario_nio != null) continue;
-      const product = missingCostProducts.get(item.producto_id) || { nombre: item.producto, sku: item.sku, unidades: 0 };
-      product.unidades += Number(item.cantidad || 0);
-      missingCostProducts.set(item.producto_id, product);
-    }
-  }
-  const missingCostLabel = [...missingCostProducts.values()]
-    .map((item) => `${item.nombre}${item.sku ? ` (${item.sku})` : ''}, ${item.unidades} unidades`)
-    .join('; ');
   const purchaseCount = report.compras.length;
   const salesRows = report.ventas.map((sale) => `<tr>${cell(date(sale.fecha))}${cell(`Factura #${sale.id}`)}${cell(sale.cliente)}${cell(money(sale.total_nio), 'num')}${cell(money(sale.abonado_nio), 'num')}${cell(money(sale.saldo_nio), 'num')}</tr>`).join('');
   const purchaseRows = report.compras.map((purchase) => `<tr>${cell(date(purchase.fecha))}${cell(`Compra #${purchase.id}`)}${cell(purchase.proveedor)}${cell(purchase.referencia || '—')}${cell(money(purchase.total_nio), 'num')}${cell(money(purchase.abonado_nio), 'num')}${cell(money(purchase.saldo_nio), 'num')}</tr>`).join('');
@@ -61,7 +49,6 @@ export function openMonthlyReport(report, win = window.open('', '_blank')) {
     <div class="executive"><div><div class="executive-label">Rentabilidad del período</div><strong>${escapeHtml(grossProfit)}</strong></div></div>
     <h2 class="section-title">Indicadores clave <span class="section-kicker">Montos expresados en c?rdobas</span></h2>
     <div class="cards"><div class="card"><small>Ventas netas</small><strong>${escapeHtml(money(summary.ventas_nio))}</strong></div><div class="card"><small>Unidades vendidas</small><strong>${escapeHtml(summary.unidades_vendidas)}</strong></div><div class="card"><small>Ticket promedio</small><strong>${escapeHtml(money(summary.ticket_promedio_nio))}</strong></div><div class="card"><small>Utilidad bruta</small><strong>${escapeHtml(grossProfit)}</strong></div><div class="card"><small>Compras netas</small><strong>${escapeHtml(money(summary.compras_nio))}</strong></div><div class="card"><small>Numero de compras</small><strong>${escapeHtml(purchaseCount)}</strong></div><div class="card"><small>Monto total cobrado</small><strong>${escapeHtml(money(summary.cobros_mes_nio))}</strong></div><div class="card"><small>Monto por cobrar</small><strong>${escapeHtml(summary.cuentas_por_cobrar_nio == null ? 'No disponible' : money(summary.cuentas_por_cobrar_nio))}</strong></div></div>
-    <p class="note">La utilidad bruta se calcula con el costo actual de los productos vendidos. ${missingCostLabel ? `Sin costo registrado: ${escapeHtml(missingCostLabel)}.` : ''} El monto por cobrar suma los saldos pendientes de todas las facturas, incluidas las de meses anteriores. Compras netas incluye el envío registrado.</p>
     <h2 class="section-title">Detalle de ventas <span class="section-kicker">${report.ventas.length} registros</span></h2>
     ${table(['Fecha','Factura','Cliente','Total','Abonado','Saldo'], salesRows)}
     <h2 class="section-title">Detalle de compras <span class="section-kicker">${purchaseCount} registros</span></h2>
