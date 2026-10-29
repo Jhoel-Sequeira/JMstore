@@ -547,6 +547,25 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
     previous_client_ids = {row[0] for row in db.query(Venta.cliente_id).filter(
         Venta.cliente_id.in_(current_client_ids), Venta.fecha_venta < start,
     ).distinct().all()} if current_client_ids else set()
+    invoice_payments = (db.query(
+        PagoVenta.venta_id.label("venta_id"),
+        func.sum(PagoVenta.monto).label("abonado_nio"),
+    ).group_by(PagoVenta.venta_id).subquery())
+    paid = func.coalesce(invoice_payments.c.abonado_nio, 0)
+    pending_abonos = (db.query(Venta, Cliente.nombre_cliente, paid)
+                      .join(Cliente, Cliente.id == Venta.cliente_id)
+                      .outerjoin(invoice_payments, invoice_payments.c.venta_id == Venta.id)
+                      .filter(Venta.total > paid)
+                      .order_by(Venta.fecha_venta, Venta.id).all())
+    pending_records = [{
+        "factura_id": sale.id,
+        "fecha": sale.fecha_venta,
+        "cliente": client_name,
+        "total_nio": _as_float(sale.total),
+        "abonado_nio": _as_float(paid_amount),
+        "saldo_nio": _as_float(sale.total) - _as_float(paid_amount),
+    } for sale, client_name, paid_amount in pending_abonos]
+    receivable_total = _receivable_total(db)
     sales_by_day: dict[date, float] = {}
     for sale, _ in sales:
         sales_by_day[sale.fecha_venta.date()] = sales_by_day.get(sale.fecha_venta.date(), 0.0) + _as_float(sale.total)
@@ -583,9 +602,11 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
             "margen_estimado_pct": profit["margen_estimado_pct"],
             "comisiones_pos_nio": profit["comisiones_pos_nio"],
             "lineas_sin_costo": profit["lineas_sin_costo"],
+            "cuentas_por_cobrar_nio": receivable_total,
             "cobros_por_metodo": [{"metodo": name, "monto_nio": amount} for name, amount in sorted(method_totals.items())],
             "valor_inventario_costo_nio": inventory_cost, "valor_inventario_venta_nio": inventory_retail,
         },
         "ventas": sale_records, "compras": purchase_records, "abonos_mes": payment_records,
+        "pendientes_abono": pending_records,
         "inventario": inventory, "ventas_diarias": sales_days,
     }

@@ -73,11 +73,6 @@ def create_purchase(payload: CompraCreate, db: Session = Depends(get_db)):
     missing = [product_id for product_id in product_ids if product_id not in products_by_id]
     if missing:
         raise HTTPException(404, f"Producto no encontrado: {missing[0]}")
-    wrong_supplier = [product_id for product_id in product_ids
-                      if products_by_id[product_id].marca_id != supplier.id]
-    if wrong_supplier:
-        raise HTTPException(422, "Los productos de la compra deben pertenecer a la marca seleccionada como proveedora")
-
     base_cost = _money(sum((item.costo_unitario_nio * item.cantidad for item in payload.items), Decimal("0")))
     shipping_total = _money(payload.costo_envio_nio)
     total_purchase = _money(base_cost + shipping_total)

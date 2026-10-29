@@ -2,12 +2,13 @@ from io import BytesIO
 import uuid
 
 import qrcode
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models.inventario import Producto
+from app.models.producto_codigo_qr import ProductoCodigoQR
 from app.models.marcas import Estado, Marca
 from app.schemas.inventario import ProductoCreate, ProductoResponse, ProductoUpdate
 from app.services.stock_service import available_stock_by_product, critical_stock_by_product
@@ -15,11 +16,22 @@ from app.services.stock_service import available_stock_by_product, critical_stoc
 router = APIRouter()
 
 
+def _qr_codes_by_product(db: Session, product_ids: list[int]) -> dict[int, list[str]]:
+    codes: dict[int, list[str]] = {}
+    if product_ids:
+        for product_id, code in (db.query(ProductoCodigoQR.producto_id, ProductoCodigoQR.codigo_qr)
+                                 .filter(ProductoCodigoQR.producto_id.in_(product_ids))
+                                 .order_by(ProductoCodigoQR.codigo_qr).all()):
+            codes.setdefault(product_id, []).append(code)
+    return codes
+
+
 def _product_response(product: Producto, brand_name: str | None, db: Session) -> dict:
     stock = available_stock_by_product(db, [product.id]).get(product.id, 0)
     critical = critical_stock_by_product(db, [product.id]).get(product.id, 5)
     return {**{column.name: getattr(product, column.name) for column in Producto.__table__.columns},
-            "stock": stock, "stock_critico": critical, "marca_nombre": brand_name}
+            "stock": stock, "stock_critico": critical, "marca_nombre": brand_name,
+            "codigos_qr": [product.codigo_qr, *_qr_codes_by_product(db, [product.id]).get(product.id, [])]}
 
 
 @router.get("/", response_model=list[ProductoResponse])
@@ -30,9 +42,12 @@ def get_catalog(db: Session = Depends(get_db)):
     product_ids = [product.id for product, _ in products]
     stocks = available_stock_by_product(db, product_ids)
     critical = critical_stock_by_product(db, product_ids)
+    qr_codes = _qr_codes_by_product(db, product_ids)
     return [{**{column.name: getattr(product, column.name) for column in Producto.__table__.columns},
              "stock": stocks.get(product.id, 0), "stock_critico": critical.get(product.id, 5),
-             "marca_nombre": brand_name} for product, brand_name in products]
+             "marca_nombre": brand_name,
+             "codigos_qr": [product.codigo_qr, *qr_codes.get(product.id, [])]}
+            for product, brand_name in products]
 
 
 @router.post("/", response_model=ProductoResponse, status_code=status.HTTP_201_CREATED)
@@ -85,11 +100,19 @@ def update_catalog_product(product_id: int, payload: ProductoUpdate, db: Session
 
 
 @router.get("/{product_id}/qr")
-def get_product_qr(product_id: int, db: Session = Depends(get_db)):
+def get_product_qr(product_id: int, codigo_qr: str | None = Query(default=None, max_length=255),
+                   db: Session = Depends(get_db)):
     product = db.query(Producto).filter(Producto.id == product_id).first()
     if not product:
         raise HTTPException(404, "Producto no encontrado")
-    image = qrcode.make(product.codigo_qr)
+    qr_value = codigo_qr or product.codigo_qr
+    alias_belongs = db.query(ProductoCodigoQR.codigo_qr).filter(
+        ProductoCodigoQR.producto_id == product.id,
+        ProductoCodigoQR.codigo_qr == qr_value,
+    ).first()
+    if qr_value != product.codigo_qr and not alias_belongs:
+        raise HTTPException(404, "El código QR no pertenece a este producto")
+    image = qrcode.make(qr_value)
     output = BytesIO()
     image.save(output, format="PNG")
     output.seek(0)

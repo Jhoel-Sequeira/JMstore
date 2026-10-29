@@ -7,12 +7,14 @@ from decimal import Decimal, InvalidOperation
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile, status
 from openpyxl import load_workbook
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 from app.core.database import get_db
 from app.models.compras import CompraDetalle
 from app.models.inventario import Inventario, Producto
+from app.models.producto_codigo_qr import ProductoCodigoQR
 from app.models.marcas import Estado, Marca
 from app.schemas.inventario import ImportResult, ProductoCreate, ProductoResponse, ProductoUpdate
 from app.services.product_image_storage import MAX_PRODUCT_IMAGE_BYTES, upload_product_image, validate_image
@@ -22,9 +24,23 @@ router = APIRouter()
 logger = logging.getLogger("jmstore.inventory")
 
 
-def _product_response(product: Producto, brand_name: str | None) -> dict:
+def _qr_codes_by_product(db: Session, product_ids: list[int]) -> dict[int, list[str]]:
+    codes: dict[int, list[str]] = {}
+    if product_ids:
+        rows = (db.query(ProductoCodigoQR.producto_id, ProductoCodigoQR.codigo_qr)
+                .filter(ProductoCodigoQR.producto_id.in_(product_ids))
+                .order_by(ProductoCodigoQR.codigo_qr).all())
+        for product_id, code in rows:
+            codes.setdefault(product_id, []).append(code)
+    return codes
+
+
+def _product_response(product: Producto, brand_name: str | None, db: Session,
+                      qr_codes: dict[int, list[str]] | None = None) -> dict:
+    qr_codes = qr_codes if qr_codes is not None else _qr_codes_by_product(db, [product.id])
     return {**{column.name: getattr(product, column.name) for column in Producto.__table__.columns},
-            "marca_nombre": brand_name}
+            "marca_nombre": brand_name,
+            "codigos_qr": [product.codigo_qr, *qr_codes.get(product.id, [])]}
 
 
 @router.get("/marcas")
@@ -58,12 +74,15 @@ def list_products(
         query = query.filter(Producto.marca_id == marca_id)
     if q.strip():
         term = f"%{q.strip()}%"
-        query = query.filter((Producto.nombre.ilike(term)) | (Producto.sku.ilike(term)) | (Producto.codigo_qr.ilike(term)))
+        alias_ids = db.query(ProductoCodigoQR.producto_id).filter(ProductoCodigoQR.codigo_qr.ilike(term))
+        query = query.filter(or_(Producto.nombre.ilike(term), Producto.sku.ilike(term),
+                                 Producto.codigo_qr.ilike(term), Producto.id.in_(alias_ids)))
     rows = query.order_by(Producto.nombre).limit(1000).all()
     product_ids = [product.id for product, _ in rows]
     stocks = available_stock_by_product(db, product_ids)
     critical = critical_stock_by_product(db, product_ids)
-    return [{**_product_response(product, brand_name), "stock": stocks.get(product.id, 0),
+    qr_codes = _qr_codes_by_product(db, product_ids)
+    return [{**_product_response(product, brand_name, db, qr_codes), "stock": stocks.get(product.id, 0),
              "stock_critico": critical.get(product.id, 5)}
             for product, brand_name in rows]
 
@@ -79,12 +98,15 @@ def list_product_catalog(
         query = query.filter(Producto.marca_id == marca_id)
     if q.strip():
         term = f"%{q.strip()}%"
-        query = query.filter((Producto.nombre.ilike(term)) | (Producto.sku.ilike(term)) | (Producto.codigo_qr.ilike(term)))
+        alias_ids = db.query(ProductoCodigoQR.producto_id).filter(ProductoCodigoQR.codigo_qr.ilike(term))
+        query = query.filter(or_(Producto.nombre.ilike(term), Producto.sku.ilike(term),
+                                 Producto.codigo_qr.ilike(term), Producto.id.in_(alias_ids)))
     rows = query.order_by(Producto.nombre).limit(1000).all()
     product_ids = [product.id for product, _ in rows]
     stocks = available_stock_by_product(db, product_ids)
     critical = critical_stock_by_product(db, product_ids)
-    return [{**_product_response(product, brand_name), "stock": stocks.get(product.id, 0),
+    qr_codes = _qr_codes_by_product(db, product_ids)
+    return [{**_product_response(product, brand_name, db, qr_codes), "stock": stocks.get(product.id, 0),
              "stock_critico": critical.get(product.id, 5)}
             for product, brand_name in rows]
 
@@ -116,7 +138,7 @@ def update_product(product_id: int, payload: ProductoUpdate, db: Session = Depen
         inventory.stock_critico = critical
     db.commit()
     db.refresh(product)
-    result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar())
+    result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar(), db)
     result["stock"] = available_stock_by_product(db, [product.id]).get(product.id, 0)
     result["stock_critico"] = critical_stock_by_product(db, [product.id]).get(product.id, 5)
     return result
@@ -138,7 +160,7 @@ async def upload_product_photo(product_id: int, file: UploadFile = File(...), db
         logger.exception("Could not save uploaded image URL for product_id=%s", product_id)
         raise HTTPException(500, "La imagen se subió, pero no se pudo actualizar el producto") from exc
     db.refresh(product)
-    result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar())
+    result = _product_response(product, db.query(Marca.nombre_marca).filter(Marca.id == product.marca_id).scalar(), db)
     result["stock"] = available_stock_by_product(db, [product.id]).get(product.id, 0)
     result["stock_critico"] = critical_stock_by_product(db, [product.id]).get(product.id, 5)
     return result

@@ -44,6 +44,7 @@ class ProductoResponse(ProductoBase):
 
     id: int
     marca_nombre: Optional[str] = None
+    codigos_qr: list[str] = Field(default_factory=list)
     costo_total_nio: Optional[float] = None
     precio_minimo_nio: Optional[float] = None
     utilidad_nio: Optional[float] = None
