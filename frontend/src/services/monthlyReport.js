@@ -61,6 +61,20 @@ export function openMonthlyReport(report, win = window.open('', '_blank')) {
     }
   }
   const products = [...productTotals.values()];
+  const missingCostProducts = new Map();
+  for (const sale of report.ventas) {
+    for (const item of sale.items) {
+      if (item.costo_unitario_nio != null) continue;
+      const current = missingCostProducts.get(item.producto_id) || {
+        producto: item.producto, sku: item.sku, unidades: 0,
+      };
+      current.unidades += Number(item.cantidad || 0);
+      missingCostProducts.set(item.producto_id, current);
+    }
+  }
+  const missingCostList = [...missingCostProducts.values()]
+    .map((item) => `${item.producto}${item.sku ? ` (${item.sku})` : ''}: ${item.unidades} unidades`)
+    .join(', ');
   const topProducts = [...products].sort((a, b) => b.unidades - a.unidades).slice(0, 5);
   const profitableProducts = [...products].filter((item) => item.costo_completo).sort((a, b) => b.utilidad_nio - a.utilidad_nio).slice(0, 5);
   const soldProductIds = new Set(productTotals.keys());
@@ -115,6 +129,7 @@ export function openMonthlyReport(report, win = window.open('', '_blank')) {
     <div class="sales-snapshot"><div><span>Ventas netas facturadas</span><strong>${escapeHtml(money(summary.ventas_nio))}</strong></div><div><span>Pedidos</span><strong>${escapeHtml(summary.facturas)}</strong></div><div><span>Unidades vendidas</span><strong>${escapeHtml(summary.unidades_vendidas)}</strong></div><div><span>Ticket promedio</span><strong>${escapeHtml(money(summary.ticket_promedio_nio))}</strong></div><p>${escapeHtml(growthLabel)} · ${escapeHtml(bestSalesDay)}</p></div>
     <h2 class="section-title">2. Rentabilidad</h2>
     <div class="sales-snapshot"><div><span>Costo de ventas estimado</span><strong>${summary.costo_ventas_estimado_nio == null ? 'No disponible' : escapeHtml(money(summary.costo_ventas_estimado_nio))}</strong></div><div><span>Utilidad bruta estimada</span><strong>${escapeHtml(grossProfit)}</strong></div><div><span>Margen bruto estimado</span><strong>${summary.costo_ventas_estimado_nio == null || !summary.ventas_nio ? 'No disponible' : `${((summary.ventas_nio - summary.costo_ventas_estimado_nio) / summary.ventas_nio * 100).toFixed(1)}%`}</strong></div><div><span>Comisiones POS</span><strong>${escapeHtml(money(summary.comisiones_pos_nio))}</strong></div></div>
+    ${missingCostProducts.size ? `<p class="note"><strong>Productos vendidos sin costo registrado:</strong> ${escapeHtml(missingCostList)}.</p>` : ''}
     <p class="note">Gastos operativos no registrados; por eso no se puede calcular utilidad neta. La utilidad estimada descuenta costos actuales de producto y comisiones POS, no representa utilidad contable histórica.</p>
     <h2 class="section-title">3. Inventario</h2>
     <div class="sales-snapshot"><div><span>Stock inicial</span><strong>No hay historial</strong></div><div><span>Entradas registradas</span><strong>${escapeHtml(summary.unidades_compradas)} unidades</strong></div><div><span>Salidas por ventas</span><strong>${escapeHtml(summary.unidades_vendidas)} unidades</strong></div><div><span>Agotados al corte</span><strong>${escapeHtml(report.inventario.filter((item) => item.stock === 0).length)}</strong></div></div>
