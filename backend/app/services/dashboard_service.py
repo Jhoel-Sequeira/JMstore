@@ -211,12 +211,15 @@ def _profit_summary(db: Session, start: datetime, end: datetime) -> dict:
         .all()
     )
     known_profit = 0.0
+    known_cost_of_sales = 0.0
     missing_cost_lines = 0
     for quantity, subtotal, cost, shipping in rows:
         if cost is None:
             missing_cost_lines += 1
             continue
-        known_profit += _as_float(subtotal) - int(quantity) * (_as_float(cost) + _as_float(shipping))
+        line_cost = int(quantity) * (_as_float(cost) + _as_float(shipping))
+        known_cost_of_sales += line_cost
+        known_profit += _as_float(subtotal) - line_cost
 
     commission = _as_float(
         db.query(func.coalesce(func.sum(Venta.comision_pos), 0))
@@ -228,6 +231,9 @@ def _profit_summary(db: Session, start: datetime, end: datetime) -> dict:
     return {
         "utilidad_estimada_nio": estimated_profit if missing_cost_lines == 0 else None,
         "margen_estimado_pct": (estimated_profit / revenue * 100) if revenue and missing_cost_lines == 0 else None,
+        "ventas_nio": revenue,
+        "costo_ventas_estimado_nio": known_cost_of_sales if missing_cost_lines == 0 else None,
+        "comisiones_pos_nio": commission,
         "lineas_sin_costo": missing_cost_lines,
     }
 
@@ -415,8 +421,10 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
     """Build a complete monthly business cut, with invoice and collection dates kept distinct."""
     start_date = date(year, month, 1)
     end_date = date(year + (month == 12), 1 if month == 12 else month + 1, 1)
+    today = datetime.now(BUSINESS_TIMEZONE).date()
+    cutoff_date = min(today, end_date - timedelta(days=1))
     start = datetime.combine(start_date, time.min)
-    end = datetime.combine(end_date, time.min)
+    end = datetime.combine(cutoff_date + timedelta(days=1), time.min)
 
     sales = (db.query(Venta, Cliente.nombre_cliente)
              .join(Cliente, Cliente.id == Venta.cliente_id)
@@ -434,16 +442,18 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
     for payment in all_invoice_payments:
         payments_by_sale.setdefault(payment.venta_id, []).append(payment)
 
-    sale_details = (db.query(VentaDetalle, Producto.nombre, Producto.sku)
+    sale_details = (db.query(VentaDetalle, Producto.nombre, Producto.sku, Producto.id,
+                             Producto.costo_nio, Producto.costo_envio_nio)
                     .join(Producto, Producto.id == VentaDetalle.producto_id)
                     .filter(VentaDetalle.venta_id.in_(sale_ids))
                     .order_by(VentaDetalle.venta_id, VentaDetalle.id).all()) if sale_ids else []
     details_by_sale: dict[int, list] = {}
-    for line, name, sku in sale_details:
+    for line, name, sku, product_id, cost, shipping in sale_details:
         details_by_sale.setdefault(line.venta_id, []).append({
-            "producto": name, "sku": sku, "cantidad": line.cantidad,
+            "producto_id": product_id, "producto": name, "sku": sku, "cantidad": line.cantidad,
             "precio_unitario_nio": _as_float(line.precio_unitario),
             "descuento_nio": _as_float(line.descuento), "subtotal_nio": _as_float(line.subtotal),
+            "costo_unitario_nio": None if cost is None else _as_float(cost) + _as_float(shipping),
         })
 
     sale_records = []
@@ -451,7 +461,7 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
         invoice_payments = payments_by_sale.get(sale.id, [])
         paid = sum((_as_float(payment.monto) for payment in invoice_payments), 0.0)
         sale_records.append({
-            "id": sale.id, "fecha": sale.fecha_venta, "cliente": client_name,
+            "id": sale.id, "fecha": sale.fecha_venta, "cliente_id": sale.cliente_id, "cliente": client_name,
             "total_nio": _as_float(sale.total), "abonado_nio": paid,
             "saldo_nio": max(0.0, _as_float(sale.total) - paid),
             "comision_pos_nio": _as_float(sale.comision_pos),
@@ -507,7 +517,7 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
         quantity = int(stock.stock or 0)
         cost = None if product.costo_nio is None else _as_float(product.costo_nio) + _as_float(product.costo_envio_nio)
         inventory.append({
-            "producto": product.nombre, "sku": product.sku, "marca": brand,
+            "producto_id": product.id, "producto": product.nombre, "sku": product.sku, "marca": brand,
             "stock": quantity, "stock_minimo": int(stock.stock_critico or 0),
             "costo_unitario_nio": cost, "precio_unitario_nio": _as_float(product.precio),
             "valor_costo_nio": None if cost is None else quantity * cost,
@@ -521,11 +531,46 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
     inventory_cost = sum(item["valor_costo_nio"] or 0 for item in inventory)
     inventory_retail = sum(item["valor_venta_nio"] for item in inventory)
     profit = _profit_summary(db, start, end)
+    previous_start_date = date(year, month, 1) - timedelta(days=1)
+    previous_start_date = previous_start_date.replace(day=1)
+    previous_end_date = min(
+        previous_start_date + timedelta(days=cutoff_date.day),
+        date(year, month, 1),
+    )
+    previous_sales, _ = _sales_totals(
+        db, datetime.combine(previous_start_date, time.min),
+        datetime.combine(previous_end_date, time.min),
+    )
+    sold_units = sum(item["cantidad"] for sale in sale_records for item in sale["items"])
+    purchased_units = sum(item["cantidad"] for purchase in purchase_records for item in purchase["items"])
+    current_client_ids = {sale["cliente_id"] for sale in sale_records}
+    previous_client_ids = {row[0] for row in db.query(Venta.cliente_id).filter(
+        Venta.cliente_id.in_(current_client_ids), Venta.fecha_venta < start,
+    ).distinct().all()} if current_client_ids else set()
+    sales_by_day: dict[date, float] = {}
+    for sale, _ in sales:
+        sales_by_day[sale.fecha_venta.date()] = sales_by_day.get(sale.fecha_venta.date(), 0.0) + _as_float(sale.total)
+    sales_days = [
+        {"fecha": (start_date + timedelta(days=offset)).isoformat(),
+         "ventas_nio": sales_by_day.get(start_date + timedelta(days=offset), 0.0)}
+        for offset in range(max(0, (cutoff_date - start_date).days + 1))
+    ]
+    best_sales_day = max(sales_days, key=lambda item: item["ventas_nio"], default=None)
     return {
         "year": year, "month": month, "desde": start_date.isoformat(),
-        "hasta": (end_date - timedelta(days=1)).isoformat(),
+        "hasta": cutoff_date.isoformat(),
         "resumen": {
             "ventas_nio": sales_total, "compras_nio": purchases_total,
+            "ventas_mes_anterior_nio": previous_sales,
+            "crecimiento_ventas_pct": ((sales_total - previous_sales) / previous_sales * 100) if previous_sales else None,
+            "facturas": len(sale_records),
+            "unidades_vendidas": sold_units,
+            "unidades_compradas": purchased_units,
+            "clientes_nuevos": len(current_client_ids - previous_client_ids),
+            "clientes_recurrentes": len(current_client_ids & previous_client_ids),
+            "ticket_promedio_nio": sales_total / len(sale_records) if sale_records else 0.0,
+            "dias_con_ventas": sum(1 for item in sales_days if item["ventas_nio"] > 0),
+            "mejor_dia_ventas": best_sales_day,
             "cobros_mes_nio": collected_total,
             "saldo_facturas_mes_nio": sum(item["saldo_nio"] for item in sale_records),
             "abonado_facturas_mes_nio": sum(item["abonado_nio"] for item in sale_records),
@@ -539,5 +584,5 @@ def get_monthly_report(db: Session, year: int, month: int) -> dict:
             "valor_inventario_costo_nio": inventory_cost, "valor_inventario_venta_nio": inventory_retail,
         },
         "ventas": sale_records, "compras": purchase_records, "abonos_mes": payment_records,
-        "inventario": inventory,
+        "inventario": inventory, "ventas_diarias": sales_days,
     }

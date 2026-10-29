@@ -85,7 +85,7 @@ export default function DashboardPage() {
             {periodOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
           <label className="sr-only" htmlFor="report-month">Mes del corte</label>
-          <input id="report-month" type="month" value={reportMonth} onChange={(event) => setReportMonth(event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
+          <input id="report-month" type="month" value={reportMonth} max={currentBusinessMonth()} onChange={(event) => setReportMonth(event.target.value)} className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100" />
           <button type="button" onClick={exportMonthlyReport} disabled={reportLoading || !reportMonth} className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50">
             <span className={`material-symbols-outlined text-lg ${reportLoading ? 'animate-spin' : ''}`}>{reportLoading ? 'progress_activity' : 'picture_as_pdf'}</span>
             <span>{reportLoading ? 'Preparando…' : 'Exportar corte PDF'}</span>
